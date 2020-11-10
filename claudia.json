@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "task-sharing-bot-executor",
+    "name": "task-sharing-bot",
+    "region": "eu-west-2"
+  },
+  "api": {
+    "id": "4t6ctmg9f1",
+    "module": "bot"
+  }
+}
