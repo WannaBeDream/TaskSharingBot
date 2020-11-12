@@ -2,10 +2,16 @@
   "name": "task-sharing-bot",
   "version": "1.0.0",
   "description": "task sharing bot on CloudiaJS and mongoDB cores basis",
-  "main": "bot.js",
+  "main": "src/bot.js",
   "scripts": {
-    "create": "claudia create --region eu-west-2 --api-module bot --configure-telegram-bot",
-    "update": "claudia update"
+    "start": "nodemon local",
+    "debug": "node --inspect local",
+    "webhook": "curl https://api.telegram.org/bot$(grep BOT_TOKEN src/config/.env | cut -d '=' -f2)/setWebhook?url=$(grep WEBHOOK_URL src/config/.env | cut -d '=' -f2)",
+    "create": "claudia create --region eu-west-2 --api-module src/bot --profile Magnifikate --role AWSLambdaBasicExecutionRole --configure-telegram-bot",
+    "update": "claudia update",
+    "deploy": "claudia update --profile Magnifikate && npm run webhook",
+    "updateFast": "claudia update --cache-api-config apiConfig",
+    "test": "claudia test-lambda"
   },
   "keywords": [
     "aws",
@@ -16,10 +22,18 @@
   "author": "Magnifikate",
   "license": "ISC",
   "devDependencies": {
-    "claudia": "^5.12.0"
+    "claudia": "^5.12.0",
+    "eslint": "^7.13.0",
+    "express": "^4.17.1",
+    "ngrok": "^3.3.0",
+    "nodemon": "^2.0.6"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "claudia-api-builder": "^4.1.2",
-    "claudia-bot-builder": "^4.5.0"
+    "claudia-bot-builder": "^4.5.0",
+    "dotenv": "^8.2.0",
+    "minimal-request-promise": "^1.5.0",
+    "mongoose": "^5.10.13"
   }
 }

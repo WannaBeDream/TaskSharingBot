@@ -1,11 +1,12 @@
 {
   "lambda": {
-    "role": "task-sharing-bot-executor",
+    "role": "AWSLambdaBasicExecutionRole",
     "name": "task-sharing-bot",
-    "region": "eu-west-2"
+    "region": "eu-west-2",
+    "sharedRole": true
   },
   "api": {
-    "id": "4t6ctmg9f1",
-    "module": "bot"
+    "id": "5lq235m03e",
+    "module": "src/bot"
   }
 }
