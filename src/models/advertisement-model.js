@@ -40,27 +40,8 @@ const AdvertisementSchema = new mongoose.Schema({
         type: Boolean,
         require: true,
         unique: false
-    },
-    time: {
-        type: Number || String,
-        require: false,
-        unique: false
-    },
-    date: {
-        type: Date,
-        require: true,
-        unique: false
-    },
-    responders: {
-        ref: 'users',
-        type: [mongoose.Schema.Types.ObjectId],
-        require: false,
-        unique: true
-    },
-    created: {
-        type: Date,
-        default: Date.now
     }
-});
+},
+    { timestamps: true });
 
 module.exports = mongoose.model('Advertisement', AdvertisementSchema);
