@@ -40,3 +40,8 @@
 2) Type some text and enjoy
 
 You need to configure the webhook after each launch of your local bot.
+
+
+# License
+
+MIT
