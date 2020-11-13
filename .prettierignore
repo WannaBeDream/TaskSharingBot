@@ -1,0 +1,4 @@
+.vscode/settings.json
+
+# ignore all files with name
+package-lock.json

@@ -1,0 +1,8 @@
+# Visit https://eslint.org/docs/user-guide/configuring to read more about this file
+
+# woork environment
+/.vscode
+/.idea
+
+# dependencies
+/node_modules
