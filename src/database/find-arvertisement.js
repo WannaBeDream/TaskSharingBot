@@ -35,4 +35,19 @@ const findAdsWithinRadius = async (telegramId) => {
     }
 };
 
-module.exports = { findAdsWithinRadius };
+/**
+ * Return own user`s advertisements
+ *
+ * @async
+ * @param {Number} authorId - telegram ID
+ * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
+ */
+const findMyAds = async (authorId) => {
+    try {
+        return await AdvertModel.find({ author: authorId });
+    } catch (e) {
+        throw new Error('Unable find your advertisements');
+    }
+};
+
+module.exports = { findAdsWithinRadius, findMyAds };
