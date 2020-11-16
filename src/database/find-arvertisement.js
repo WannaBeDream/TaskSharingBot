@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 const { logger } = require('../helpers');
 const { UserModel, AdvertModel } = require('../models');
 
@@ -68,4 +67,20 @@ const findAdsByCategory = async (telegramId, category) => {
     }
 };
 
-module.exports = { findAdsWithinRadius, findMyAds, findAdsByCategory };
+/**
+ * Return all saved advertisements
+ *
+ * @async
+ * @param {Number} telegramId
+ * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
+ */
+const findSavedAds = async (telegramId) => {
+    try {
+        const user = await UserModel.findById(telegramId);
+        return user.savedAdvertisements;
+    } catch (e) {
+        throw new Error('Unable find saved advertisements');
+    }
+};
+
+module.exports = { findAdsWithinRadius, findMyAds, findAdsByCategory, findSavedAds };
