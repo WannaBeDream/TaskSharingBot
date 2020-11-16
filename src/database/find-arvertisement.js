@@ -46,8 +46,26 @@ const findMyAds = async (authorId) => {
     try {
         return await AdvertModel.find({ author: authorId });
     } catch (e) {
+        logger.error(e);
         throw new Error('Unable find your advertisements');
     }
 };
 
-module.exports = { findAdsWithinRadius, findMyAds };
+/**
+ * Return all advertisements with specific category, except user`s own advertisements
+ *
+ * @async
+ * @param {Number} telegramId
+ * @param {String} category
+ * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
+ */
+const findAdsByCategory = async (telegramId, category) => {
+    try {
+        return await AdvertModel.find({ author: { $ne: telegramId }, category });
+    } catch (e) {
+        logger.error(e);
+        throw new Error('Unable find advertisements');
+    }
+};
+
+module.exports = { findAdsWithinRadius, findMyAds, findAdsByCategory };
