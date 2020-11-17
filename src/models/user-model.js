@@ -1,31 +1,35 @@
 const mongoose = require('mongoose');
+const autopopulate = require('mongoose-autopopulate');
 
 const UserSchema = new mongoose.Schema({
-    telegramId: {
+    _id: {
         type: Number,
-        require: true,
-        unique: true
+        required: true
     },
     location: {
         type: {
             type: String,
             default: 'Point'
         },
-        coordinates: [Number],
-        require: true,
-        unique: false
+        coordinates: {
+            type: [Number],
+            required: true
+        }
     },
     searchRadius: {
         type: Number,
-        require: true,
-        unique: false
+        require: true
     },
-    savedAdvertisements: {
-        ref: 'advertisements',
-        type: [mongoose.Schema.Types.ObjectId],
-        require: false,
-        unique: false
-    }
+    savedAdvertisements: [
+        {
+            ref: 'advertisements',
+            type: [mongoose.Schema.Types.ObjectId],
+            autopopulate: true
+        }
+    ]
 });
 
-module.exports = mongoose.model('User', UserSchema);
+UserSchema.index({ location: '2dsphere' });
+UserSchema.plugin(autopopulate);
+
+module.exports = mongoose.model('users', UserSchema);
