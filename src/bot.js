@@ -1,5 +1,5 @@
 const botBuilder = require('claudia-bot-builder');
 
-const messageHandler = require('./features');
+const router = require('./router');
 
-module.exports = botBuilder(messageHandler);
+module.exports = botBuilder(router, { platforms: ['telegram'] });
