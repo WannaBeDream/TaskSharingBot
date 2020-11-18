@@ -6,15 +6,15 @@ const { UserModel, AdvertModel } = require('../models');
  *
  * @async
  * @param {Number} _id - telegram ID
- * @param {Object} location - object with properties latitude and longitude
- * @param {Number} searchRadius - in metres
+ * @param {string} lang
+ * @param {string} appState
  */
-const createUser = async (_id, { latitude, longitude }, searchRadius) => {
+const createUser = async (_id, appStateId, lang) => {
     try {
         const model = new UserModel({
             _id,
-            location: { coordinates: [longitude, latitude] },
-            searchRadius
+            lang,
+            appStateId
         });
         await model.save();
     } catch (e) {

@@ -6,7 +6,7 @@ const parser = require('claudia-bot-builder/lib/telegram/parse');
 const responder = require('claudia-bot-builder/lib/telegram/reply');
 const config = require('./src/config');
 
-const messageHandler = require('./src/features');
+const router = require('./src/router');
 
 (async () => {
     try {
@@ -35,7 +35,7 @@ const messageHandler = require('./src/features');
 
         app.post(webhookPath, async (req, res) => {
             const parsedMessage = parser(req.body);
-            const botResponse = await messageHandler(parsedMessage);
+            const botResponse = await router(parsedMessage);
 
             responder(parsedMessage, botResponse, token);
 

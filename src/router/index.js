@@ -1,16 +1,26 @@
-const appStateDao = require('./appStateDao');
+const { MONGO_URI } = require('../config');
+const appStateDao = require('./app-state-mongo');
 const commandParser = require('./commandParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
+const { connect } = require('../database/create-connection');
 
 module.exports = async (update) => {
-    console.log(update.originalRequest.message);
+    // connect to mongo
+    await connect(MONGO_URI); // create try catch
+
+    // get Id
     const userId = update.originalRequest.message.from.id;
+
+    // get user`s state
     const userState = await appStateDao.getUserState(userId);
-    console.log(userState);
+
+    // parse input command
     const command = commandParser(update.text, userState.lang);
-    console.log(command);
+
+    //
     const transition = STATE_MACHINE[userState.appStateId][command.id];
+
     if (!transition) {
         return langResources.unknownCommand[userState.lang];
     }

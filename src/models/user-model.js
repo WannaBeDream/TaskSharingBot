@@ -13,12 +13,19 @@ const UserSchema = new mongoose.Schema({
         },
         coordinates: {
             type: [Number],
-            required: true
+            default: [0, 0]
         }
+    },
+    appStateId: {
+        type: String,
+        require: true
+    },
+    lang: {
+        type: String
     },
     searchRadius: {
         type: Number,
-        require: true
+        default: 0
     },
     savedAdvertisements: [
         {
