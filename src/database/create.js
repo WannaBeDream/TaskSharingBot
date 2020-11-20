@@ -26,32 +26,12 @@ const createUser = async (_id, appStateId, lang) => {
 /**
  * Create and save Advertisement object
  *
- * @param {Object} advertisement
+ * @async
  * @property {Number} author - telegram ID
- * @property {string} title
- * @property {string} description
- * @property {Object} location - object with properties latitude and longitude
- * @property {string} category
- * @property {string} remuneration
  */
-const createAdvertisement = async ({
-    author,
-    title,
-    description,
-    location: { latitude, longitude },
-    category,
-    remuneration
-}) => {
+const createAdvertisement = async (author) => {
     try {
-        const model = new AdvertModel({
-            author,
-            title,
-            description,
-            location: { coordinates: [longitude, latitude] },
-            category,
-            remuneration,
-            isActive: true
-        });
+        const model = new AdvertModel({ author });
         await model.save();
     } catch (e) {
         logger.error(e);

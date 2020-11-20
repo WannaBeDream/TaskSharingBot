@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { logger } = require('../helpers');
 
+// /////////////////////////////////////////////////
+// НАДО ПЕРЕДЕЛАТЬ Todo
+// /////////////////////////////////////////////////
 const connect = async (url) => {
     try {
         await mongoose.connect(url, {

@@ -18,14 +18,15 @@ const findAdsWithinRadius = async (telegramId) => {
 
         return await AdvertModel.find({
             location: {
-                $near: {
+                $nearSphere: {
                     $geometry: {
                         type: 'Point',
                         coordinates
                     },
-                    $maxDistance: searchRadius
+                    $maxDistance: searchRadius * 1000000
                 }
             },
+            isActive: true,
             author: { $ne: _id } // not return own user`s advertisements
         });
     } catch (e) {
@@ -43,7 +44,7 @@ const findAdsWithinRadius = async (telegramId) => {
  */
 const findMyAds = async (authorId) => {
     try {
-        return await AdvertModel.find({ author: authorId });
+        return await AdvertModel.find({ author: authorId, isActive: true });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -83,4 +84,20 @@ const findSavedAds = async (telegramId) => {
     }
 };
 
-module.exports = { findAdsWithinRadius, findMyAds, findAdsByCategory, findSavedAds };
+const findUser = async (telegramId) => {
+    try {
+        return await UserModel.findById(telegramId);
+    } catch (e) {
+        throw new Error('Unable find user');
+    }
+};
+
+const findAdvertisement = async (telegramId) => {
+    try {
+        return await AdvertModel.findOne({ author: telegramId, isActive: false });
+    } catch (e) {
+        throw new Error('Unable find advertisement');
+    }
+};
+
+module.exports = { findAdsWithinRadius, findMyAds, findAdsByCategory, findSavedAds, findUser, findAdvertisement };
