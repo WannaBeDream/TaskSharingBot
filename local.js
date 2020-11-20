@@ -6,7 +6,7 @@ const parser = require('claudia-bot-builder/lib/telegram/parse');
 const responder = require('claudia-bot-builder/lib/telegram/reply');
 const config = require('./src/config');
 
-const messageHandler = require('./src/features');
+const messageHandler = require('./src/router');
 
 (async () => {
     try {
