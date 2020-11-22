@@ -5,6 +5,16 @@ const commandParser = require('./commandParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
 const { connectToDatabase } = require('../database/create-connection');
+const {
+    ADD_TO_SAVED,
+    AD_DISPLAY_ALL_ACT,
+    DELETE_FROM_SAVED,
+    DELETE_MY_AD,
+    AD_DISPLAY_MY_ACT,
+    AD_DISPLAY_SAVED_ACT,
+    USER_ACT,
+    AD_ACT
+} = require('../features/constants');
 
 module.exports = async (update) => {
     try {
@@ -16,13 +26,13 @@ module.exports = async (update) => {
 
             // Todo - make constants
             switch (op) {
-                case 'ADD_TO_SAVED':
+                case ADD_TO_SAVED:
                     await appStateDao.addToSaved(update.originalRequest.callback_query.from.id, idAd);
                     break;
-                case 'DELETE_FROM_SAVED':
+                case DELETE_FROM_SAVED:
                     await appStateDao.deleteFromSaved(update.originalRequest.callback_query.from.id, idAd);
                     break;
-                case 'DELETE_MY_AD':
+                case DELETE_MY_AD:
                     await appStateDao.deleteMyAd(idAd);
                     break;
                 default:
@@ -66,25 +76,25 @@ module.exports = async (update) => {
         let ads = [];
         // переменная устанавливается во время действий
         switch (action.act) {
-            case 'USER_ACT':
+            case USER_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
                 break;
-            case 'AD_ACT':
+            case AD_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
                 await appStateDao.updateAdvertisement(userId, {
                     ...userState,
                     appStateId: transition.targetState.id
                 });
                 break;
-            case 'AD_DISPLAY_ALL_ACT':
+            case AD_DISPLAY_ALL_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
                 ads = await appStateDao.findAllAds(userId);
                 break;
-            case 'AD_DISPLAY_MY_ACT':
+            case AD_DISPLAY_MY_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
                 ads = await appStateDao.findMyAdss(userId);
                 break;
-            case 'AD_DISPLAY_SAVED_ACT':
+            case AD_DISPLAY_SAVED_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
                 ads = await appStateDao.findSavedAdss(userId);
                 break;

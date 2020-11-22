@@ -4,17 +4,18 @@ const labels = require('./labels');
 const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../../router/general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../../router/labels');
+const { USER_ACT } = require('../constants');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //
 // ////////////////////////////////////////////////// //
 
 exports.initNewUserSetLocationView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     return new telegramTemplate.Text(labels.newUserEnterLocation[update.userState.lang]).replyKeyboardHide().get();
 };
 exports.initNewUserSetRadiusView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     // eslint-disable-next-line prettier/prettier
     return (
         new telegramTemplate.Text(labels.newUserEnterRadius[update.userState.lang])
@@ -30,7 +31,7 @@ exports.initNewUserSetRadiusView = (update) => {
     );
 };
 exports.initUserSettingsView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     const { lang } = update.userState;
     return new telegramTemplate.Text('\uD83D\uDE01')
         .addReplyKeyboard(
@@ -44,7 +45,7 @@ exports.initUserSettingsView = (update) => {
         .get();
 };
 exports.initChangeLocationView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     return [
         new telegramTemplate.Text(labels.existingUserChangeLocation[update.userState.lang]).get(),
         new telegramTemplate.Location(
@@ -57,7 +58,7 @@ exports.initChangeLocationView = (update) => {
 };
 
 exports.initChangeRadiusView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     return new telegramTemplate.Text(
         labels.existingUserChangeRadius[update.userState.lang](update.userState.searchRadius)
     )
@@ -66,7 +67,7 @@ exports.initChangeRadiusView = (update) => {
 };
 
 exports.initViewProfileView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     const name = `${update.originalRequest.message.from.first_name} ${update.originalRequest.message.from.last_name}`;
     return [
         new telegramTemplate.Text(
@@ -81,13 +82,13 @@ exports.initViewProfileView = (update) => {
     ];
 };
 exports.initChangeLangView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     return new telegramTemplate.Text('\uD83D\uDE01')
         .addReplyKeyboard([[labels.language.en, labels.language.ua], [backCommand.title[update.userState.lang]]], true)
         .get();
 };
 exports.initNewUserChangeLangView = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     return new telegramTemplate.Text('\uD83D\uDE01')
         .addReplyKeyboard([[labels.language.en, labels.language.ua]], true)
         .get();
@@ -98,7 +99,7 @@ exports.initNewUserChangeLangView = (update) => {
 // ////////////////////////////////////////////////// //
 
 exports.setLanguage = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     if (update.text === labels.language.en || update.text === 'en') {
         update.userState.lang = 'en';
     } else if (update.text === labels.language.ua || update.text === 'ua') {
@@ -109,7 +110,7 @@ exports.setLanguage = (update) => {
 };
 
 exports.setRadius = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     if (!Number.isInteger(+update.text) || +update.text < 1 || +update.text > 50) {
         throw new Error(labels.incorrectRadius[update.userState.lang]);
     }
@@ -118,7 +119,7 @@ exports.setRadius = (update) => {
 };
 
 exports.setLocation = (update) => {
-    update.userState.act = 'USER_ACT';
+    update.userState.act = USER_ACT;
     const { location } = update.originalRequest.message;
     if (!location) {
         throw new Error(labels.locationNotSet[update.userState.lang]);
