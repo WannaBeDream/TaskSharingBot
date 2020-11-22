@@ -1,21 +1,19 @@
 const mongoose = require('mongoose');
-const { logger } = require('../helpers');
 
-// /////////////////////////////////////////////////
-// НАДО ПЕРЕДЕЛАТЬ Todo
-// /////////////////////////////////////////////////
-const connect = async (url) => {
-    try {
-        await mongoose.connect(url, {
-            useNewUrlParser: true,
-            useFindAndModify: false,
-            useUnifiedTopology: true,
-            useCreateIndex: true
-        });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(`Connection to MongoDB is rejected: ${e.message}`);
+let cachedDb = null;
+
+const connectToDatabase = async (uri) => {
+    if (cachedDb) {
+        return Promise.resolve(cachedDb);
     }
-};
 
-module.exports = { connect };
+    const db = await mongoose.connect(uri, {
+        useNewUrlParser: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    });
+    cachedDb = db;
+    return cachedDb;
+};
+module.exports = { connectToDatabase };

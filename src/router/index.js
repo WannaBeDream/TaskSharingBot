@@ -4,11 +4,11 @@ const appStateDao = require('./app-state-mongo');
 const commandParser = require('./commandParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
-const { connect } = require('../database/create-connection');
+const { connectToDatabase } = require('../database/create-connection');
 
 module.exports = async (update) => {
     try {
-        await connect(MONGO_URI); // TODO REDO https://docs.atlas.mongodb.com/best-practices-connecting-to-aws-lambda/#example
+        await connectToDatabase(MONGO_URI); // https://docs.atlas.mongodb.com/best-practices-connecting-to-aws-lambda/#example
 
         // Handle data from inline keyboard
         if (update.originalRequest.callback_query !== undefined) {
