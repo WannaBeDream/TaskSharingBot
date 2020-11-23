@@ -31,13 +31,33 @@ module.exports = async (update) => {
                     break;
                 case DELETE_FROM_SAVED:
                     await appStateDao.deleteFromSaved(update.originalRequest.callback_query.from.id, idAd);
-                    break;
+                    // Todo
+                    return {
+                        method: 'deleteMessage',
+                        body: {
+                            chat_id: update.originalRequest.callback_query.from.id,
+                            message_id: update.originalRequest.callback_query.message.message_id
+                        }
+                    };
                 case DELETE_MY_AD:
                     await appStateDao.deleteMyAd(idAd);
-                    break;
+                    // Todo
+                    return {
+                        method: 'deleteMessage',
+                        body: {
+                            chat_id: update.originalRequest.callback_query.from.id,
+                            message_id: update.originalRequest.callback_query.message.message_id
+                        }
+                    };
                 case SPAM:
                     // Todo
-                    break;
+                    return {
+                        method: 'deleteMessage',
+                        body: {
+                            chat_id: update.originalRequest.callback_query.from.id,
+                            message_id: update.originalRequest.callback_query.message.message_id
+                        }
+                    };
                 default:
                     break;
             }

@@ -33,11 +33,11 @@ exports.displayAllAds = (update) => {
                     [
                         {
                             text: labels.spamMessage[update.userState.lang],
-                            callback_data: callbackData
+                            callback_data: spamCallbackData
                         },
                         {
                             text: labels.addToSavedMessage[update.userState.lang],
-                            callback_data: spamCallbackData
+                            callback_data: callbackData
                         }
                     ]
                 ])
