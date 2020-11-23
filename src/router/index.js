@@ -13,7 +13,8 @@ const {
     AD_DISPLAY_MY_ACT,
     AD_DISPLAY_SAVED_ACT,
     USER_ACT,
-    AD_ACT
+    AD_ACT,
+    SPAM
 } = require('../features/constants');
 
 module.exports = async (update) => {
@@ -24,7 +25,6 @@ module.exports = async (update) => {
         if (update.originalRequest.callback_query !== undefined) {
             const { idAd, op } = JSON.parse(update.originalRequest.callback_query.data);
 
-            // Todo - make constants
             switch (op) {
                 case ADD_TO_SAVED:
                     await appStateDao.addToSaved(update.originalRequest.callback_query.from.id, idAd);
@@ -34,6 +34,9 @@ module.exports = async (update) => {
                     break;
                 case DELETE_MY_AD:
                     await appStateDao.deleteMyAd(idAd);
+                    break;
+                case SPAM:
+                    // Todo
                     break;
                 default:
                     break;
@@ -74,7 +77,7 @@ module.exports = async (update) => {
         const action = { ...userState };
 
         let ads = [];
-        // переменная устанавливается во время действий
+
         switch (action.act) {
             case USER_ACT:
                 await appStateDao.updateUser(userId, { ...userState, appStateId: transition.targetState.id });
@@ -101,7 +104,7 @@ module.exports = async (update) => {
             default:
                 break;
         }
-        // If ads were found
+
         if (ads.length !== 0) {
             update.advertisements = ads;
             reply = [];

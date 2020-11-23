@@ -6,7 +6,7 @@ const { USER_ACT } = require('../constants');
 
 exports.initUserHomeView = (update) => {
     update.userState.act = USER_ACT;
-    return new telegramTemplate.Text('\uD83D\uDE01')
+    return new telegramTemplate.Text('🏠')
         .addReplyKeyboard(
             [
                 [commands.CREATE_AD.title[update.userState.lang], commands.ALL_ADS.title[update.userState.lang]],

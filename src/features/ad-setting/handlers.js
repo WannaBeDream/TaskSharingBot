@@ -4,6 +4,7 @@ const labels = require('./labels');
 const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../../router/general-commands');
 const { AD_ACT } = require('../constants');
+const { AD_TEMPLATE } = require('../ad-template');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
@@ -49,24 +50,9 @@ exports.userPublishAdView = (update) => {
     update.userState.act = AD_ACT;
     const {
         sender,
-        originalRequest: {
-            message: {
-                from: { first_name: name }
-            }
-        },
         advertisementState: { title, description, renumeration }
     } = update;
-    return new telegramTemplate.Text(`
-    ===============================
-    [  ${name}](tg://user?id=${sender})
-
-    *❗️ ${title} ❗️*
-
-    ${description}
-
-    🎁   ${renumeration}   🎁
-    ===============================
-    `)
+    return new telegramTemplate.Text(AD_TEMPLATE(update, title, sender, description, renumeration))
         .addReplyKeyboard(
             [[commands.CANCEL_AD.title[update.userState.lang]], [commands.PUBLISH_AD.title[update.userState.lang]]],
             true
@@ -76,9 +62,7 @@ exports.userPublishAdView = (update) => {
 
 exports.congratulations = (update) => {
     update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(`Congratulations`)
-        .addReplyKeyboard([[backCommand.title[update.userState.lang]]], true)
-        .get();
+    return new telegramTemplate.Text(`👌🏿`).addReplyKeyboard([[backCommand.title[update.userState.lang]]], true).get();
 };
 
 // ////////////////////////////////////////////////// //

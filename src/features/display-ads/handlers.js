@@ -6,8 +6,11 @@ const {
     DELETE_FROM_SAVED,
     DELETE_MY_AD,
     AD_DISPLAY_MY_ACT,
-    AD_DISPLAY_SAVED_ACT
+    AD_DISPLAY_SAVED_ACT,
+    SPAM
 } = require('../constants');
+const labels = require('./labels');
+const { AD_TEMPLATE } = require('../ad-template');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //
@@ -21,30 +24,27 @@ exports.displayAllAds = (update) => {
                 idAd: id,
                 op: ADD_TO_SAVED
             });
-            return new telegramTemplate.Text(`
-            ===============================
-            [   Author](tg://user?id=${author})
-
-            *❗️ ${title} ❗️*
-
-            ${description}
-
-            🎁   ${renumeration}   🎁
-            ===============================
-            `)
+            const spamCallbackData = JSON.stringify({
+                idAd: id,
+                op: SPAM
+            });
+            return new telegramTemplate.Text(AD_TEMPLATE(update, title, author, description, renumeration))
                 .addInlineKeyboard([
                     [
                         {
-                            text: '❤️',
+                            text: labels.spamMessage[update.userState.lang],
                             callback_data: callbackData
+                        },
+                        {
+                            text: labels.addToSavedMessage[update.userState.lang],
+                            callback_data: spamCallbackData
                         }
                     ]
                 ])
                 .get();
         });
     }
-    // Todo - make constatns + lang
-    return 'Nothing to display';
+    return new telegramTemplate.Text(labels.ifEmptyArrayMessage[update.userState.lang]).get();
 };
 
 exports.displayMyAds = (update) => {
@@ -55,21 +55,11 @@ exports.displayMyAds = (update) => {
                 idAd: id,
                 op: DELETE_MY_AD
             });
-            return new telegramTemplate.Text(`
-            ===============================
-            [   Author](tg://user?id=${author})
-
-            *❗️ ${title} ❗️*
-
-            ${description}
-
-            🎁   ${renumeration}   🎁
-            ===============================
-            `)
+            return new telegramTemplate.Text(AD_TEMPLATE(update, title, author, description, renumeration))
                 .addInlineKeyboard([
                     [
                         {
-                            text: '☠️',
+                            text: labels.deleteMyMessage[update.userState.lang],
                             callback_data: callbackData
                         }
                     ]
@@ -77,7 +67,7 @@ exports.displayMyAds = (update) => {
                 .get();
         });
     }
-    return 'Nothing to display';
+    return new telegramTemplate.Text(labels.ifEmptyArrayMessage[update.userState.lang]).get();
 };
 
 exports.displaySavedAds = (update) => {
@@ -88,21 +78,11 @@ exports.displaySavedAds = (update) => {
                 idAd: id,
                 op: DELETE_FROM_SAVED
             });
-            return new telegramTemplate.Text(`
-            ===============================
-            [   Author](tg://user?id=${author})
-
-            *❗️ ${title} ❗️*
-
-            ${description}
-
-            🎁   ${renumeration}   🎁
-            ===============================
-            `)
+            return new telegramTemplate.Text(AD_TEMPLATE(update, title, author, description, renumeration))
                 .addInlineKeyboard([
                     [
                         {
-                            text: '💀',
+                            text: labels.deleteFromSavedMessage[update.userState.lang],
                             callback_data: callbackData
                         }
                     ]
@@ -110,5 +90,5 @@ exports.displaySavedAds = (update) => {
                 .get();
         });
     }
-    return 'Nothing to display';
+    return new telegramTemplate.Text(labels.ifEmptyArrayMessage[update.userState.lang]).get();
 };

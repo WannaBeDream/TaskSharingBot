@@ -33,7 +33,7 @@ exports.initNewUserSetRadiusView = (update) => {
 exports.initUserSettingsView = (update) => {
     update.userState.act = USER_ACT;
     const { lang } = update.userState;
-    return new telegramTemplate.Text('\uD83D\uDE01')
+    return new telegramTemplate.Text('🙎')
         .addReplyKeyboard(
             [
                 [commands.CHANGE_LOCATION.title[`${lang}`], commands.CHANGE_RADIUS.title[`${lang}`]],
