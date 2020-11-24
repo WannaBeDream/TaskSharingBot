@@ -5,28 +5,25 @@ exports.USER_SETTINGS = {
         ua: 'Налаштування профілю'
     }
 };
-
-exports.USER_SAVED_ADS = {
-    id: 'userSavedAds',
+exports.LOCAL_ADS = {
+    id: 'localAds',
     title: {
-        en: 'Your saved ads',
-        ua: 'Збережені оголошення'
+        en: 'All Local Ads',
+        ua: 'Всі локальні оголошення'
     }
 };
-
-exports.ALL_ADS = {
-    id: 'allAds',
+exports.SELECTED_ADS = {
+    id: 'selectedAds',
     title: {
-        en: 'All ads',
-        ua: 'Усі оголошення'
+        en: 'Selected Ads',
+        ua: 'Відібрані оголошення'
     }
 };
-
-exports.MY_ADS = {
-    id: 'myAds',
+exports.OWN_ADS = {
+    id: 'ownAds',
     title: {
-        en: 'My ads',
-        ua: 'Мої оголошення'
+        en: 'Own Ads',
+        ua: 'Власні оголошення'
     }
 };
 

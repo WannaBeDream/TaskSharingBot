@@ -9,13 +9,9 @@ const { UserModel, AdvertModel } = require('../models');
  * @param {string} lang
  * @param {string} appState
  */
-const createUser = async (_id, appStateId, lang) => {
+const createUser = async (user) => {
     try {
-        const model = new UserModel({
-            _id,
-            lang,
-            appStateId
-        });
+        const model = new UserModel(user);
         await model.save();
     } catch (e) {
         logger.error(e);
@@ -29,9 +25,9 @@ const createUser = async (_id, appStateId, lang) => {
  * @async
  * @property {Number} author - telegram ID
  */
-const createAdvertisement = async (author) => {
+const createAdvertisement = async (advertisement) => {
     try {
-        const model = new AdvertModel({ author });
+        const model = new AdvertModel(advertisement);
         await model.save();
     } catch (e) {
         logger.error(e);

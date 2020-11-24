@@ -1,31 +1,26 @@
-/* eslint-disable no-param-reassign */
-const { telegramTemplate } = require('claudia-bot-builder');
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
-const { USER_ACT } = require('../constants');
 
-exports.initUserHomeView = (update) => {
-    update.userState.act = USER_ACT;
-    return new telegramTemplate.Text('🏠')
+exports.initUserHomeView = (context) => {
+    return new Text('🏠')
         .addReplyKeyboard(
             [
-                [commands.CREATE_AD.title[update.userState.lang], commands.ALL_ADS.title[update.userState.lang]],
-                [commands.MY_ADS.title[update.userState.lang], commands.USER_SAVED_ADS.title[update.userState.lang]],
-                [commands.USER_SETTINGS.title[update.userState.lang]]
+                [commands.CREATE_AD.title[context.lang], commands.OWN_ADS.title[context.lang]],
+                [commands.LOCAL_ADS.title[context.lang], commands.SELECTED_ADS.title[context.lang]],
+                [commands.USER_SETTINGS.title[context.lang]]
             ],
             true
         )
         .get();
 };
 
-exports.getUserGreeting = (update) => {
-    update.userState.act = USER_ACT;
-    const name = `${update.originalRequest.message.from.first_name} ${update.originalRequest.message.from.last_name}`;
-    return new telegramTemplate.Text(labels.existingUserGreeting[update.userState.lang](name)).get();
+exports.getUserGreeting = (context) => {
+    const name = `${context.user.firstName} ${context.user.lastName}`;
+    return new Text(labels.existingUserGreeting[context.lang](name)).get();
 };
 
-exports.getNewUserGreeting = (update) => {
-    update.userState.act = USER_ACT;
-    const name = `${update.originalRequest.message.from.first_name} ${update.originalRequest.message.from.last_name}`;
-    return new telegramTemplate.Text(labels.newUserGreeting[update.userState.lang](name)).get();
+exports.getNewUserGreeting = (context) => {
+    const name = `${context.user.firstName} ${context.user.lastName}`;
+    return new Text(labels.newUserGreeting[context.lang](name)).get();
 };

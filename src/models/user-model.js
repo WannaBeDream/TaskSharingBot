@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
             default: [0, 0]
         }
     },
+    searchRadius: {
+        type: Number,
+        default: 0
+    },
     appStateId: {
         type: String,
         require: true
@@ -23,9 +27,14 @@ const UserSchema = new mongoose.Schema({
     lang: {
         type: String
     },
-    searchRadius: {
-        type: Number,
-        default: 0
+    adsViewMode: {
+        type: String
+    },
+    adsCategory: {
+        type: String
+    },
+    adsPage: {
+        type: Number
     },
     savedAdvertisements: [
         {

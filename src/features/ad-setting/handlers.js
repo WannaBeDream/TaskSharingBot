@@ -1,115 +1,100 @@
-/* eslint-disable no-param-reassign */
-const { telegramTemplate } = require('claudia-bot-builder');
+/* eslint-disable no-underscore-dangle */
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
-const { GO_BACK: backCommand } = require('../../router/general-commands');
-const { AD_ACT } = require('../constants');
+const inputCms = require('../ad-categories');
 const { AD_TEMPLATE } = require('../ad-template');
+
+const { findAdvertisement } = require('../../database/find');
+const { createAdvertisement } = require('../../database/create');
+const { updateAdState } = require('../../database/update');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
 // ////////////////////////////////////////////////// //
 
-exports.userSetAdNameView = (update) => {
-    update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(labels.newUserSetAdNameView[update.userState.lang]).replyKeyboardHide().get();
+exports.userSetAdNameView = (context) => {
+    return new Text(labels.newUserSetAdNameView[context.lang]).replyKeyboardHide().get();
 };
 
-exports.initUserSetAdDescriptionView = (update) => {
-    update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(labels.newUserSetAdDescriptionView[update.userState.lang])
-        .replyKeyboardHide()
-        .get();
+exports.userSetAdDescriptionView = (context) => {
+    return new Text(labels.newUserSetAdDescriptionView[context.lang]).replyKeyboardHide().get();
 };
 
-exports.userSetAdRenumerationView = (update) => {
-    update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(labels.newUserEnterRenumeration[update.userState.lang]).replyKeyboardHide().get();
+exports.userSetAdRenumerationView = (context) => {
+    return new Text(labels.newUserEnterRenumeration[context.lang]).replyKeyboardHide().get();
 };
 
-exports.userSetAdCategotyView = (update) => {
-    update.userState.act = AD_ACT;
-    // Todo change lang !!
-    return new telegramTemplate.Text(labels.newUserSetAdCategotyView[update.userState.lang])
+exports.userSetAdCategotyView = (context) => {
+    return new Text(labels.newUserSetAdCategotyView[context.lang])
         .addReplyKeyboard(
             [
-                ['Фізична', 'Інтелектуальна'],
-                ['Ментальна', 'Часова']
+                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
+                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
+                [inputCms.LOST_FOUND_ADS.title[context.lang]]
             ],
             true
         )
         .get();
 };
 
-exports.userSetAdLocationView = (update) => {
-    update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(labels.newUserEnterAdLocation[update.userState.lang]).replyKeyboardHide().get();
+exports.userSetAdLocationView = (context) => {
+    return new Text(labels.newUserEnterAdLocation[context.lang]).replyKeyboardHide().get();
 };
 
-exports.userPublishAdView = (update) => {
-    update.userState.act = AD_ACT;
-    const {
-        sender,
-        advertisementState: { title, description, renumeration }
-    } = update;
-    return new telegramTemplate.Text(AD_TEMPLATE(update, title, sender, description, renumeration))
-        .addReplyKeyboard(
-            [[commands.CANCEL_AD.title[update.userState.lang]], [commands.PUBLISH_AD.title[update.userState.lang]]],
-            true
-        )
+exports.userPublishAdView = async (context) => {
+    const ad = await findAdvertisement(context.user.id);
+    return new Text(AD_TEMPLATE(ad, context.lang))
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]], true)
         .get();
-};
-
-exports.congratulations = (update) => {
-    update.userState.act = AD_ACT;
-    return new telegramTemplate.Text(`👌🏿`).addReplyKeyboard([[backCommand.title[update.userState.lang]]], true).get();
 };
 
 // ////////////////////////////////////////////////// //
 //                      Set data                      //
 // ////////////////////////////////////////////////// //
 
-exports.setTitle = (update) => {
-    update.userState.act = AD_ACT;
-    const { text } = update.originalRequest.message;
-    update.userState.ad = {};
-    update.userState.ad.title = text;
+exports.setTitle = async (context) => {
+    const ad = { author: context.user.id, title: context.inputData };
+    await createAdvertisement(ad);
 };
 
-exports.setDescription = (update) => {
-    update.userState.act = AD_ACT;
-    const { text } = update.originalRequest.message;
-    update.userState.ad = {};
-    update.userState.ad.description = text;
+exports.setDescription = async (context) => {
+    const ad = await findAdvertisement(context.user.id);
+    ad.description = context.inputData;
+    await updateAdState(ad._id, ad);
 };
 
-exports.setRenumeration = (update) => {
-    update.userState.act = AD_ACT;
-    const { text } = update.originalRequest.message;
-    update.userState.ad = {};
-    update.userState.ad.renumeration = text;
+exports.setRenumeration = async (context) => {
+    const ad = await findAdvertisement(context.user.id);
+    ad.renumeration = context.inputData;
+    await updateAdState(ad._id, ad);
 };
 
-exports.setCategory = (update) => {
-    update.userState.act = AD_ACT;
-    const { text } = update.originalRequest.message;
-    update.userState.ad = {};
-    update.userState.ad.category = text;
+exports.setCategory = async (context) => {
+    const ad = await findAdvertisement(context.user.id);
+    ad.category = context.inputData;
+    await updateAdState(ad._id, ad);
 };
 
-exports.setLocation = (update) => {
-    update.userState.act = AD_ACT;
-    const { location } = update.originalRequest.message;
-    if (!location) {
-        throw new Error(labels.locationNotSet[update.userState.lang]);
+exports.setLocation = async (context) => {
+    if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
+        throw new Error(labels.locationNotSet[context.lang]);
     }
-    update.userState.ad = {};
-    update.userState.ad.location = { type: 'Point', coordinates: [location.longitude, location.latitude] };
+    const ad = await findAdvertisement(context.user.id);
+    ad.location = {
+        type: 'Point',
+        coordinates: [context.inputData.longitude, context.inputData.latitude]
+    };
+    await updateAdState(ad._id, ad);
 };
 
-exports.publish = (update) => {
-    update.userState.act = AD_ACT;
-    const { text } = update.originalRequest.message;
-    update.userState.ad = {};
-    update.userState.ad.isActive = text === commands.PUBLISH_AD.title[update.userState.lang];
+exports.publish = async (context) => {
+    const ad = await findAdvertisement(context.user.id);
+    ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
+    await updateAdState(ad._id, ad);
+    return new Text(`👌🏿`).get();
+};
+
+exports.cancel = () => {
+    return new Text(`👌🏿`).get();
 };

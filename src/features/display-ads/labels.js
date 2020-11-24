@@ -7,20 +7,8 @@ module.exports = {
         en: `Author`,
         ua: `Автор`
     },
-    addToSavedMessage: {
-        en: `❤️`,
-        ua: `❤️`
-    },
-    deleteFromSavedMessage: {
-        en: `🗑 Delete 🗑`,
-        ua: `🗑 Видалити 🗑`
-    },
-    deleteMyMessage: {
-        en: `☠️ Delete ☠️`,
-        ua: `☠️ Знищити ☠️`
-    },
-    spamMessage: {
-        en: `❌ Spam ❌`,
-        ua: `❌ Спам ❌`
+    selectAdsCategory: {
+        en: 'Please select Category',
+        ua: 'Будь ласка, оберіть категорію'
     }
 };

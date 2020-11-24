@@ -21,16 +21,12 @@ module.exports = {
     CHANGE_LANGUAGE: { id: 'changeLang', constructor: settingsHandlers.initChangeLangView },
 
     CREATE_AD: { id: 'createAd', constructor: settingsAdHandlers.userSetAdNameView },
-    SET_DESCRIPTION: { id: 'setDescription', constructor: settingsAdHandlers.initUserSetAdDescriptionView },
+    SET_DESCRIPTION: { id: 'setDescription', constructor: settingsAdHandlers.userSetAdDescriptionView },
     SET_CATEGORY: { id: 'setCategory', constructor: settingsAdHandlers.userSetAdCategotyView },
     SET_LOCATION: { id: 'setLocation', constructor: settingsAdHandlers.userSetAdLocationView },
     SET_RENUMERATION: { id: 'setRenumeration', constructor: settingsAdHandlers.userSetAdRenumerationView },
     PREVIEW_AD: { id: 'previewAd', constructor: settingsAdHandlers.userPublishAdView },
 
-    PUBLISH_AD: { id: 'publishAd', constructor: settingsAdHandlers.congratulations },
-    CANCEL_AD: { id: 'cancelAd', constructor: userHomeHandlers.initUserHomeView },
-
-    ALL_ADS: { id: 'allAds', constructor: displayHandlers.displayAllAds },
-    MY_ADS: { id: 'myAds', constructor: displayHandlers.displayMyAds },
-    USER_SAVED_ADS: { id: 'savedAds', constructor: displayHandlers.displaySavedAds }
+    SET_ADS_CATEGORY: { id: 'setAdsCategory', constructor: displayHandlers.initSetAdsCategoryView },
+    VIEW_FOUND_ADS: { id: 'viewFoundAds', constructor: displayHandlers.initViewFoundAdsView }
 };

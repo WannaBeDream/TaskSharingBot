@@ -1,15 +1,15 @@
 const labels = require('./display-ads/labels');
 
-exports.AD_TEMPLATE = (update, title, author, description, renumeration) => {
+exports.AD_TEMPLATE = (ad, lang) => {
     return `
 
-[   ${labels.author[update.userState.lang]}](tg://user?id=${author})
+[   ${labels.author[`${lang}`]}](tg://user?id=${ad.author})
 
-❗️*${title}*❗️
+❗️*${ad.title}*❗️
 
-${description}
+${ad.description}
 
-🎁   ${renumeration}   🎁
+🎁   ${ad.renumeration}   🎁
 
 `;
 };

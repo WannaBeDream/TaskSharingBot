@@ -42,8 +42,8 @@ const router = require('./src/router');
             res.sendStatus(200);
         });
 
-        app.listen(port, () => process.stdout.write(`Server started at port ${port}\n`));
+        app.listen(port, () => console.log(`Server started at port ${port}\n`));
     } catch (err) {
-        process.stdout.write(`${err.message}\n`);
+        console.error(`${err.message}\n`);
     }
 })();
