@@ -24,7 +24,7 @@ const findAdsWithinRadius = async (telegramId) => {
                         type: 'Point',
                         coordinates
                     },
-                    $maxDistance: searchRadius * 1000000
+                    $maxDistance: searchRadius * 1000000 // DON`T FORGET TO CHANGE -> 1000
                 }
             },
             isActive: true,
@@ -36,13 +36,6 @@ const findAdsWithinRadius = async (telegramId) => {
     }
 };
 
-/**
- * Return own user`s advertisements
- *
- * @async
- * @param {Number} authorId - telegram ID
- * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
- */
 const findMyAds = async (criteria) => {
     try {
         return await AdvertModel.find({ author: criteria.author, isActive: true });
@@ -52,14 +45,6 @@ const findMyAds = async (criteria) => {
     }
 };
 
-/**
- * Return all advertisements with specific category, except user`s own advertisements
- *
- * @async
- * @param {Number} telegramId
- * @param {String} category
- * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
- */
 const findAdsByCategory = async (criteria) => {
     try {
         return await AdvertModel.find({
@@ -69,7 +54,7 @@ const findAdsByCategory = async (criteria) => {
                         type: 'Point',
                         coordinates: [criteria.location.longitude, criteria.location.latitude]
                     },
-                    $maxDistance: criteria.radius * 1000000
+                    $maxDistance: criteria.radius * 1000000  // DON`T FORGET TO CHANGE -> 1000
                 }
             },
             isActive: true,
@@ -82,13 +67,6 @@ const findAdsByCategory = async (criteria) => {
     }
 };
 
-/**
- * Return all saved advertisements
- *
- * @async
- * @param {Number} telegramId
- * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
- */
 const findSavedAds = async (criteria) => {
     try {
         const user = await UserModel.findById(criteria.user);
