@@ -41,7 +41,7 @@ const settingsTransitions = {
 };
 
 const adsInlineCommands = {
-    [viewAdsCommands.REPORT.id]: { handler: viewAdsHandlers.reportAd },
+    [viewAdsCommands.REPORT.id]: { handler: viewAdsHandlers.reportSpam },
     [viewAdsCommands.CANCEL_REPORT.id]: { handler: viewAdsHandlers.unreportAd },
     [viewAdsCommands.ADD_TO_FAV.id]: { handler: viewAdsHandlers.addToSaved },
     [viewAdsCommands.REMOVE_FROM_FAV.id]: { handler: viewAdsHandlers.deleteFromSaved },

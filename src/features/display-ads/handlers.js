@@ -151,13 +151,26 @@ exports.searchNewerAds = async (context) => {
     await searchAdsByContextState(context);
 };
 
+function deleteMessageFromChat(context) {
+    return {
+        method: 'deleteMessage',
+        body: { chat_id: context.chat_id, message_id: context.message_id }
+    };
+}
+
 exports.addToSaved = async (context) => {
     await addToSavedAds(context.user.id, context.inputData);
 };
 exports.deleteFromSaved = async (context) => {
     await deleteFromSavedAds(context.user.id, context.inputData);
+    return deleteMessageFromChat(context);
 };
 
 exports.deleteMyAd = async (context) => {
     await deleteAd(context.inputData);
+    return deleteMessageFromChat(context);
+};
+
+exports.reportSpam = (context) => {
+    return deleteMessageFromChat(context);
 };

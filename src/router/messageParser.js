@@ -11,12 +11,33 @@ const allCommands = Object.values(settingsCommands)
     .concat(Object.values(viewAdsCommands))
     .concat(Object.values(settingsAdCommands));
 
-exports.parseCommand = (update, lang) => {
-    const commandText = !update.originalRequest.callback_query ? update.text : JSON.parse(update.text).cmd;
-    const command = allCommands.find((c) => {
-        return c.title[`${lang}`] === commandText;
+function parseRegularCommand(update, lang) {
+    return allCommands.find((c) => {
+        return c.title[`${lang}`] === update.text;
     });
+}
+function parseCallbackCommand(update) {
+    const commandText = JSON.parse(update.text).cmd;
+    return allCommands.find((c) => {
+        return c.id === commandText;
+    });
+}
+
+exports.parseCommand = (update, lang) => {
+    const isNotCallback = !update.originalRequest.callback_query;
+    const command = isNotCallback ? parseRegularCommand(update, lang) : parseCallbackCommand(update);
     return command || generalCommands.DATA_INPUT;
+};
+
+exports.parseChatData = (update) => {
+    return !update.originalRequest.callback_query
+        ? {
+              /* currently supported only for calback queries */
+          }
+        : {
+              chat_id: update.originalRequest.callback_query.from.id,
+              message_id: update.originalRequest.callback_query.message.message_id
+          };
 };
 
 exports.parseDataInput = (update, lang) => {

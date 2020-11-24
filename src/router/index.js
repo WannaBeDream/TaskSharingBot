@@ -6,18 +6,22 @@ const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
 const { connectToDatabase } = require('../database/create-connection');
 
+async function tryExecuteFunction(func, params, result) {
+    if (func) {
+        const reply = await func(params);
+        if (reply && Array.isArray(reply)) {
+            result.push(...reply);
+        } else if (reply) {
+            result.push(reply);
+        }
+    }
+}
+
 module.exports = async (update) => {
     try {
         console.log(update.originalRequest.message || update.originalRequest.callback_query);
         // https://docs.atlas.mongodb.com/best-practices-connecting-to-aws-lambda/#example
         await connectToDatabase(MONGO_URI);
-
-        // Todo. Most likely we should add this to the context too.
-        // :
-        // :         chat_id: update.originalRequest.callback_query.from.id,
-        // :         message_id: update.originalRequest.callback_query.message.message_id
-        // :
-        // (parse update Object only in messageParser)
 
         const user = messageParser.parseUser(update);
         const userState = await appStateDao.getUserState(user.id);
@@ -29,24 +33,16 @@ module.exports = async (update) => {
         }
 
         const inputData = messageParser.parseDataInput(update, userState.lang);
-        const context = { user, userState, lang: userState.lang, inputData };
+        const chatData = messageParser.parseChatData(update);
+        const context = { user, userState, lang: userState.lang, inputData, ...chatData };
 
         const reply = [];
-        if (transition.handler) {
-            const commandProcessResult = await transition.handler(context);
-            if (commandProcessResult) {
-                reply.push(commandProcessResult);
-            }
-        }
-        const markup = await transition.targetState.constructor(context);
-        if (Array.isArray(markup)) {
-            reply.push(...markup);
-        } else {
-            reply.push(markup);
-        }
+        await tryExecuteFunction(transition.handler, context, reply);
+        await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
+
         await appStateDao.setUserState(user.id, {
             ...userState,
-            appStateId: transition.targetState.id,
+            ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
             lang: context.lang
         });
         return reply;
