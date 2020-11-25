@@ -54,7 +54,7 @@ const findAdsByCategory = async (criteria) => {
                         type: 'Point',
                         coordinates: [criteria.location.longitude, criteria.location.latitude]
                     },
-                    $maxDistance: criteria.radius * 1000000  // DON`T FORGET TO CHANGE -> 1000
+                    $maxDistance: criteria.radius * 1000 // DON`T FORGET TO CHANGE -> 1000 => solved
                 }
             },
             isActive: true,

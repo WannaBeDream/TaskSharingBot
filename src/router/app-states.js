@@ -23,7 +23,6 @@ module.exports = {
     CREATE_AD: { id: 'createAd', constructor: settingsAdHandlers.userSetAdNameView },
     SET_DESCRIPTION: { id: 'setDescription', constructor: settingsAdHandlers.userSetAdDescriptionView },
     SET_CATEGORY: { id: 'setCategory', constructor: settingsAdHandlers.userSetAdCategotyView },
-    SET_LOCATION: { id: 'setLocation', constructor: settingsAdHandlers.userSetAdLocationView },
     SET_RENUMERATION: { id: 'setRenumeration', constructor: settingsAdHandlers.userSetAdRenumerationView },
     PREVIEW_AD: { id: 'previewAd', constructor: settingsAdHandlers.userPublishAdView },
 
