@@ -5,7 +5,7 @@ const commands = require('./commands');
 const inputCms = require('../ad-categories');
 const { AD_TEMPLATE } = require('../ad-template');
 
-const { findAdvertisement } = require('../../database/find');
+const { findAdvertisement, findUser } = require('../../database/find');
 const { createAdvertisement } = require('../../database/create');
 const { updateAdState } = require('../../database/update');
 
@@ -36,10 +36,6 @@ exports.userSetAdCategotyView = (context) => {
             true
         )
         .get();
-};
-
-exports.userSetAdLocationView = (context) => {
-    return new Text(labels.newUserEnterAdLocation[context.lang]).replyKeyboardHide().get();
 };
 
 exports.userPublishAdView = async (context) => {
@@ -76,20 +72,12 @@ exports.setCategory = async (context) => {
     await updateAdState(ad._id, ad);
 };
 
-exports.setLocation = async (context) => {
-    if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
-        throw new Error(labels.locationNotSet[context.lang]);
-    }
+exports.publish = async (context) => {
+    const user = await findUser(context.user.id);
     const ad = await findAdvertisement(context.user.id);
     ad.location = {
-        type: 'Point',
-        coordinates: [context.inputData.longitude, context.inputData.latitude]
+        ...user.location
     };
-    await updateAdState(ad._id, ad);
-};
-
-exports.publish = async (context) => {
-    const ad = await findAdvertisement(context.user.id);
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
     return new Text(`👌🏿`).get();

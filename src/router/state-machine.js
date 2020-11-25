@@ -121,12 +121,6 @@ module.exports = {
     [appStates.SET_RENUMERATION.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setRenumeration,
-            targetState: appStates.SET_LOCATION
-        }
-    },
-    [appStates.SET_LOCATION.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setLocation,
             targetState: appStates.PREVIEW_AD
         }
     },
