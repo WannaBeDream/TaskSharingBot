@@ -8,7 +8,6 @@ const appStates = require('./app-states');
 
 module.exports.getUserState = (userId) => {
     return new Promise((resolve, reject) => {
-        // eslint-disable-next-line prettier/prettier
         const params = { TableName, Key: { userId: `${userId}` } };
         docClient.get(params, (err, data) => {
             if (!err) {

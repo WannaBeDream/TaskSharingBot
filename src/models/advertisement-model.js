@@ -9,13 +9,11 @@ const AdvertisementSchema = new mongoose.Schema(
         },
         title: {
             type: String,
-            require: true,
-            unique: false
+            default: ''
         },
         description: {
             type: String,
-            require: true,
-            unique: false
+            default: ''
         },
         location: {
             type: {
@@ -24,22 +22,20 @@ const AdvertisementSchema = new mongoose.Schema(
             },
             coordinates: {
                 type: [Number],
-                require: true
+                default: [0, 0]
             }
         },
         category: {
             type: String,
-            require: true,
-            unique: false
+            default: ''
         },
-        remuneration: {
+        renumeration: {
             type: String,
-            unique: false
+            default: ''
         },
         isActive: {
             type: Boolean,
-            require: true,
-            unique: false
+            default: false
         }
     },
     { timestamps: true }

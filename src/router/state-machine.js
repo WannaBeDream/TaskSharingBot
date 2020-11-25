@@ -5,6 +5,11 @@ const settingsCommands = require('../features/user-settings/commands');
 const settingsHandlers = require('../features/user-settings/handlers');
 const generalCommands = require('./general-commands');
 
+const settingsAdCommands = require('../features/ad-setting/commands');
+const settingsAdHandlers = require('../features/ad-setting/handlers');
+const viewAdsCommands = require('../features/display-ads/commands');
+const viewAdsHandlers = require('../features/display-ads/handlers');
+
 const globalTransitions = {
     [userHomeCommands.USER_SETTINGS.id]: { targetState: appStates.USER_SETTINGS },
     [settingsCommands.CHANGE_LANG.id]: { targetState: appStates.CHANGE_LANGUAGE },
@@ -14,11 +19,35 @@ const globalTransitions = {
     [generalCommands.START_BOT.id]: {
         handler: userHomeHandlers.getUserGreeting,
         targetState: appStates.USER_HOME
-    }
+    },
+    [userHomeCommands.CREATE_AD.id]: { targetState: appStates.CREATE_AD },
+    [userHomeCommands.LOCAL_ADS.id]: {
+        handler: viewAdsHandlers.startLocalAdsSearch,
+        targetState: appStates.SET_ADS_CATEGORY
+    },
+    [userHomeCommands.OWN_ADS.id]: {
+        handler: viewAdsHandlers.searchOwnAds,
+        targetState: appStates.VIEW_FOUND_ADS
+    },
+    [userHomeCommands.SELECTED_ADS.id]: {
+        handler: viewAdsHandlers.searchSelectedAds,
+        targetState: appStates.VIEW_FOUND_ADS
+    },
+    [generalCommands.GO_BACK.id]: { targetState: appStates.USER_HOME }
 };
 const settingsTransitions = {
     ...globalTransitions,
     [generalCommands.GO_BACK.id]: { targetState: appStates.USER_SETTINGS }
+};
+
+const adsInlineCommands = {
+    [viewAdsCommands.REPORT.id]: { handler: viewAdsHandlers.reportSpam },
+    [viewAdsCommands.CANCEL_REPORT.id]: { handler: viewAdsHandlers.unreportAd },
+    [viewAdsCommands.ADD_TO_FAV.id]: { handler: viewAdsHandlers.addToSaved },
+    [viewAdsCommands.REMOVE_FROM_FAV.id]: { handler: viewAdsHandlers.deleteFromSaved },
+    [viewAdsCommands.DEACTIVATE_AD.id]: { handler: viewAdsHandlers.deleteMyAd },
+    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd },
+    [viewAdsCommands.EDIT_AD.id]: { handler: viewAdsHandlers.editAd }
 };
 
 module.exports = {
@@ -47,10 +76,7 @@ module.exports = {
         }
     },
     [appStates.USER_HOME.id]: globalTransitions,
-    [appStates.USER_SETTINGS.id]: {
-        ...globalTransitions,
-        [generalCommands.GO_BACK.id]: { targetState: appStates.USER_HOME }
-    },
+    [appStates.USER_SETTINGS.id]: globalTransitions,
     [appStates.CHANGE_LOCATION.id]: {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
@@ -72,5 +98,70 @@ module.exports = {
             handler: settingsHandlers.setLanguage,
             targetState: appStates.USER_SETTINGS
         }
+    },
+
+    [appStates.CREATE_AD.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setTitle,
+            targetState: appStates.SET_DESCRIPTION
+        }
+    },
+    [appStates.SET_DESCRIPTION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setDescription,
+            targetState: appStates.SET_CATEGORY
+        }
+    },
+    [appStates.SET_CATEGORY.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setCategory,
+            targetState: appStates.SET_RENUMERATION
+        }
+    },
+    [appStates.SET_RENUMERATION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setRenumeration,
+            targetState: appStates.SET_LOCATION
+        }
+    },
+    [appStates.SET_LOCATION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setLocation,
+            targetState: appStates.PREVIEW_AD
+        }
+    },
+    [appStates.PREVIEW_AD.id]: {
+        [settingsAdCommands.PUBLISH_AD.id]: {
+            handler: settingsAdHandlers.publish,
+            targetState: appStates.USER_HOME
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
+        }
+    },
+
+    [appStates.SET_ADS_CATEGORY.id]: {
+        ...globalTransitions,
+        [generalCommands.DATA_INPUT.id]: {
+            handler: viewAdsHandlers.searchLocalAds,
+            targetState: appStates.VIEW_FOUND_ADS
+        }
+    },
+    [appStates.VIEW_FOUND_ADS.id]: {
+        ...globalTransitions,
+        [viewAdsCommands.OLDER_ADS.id]: {
+            handler: viewAdsHandlers.searchOlderAds,
+            targetState: appStates.VIEW_FOUND_ADS
+        },
+        [viewAdsCommands.NEWER_ADS.id]: {
+            handler: viewAdsHandlers.searchNewerAds,
+            targetState: appStates.VIEW_FOUND_ADS
+        },
+        [viewAdsCommands.CHANGE_CATEGORY.id]: {
+            handler: viewAdsHandlers.checkChangeCategoryAuthorization,
+            targetState: appStates.SET_ADS_CATEGORY
+        },
+        ...adsInlineCommands
     }
 };

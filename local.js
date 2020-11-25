@@ -6,11 +6,11 @@ const parser = require('claudia-bot-builder/lib/telegram/parse');
 const responder = require('claudia-bot-builder/lib/telegram/reply');
 const config = require('./src/config');
 
-const messageHandler = require('./src/router');
+const router = require('./src/router');
 
 (async () => {
     try {
-        const port = 3003;
+        const port = 3005;
         const webhookPath = '/webhook';
         const token = config.BOT_TOKEN;
 
@@ -35,15 +35,15 @@ const messageHandler = require('./src/router');
 
         app.post(webhookPath, async (req, res) => {
             const parsedMessage = parser(req.body);
-            const botResponse = await messageHandler(parsedMessage);
+            const botResponse = await router(parsedMessage);
 
             responder(parsedMessage, botResponse, token);
 
             res.sendStatus(200);
         });
 
-        app.listen(port, () => process.stdout.write(`Server started at port ${port}\n`));
+        app.listen(port, () => console.log(`Server started at port ${port}\n`));
     } catch (err) {
-        process.stdout.write(`${err.message}\n`);
+        console.error(`${err.message}\n`);
     }
 })();

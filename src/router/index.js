@@ -1,38 +1,53 @@
-const appStateDao = require('./appStateDao');
-const commandParser = require('./commandParser');
+/* eslint-disable no-param-reassign */
+const { MONGO_URI } = require('../config');
+const appStateDao = require('./app-state-mongo');
+const messageParser = require('./messageParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
+const { connectToDatabase } = require('../database/create-connection');
+
+async function tryExecuteFunction(func, params, result) {
+    if (func) {
+        const reply = await func(params);
+        if (reply && Array.isArray(reply)) {
+            result.push(...reply);
+        } else if (reply) {
+            result.push(reply);
+        }
+    }
+}
 
 module.exports = async (update) => {
-    console.log(update.originalRequest.message);
-    const userId = update.originalRequest.message.from.id;
-    const userState = await appStateDao.getUserState(userId);
-    console.log(userState);
-    const command = commandParser(update.text, userState.lang);
-    console.log(command);
-    const transition = STATE_MACHINE[userState.appStateId][command.id];
-    if (!transition) {
-        return langResources.unknownCommand[userState.lang];
-    }
-    // eslint-disable-next-line no-param-reassign
-    update.userState = userState;
     try {
+        console.log(update.originalRequest.message || update.originalRequest.callback_query);
+        // https://docs.atlas.mongodb.com/best-practices-connecting-to-aws-lambda/#example
+        await connectToDatabase(MONGO_URI);
+
+        const user = messageParser.parseUser(update);
+        const userState = await appStateDao.getUserState(user.id);
+
+        const command = messageParser.parseCommand(update, userState.lang);
+        const transition = STATE_MACHINE[userState.appStateId][command.id];
+        if (!transition) {
+            return langResources.unknownCommand[userState.lang];
+        }
+
+        const inputData = messageParser.parseDataInput(update, userState.lang);
+        const chatData = messageParser.parseChatData(update);
+        const context = { user, userState, lang: userState.lang, inputData, ...chatData };
+
         const reply = [];
-        if (transition.handler) {
-            const commandProcessResult = transition.handler(update);
-            if (commandProcessResult) {
-                reply.push(commandProcessResult);
-            }
-        }
-        const markup = transition.targetState.constructor(update);
-        if (Array.isArray(markup)) {
-            reply.push(...markup);
-        } else {
-            reply.push(markup);
-        }
-        await appStateDao.setUserState(userId, { ...userState, appStateId: transition.targetState.id });
+        await tryExecuteFunction(transition.handler, context, reply);
+        await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
+
+        await appStateDao.setUserState(user.id, {
+            ...userState,
+            ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
+            lang: context.lang
+        });
         return reply;
     } catch (error) {
+        console.error(error);
         return error.message;
     }
 };

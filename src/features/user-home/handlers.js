@@ -1,19 +1,26 @@
-const { telegramTemplate } = require('claudia-bot-builder');
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 
-exports.initUserHomeView = (update) => {
-    return new telegramTemplate.Text('\uD83D\uDE01')
-        .addReplyKeyboard([[commands.USER_SETTINGS.title[update.userState.lang]]], true)
+exports.initUserHomeView = (context) => {
+    return new Text('🏠')
+        .addReplyKeyboard(
+            [
+                [commands.CREATE_AD.title[context.lang], commands.OWN_ADS.title[context.lang]],
+                [commands.LOCAL_ADS.title[context.lang], commands.SELECTED_ADS.title[context.lang]],
+                [commands.USER_SETTINGS.title[context.lang]]
+            ],
+            true
+        )
         .get();
 };
 
-exports.getUserGreeting = (update) => {
-    const name = `${update.originalRequest.message.from.first_name} ${update.originalRequest.message.from.last_name}`;
-    return new telegramTemplate.Text(labels.existingUserGreeting[update.userState.lang](name)).get();
+exports.getUserGreeting = (context) => {
+    const name = `${context.user.firstName} ${context.user.lastName}`;
+    return new Text(labels.existingUserGreeting[context.lang](name)).get();
 };
 
-exports.getNewUserGreeting = (update) => {
-    const name = `${update.originalRequest.message.from.first_name} ${update.originalRequest.message.from.last_name}`;
-    return new telegramTemplate.Text(labels.newUserGreeting[update.userState.lang](name)).get();
+exports.getNewUserGreeting = (context) => {
+    const name = `${context.user.firstName} ${context.user.lastName}`;
+    return new Text(labels.newUserGreeting[context.lang](name)).get();
 };
