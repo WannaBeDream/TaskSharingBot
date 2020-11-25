@@ -31,7 +31,7 @@ module.exports = async (update) => {
         const command = messageParser.parseCommand(update, userState.lang);
         const transition = STATE_MACHINE[userState.appStateId][command.id];
         //  --------Validation-------
-        const validationResult = validators.ifStrLongerThen(update.originalRequest.message.text, 30);
+        const validationResult = validators.ifStrLongerThen(update.originalRequest.message.text, 50);
         if (validationResult) {
             return validatorsLabels.longer[userState.lang];
         }
