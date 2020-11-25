@@ -11,10 +11,6 @@ module.exports = {
         en: `Choose category`,
         ua: `Оберіть відповідну тему`
     },
-    newUserEnterAdLocation: {
-        en: 'Please specify location',
-        ua: 'Будь ласка, задайте локацію'
-    },
     newUserEnterRenumeration: {
         en: 'Please specify renumeration',
         ua: 'Задайте винагороду'
