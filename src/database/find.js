@@ -59,6 +59,7 @@ const findAdsByCategory = async (criteria) => {
             },
             isActive: true,
             category: criteria.category,
+            spam: { $nin: [criteria.user] },
             author: { $ne: criteria.user } // not return own user`s advertisements
         });
     } catch (e) {
