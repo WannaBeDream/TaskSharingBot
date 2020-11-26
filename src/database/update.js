@@ -1,5 +1,6 @@
 const { UserModel, AdvertModel } = require('../models');
 const { findUser } = require('./find');
+const { deleteAd } = require('./delete');
 
 const updateUser = async (telegramId, data) => {
     try {
@@ -38,4 +39,23 @@ const deleteFromSavedAds = async (userId, adId) => {
     }
 };
 
-module.exports = { updateUserState: updateUser, updateAdState: updateAd, addToSavedAds, deleteFromSavedAds };
+const markAsSpam = async (userId, adId) => {
+    try {
+        const ad = await AdvertModel.findByIdAndUpdate(adId);
+        ad.spam.push(userId);
+        await updateAd(adId, ad);
+        if (ad.spam.length >= 5) {
+            await deleteAd(adId);
+        }
+    } catch (e) {
+        throw new Error('Unable mark as spam');
+    }
+};
+
+module.exports = {
+    updateUserState: updateUser,
+    updateAdState: updateAd,
+    addToSavedAds,
+    deleteFromSavedAds,
+    markAsSpam
+};
