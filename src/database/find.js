@@ -72,6 +72,7 @@ const findSavedAds = async (criteria) => {
         const user = await UserModel.findById(criteria.user);
         return user.savedAdvertisements;
     } catch (e) {
+        logger.error(e);
         throw new Error('Unable find saved advertisements');
     }
 };
@@ -81,6 +82,7 @@ const findUser = async (telegramId) => {
         const user = await UserModel.findById(telegramId);
         return user && user._doc;
     } catch (e) {
+        logger.error(e);
         throw new Error('Unable find user');
     }
 };
@@ -90,6 +92,7 @@ const findAdvertisement = async (telegramId) => {
         const ad = await AdvertModel.findOne({ author: telegramId, isActive: false });
         return ad._doc;
     } catch (e) {
+        logger.error(e);
         throw new Error('Unable find advertisement');
     }
 };

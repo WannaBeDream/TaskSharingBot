@@ -5,8 +5,6 @@ const messageParser = require('./messageParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
 const { connectToDatabase } = require('../database/create-connection');
-const validators = require('../helpers/validators');
-const validatorsLabels = require('../helpers/validators/labels');
 
 async function tryExecuteFunction(func, params, result) {
     if (func) {
@@ -30,12 +28,6 @@ module.exports = async (update) => {
 
         const command = messageParser.parseCommand(update, userState.lang);
         const transition = STATE_MACHINE[userState.appStateId][command.id];
-        //  --------Validation-------
-        const validationResult = validators.ifStrLongerThen(update.originalRequest.message.text, 50);
-        if (validationResult) {
-            return validatorsLabels.longer[userState.lang];
-        }
-        // ---------------------------
         if (!transition) {
             return langResources.unknownCommand[userState.lang];
         }

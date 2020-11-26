@@ -8,6 +8,13 @@ const { AD_TEMPLATE } = require('../ad-template');
 const { findAdvertisement, findUser } = require('../../database/find');
 const { createAdvertisement } = require('../../database/create');
 const { updateAdState } = require('../../database/update');
+const { validators } = require('../../helpers/validators');
+const { longer } = require('../../helpers/validators/labels');
+const {
+    theLongestDescriptionValue,
+    theLongestTitleValue,
+    theLongestRenumerationValue
+} = require('../../helpers/validators/constants');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
@@ -50,17 +57,29 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
+    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestTitleValue);
+    if (validationResult) {
+        throw new Error(longer[context.lang](theLongestTitleValue));
+    }
     const ad = { author: context.user.id, title: context.inputData };
     await createAdvertisement(ad);
 };
 
 exports.setDescription = async (context) => {
+    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestDescriptionValue);
+    if (validationResult) {
+        throw new Error(longer[context.lang](theLongestDescriptionValue));
+    }
     const ad = await findAdvertisement(context.user.id);
     ad.description = context.inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setRenumeration = async (context) => {
+    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestRenumerationValue);
+    if (validationResult) {
+        throw new Error(longer[context.lang](theLongestRenumerationValue));
+    }
     const ad = await findAdvertisement(context.user.id);
     ad.renumeration = context.inputData;
     await updateAdState(ad._id, ad);

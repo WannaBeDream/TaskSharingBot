@@ -1,6 +1,6 @@
 module.exports = {
     longer: {
-        en: `You entered more characters than 50`,
-        ua: `Ви ввели більше символів ніж 50`
+        en: (val) => `You entered more characters than ${val}`,
+        ua: (val) => `Ви ввели більше символів ніж ${val}`
     }
 };
