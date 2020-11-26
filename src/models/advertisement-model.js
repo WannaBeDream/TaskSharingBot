@@ -49,6 +49,10 @@ const AdvertisementSchema = new mongoose.Schema(
         isActive: {
             type: Boolean,
             default: false
+        },
+        spam: {
+            type: [Number],
+            default: []
         }
     },
     { timestamps: true }

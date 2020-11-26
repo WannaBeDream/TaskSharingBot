@@ -8,7 +8,7 @@ const { unknownCommand: unknownCommandLabel } = require('../../router/labels');
 const { AD_TEMPLATE } = require('../ad-template');
 
 const adsDao = require('../../database/find');
-const { addToSavedAds, deleteFromSavedAds } = require('../../database/update');
+const { addToSavedAds, deleteFromSavedAds, markAsSpam } = require('../../database/update');
 const { deleteAd } = require('../../database/delete');
 
 const adsViewModes = {
@@ -151,12 +151,20 @@ exports.searchNewerAds = async (context) => {
     await searchAdsByContextState(context);
 };
 
+// ////////////////////////////////////////////////// //
+//                  Delete logic                      //
+// ////////////////////////////////////////////////// //
+
 function deleteMessageFromChat(context) {
     return {
         method: 'deleteMessage',
         body: { chat_id: context.chat_id, message_id: context.message_id }
     };
 }
+
+// ////////////////////////////////////////////////// //
+//                  Inline actions                    //
+// ////////////////////////////////////////////////// //
 
 exports.addToSaved = async (context) => {
     await addToSavedAds(context.user.id, context.inputData);
@@ -171,6 +179,7 @@ exports.deleteMyAd = async (context) => {
     return deleteMessageFromChat(context);
 };
 
-exports.reportSpam = (context) => {
+exports.reportSpam = async (context) => {
+    await markAsSpam(context.user.id, context.inputData);
     return deleteMessageFromChat(context);
 };
