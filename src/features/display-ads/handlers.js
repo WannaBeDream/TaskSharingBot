@@ -159,11 +159,23 @@ exports.searchNewerAds = async (context) => {
 //                  Delete logic                      //
 // ////////////////////////////////////////////////// //
 
-function deleteMessageFromChat(context) {
-    return {
-        method: 'deleteMessage',
-        body: { chat_id: context.chat_id, message_id: context.message_id }
-    };
+function deleteMessageFromChat(context, imgId) {
+    if (!imgId) {
+        return {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id }
+        };
+    }
+    return [
+        {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id }
+        },
+        {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id - 1 }
+        }
+    ];
 }
 
 // ////////////////////////////////////////////////// //
@@ -179,11 +191,11 @@ exports.deleteFromSaved = async (context) => {
 };
 
 exports.deleteMyAd = async (context) => {
-    await deleteAd(context.inputData);
-    return deleteMessageFromChat(context);
+    const ad = await deleteAd(context.inputData);
+    return deleteMessageFromChat(context, ad.imgId);
 };
 
 exports.reportSpam = async (context) => {
-    await markAsSpam(context.user.id, context.inputData);
-    return deleteMessageFromChat(context);
+    const imgId = await markAsSpam(context.user.id, context.inputData);
+    return deleteMessageFromChat(context, imgId);
 };

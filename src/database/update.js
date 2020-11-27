@@ -48,6 +48,7 @@ const markAsSpam = async (userId, adId) => {
         if (ad.spam.length >= 5) {
             await deleteAd(adId);
         }
+        return ad.imgId;
     } catch (e) {
         throw new Error('Unable mark as spam');
     }
