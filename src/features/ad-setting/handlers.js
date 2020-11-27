@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const { Text } = require('claudia-bot-builder').telegramTemplate;
+const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -47,11 +47,31 @@ exports.userSetAdCategotyView = (context) => {
         .get();
 };
 
+exports.userSetAdImgView = (context) => {
+    return new Text(labels.newUserEnterImg[context.lang])
+        .addReplyKeyboard([[inputCms.SKIP.title[context.lang]]], true)
+        .get();
+};
+
 exports.userPublishAdView = async (context) => {
     const ad = await findAdvertisement(context.user.id);
-    return new Text(AD_TEMPLATE(ad, context.lang))
-        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]], true)
-        .get();
+    if (!ad.imgId) {
+        return new Text(AD_TEMPLATE(ad, context.lang))
+            .addReplyKeyboard(
+                [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+                true
+            )
+            .get();
+    }
+    return [
+        new Photo(ad.imgId, ad.title).get(),
+        new Text(AD_TEMPLATE(ad, context.lang))
+            .addReplyKeyboard(
+                [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+                true
+            )
+            .get()
+    ];
 };
 
 // ////////////////////////////////////////////////// //
@@ -99,6 +119,15 @@ exports.setRenumeration = async (context) => {
 exports.setCategory = async (context) => {
     const ad = await findAdvertisement(context.user.id);
     ad.category = context.inputData;
+    await updateAdState(ad._id, ad);
+};
+
+exports.setImg = async (context) => {
+    if (context.inputData !== inputCms.SKIP.id && !Array.isArray(context.inputData)) {
+        throw new Error(labels.imgError[context.lang]);
+    }
+    const ad = await findAdvertisement(context.user.id);
+    ad.imgId = context.inputData[0].file_id;
     await updateAdState(ad._id, ad);
 };
 

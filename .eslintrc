@@ -24,7 +24,7 @@
         "prettier/prettier": ["error", { "endOfLine": "auto" }],
         "node/no-unpublished-require": [
             "error",
-            { "allowModules": ["ngrok", "express"] }
+            { "allowModules": ["ngrok", "express", "axios", "aws-sdk"] }
         ],
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "no-console": "off"

@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-const { Text } = require('claudia-bot-builder').telegramTemplate;
+const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
+const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -53,7 +54,10 @@ exports.initViewFoundAdsView = (context) => {
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
         }
-        return adView.addInlineKeyboard([inlineButtons]).get();
+        if (!ad.imgId) {
+            return adView.addInlineKeyboard([inlineButtons]).get();
+        }
+        return [new Photo(ad.imgId, ad.title).get(), adView.addInlineKeyboard([inlineButtons]).get()];
     });
     const navLine1 = [
         ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
@@ -66,11 +70,11 @@ exports.initViewFoundAdsView = (context) => {
         ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE ? [commands.CHANGE_CATEGORY.title[context.lang]] : [])
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
-    return [
+    return _.flatten([
         new Text('--').addReplyKeyboard([[backCommand.title[context.lang]]], true).get(),
         ...adsList,
         new Text('--').addReplyKeyboard(navFull, true).get()
-    ];
+    ]);
 };
 
 // ////////////////////////////////////////////////// //
@@ -155,11 +159,23 @@ exports.searchNewerAds = async (context) => {
 //                  Delete logic                      //
 // ////////////////////////////////////////////////// //
 
-function deleteMessageFromChat(context) {
-    return {
-        method: 'deleteMessage',
-        body: { chat_id: context.chat_id, message_id: context.message_id }
-    };
+function deleteMessageFromChat(context, imgId) {
+    if (!imgId) {
+        return {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id }
+        };
+    }
+    return [
+        {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id }
+        },
+        {
+            method: 'deleteMessage',
+            body: { chat_id: context.chat_id, message_id: context.message_id - 1 }
+        }
+    ];
 }
 
 // ////////////////////////////////////////////////// //
@@ -175,11 +191,11 @@ exports.deleteFromSaved = async (context) => {
 };
 
 exports.deleteMyAd = async (context) => {
-    await deleteAd(context.inputData);
-    return deleteMessageFromChat(context);
+    const ad = await deleteAd(context.inputData);
+    return deleteMessageFromChat(context, ad.imgId);
 };
 
 exports.reportSpam = async (context) => {
-    await markAsSpam(context.user.id, context.inputData);
-    return deleteMessageFromChat(context);
+    const imgId = await markAsSpam(context.user.id, context.inputData);
+    return deleteMessageFromChat(context, imgId);
 };

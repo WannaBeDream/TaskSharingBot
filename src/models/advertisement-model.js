@@ -44,6 +44,10 @@ const AdvertisementSchema = new mongoose.Schema(
             type: String,
             default: ''
         },
+        imgId: {
+            type: String,
+            default: ''
+        },
         renumeration: {
             type: String,
             default: '',

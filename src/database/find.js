@@ -17,7 +17,7 @@ const findAdsWithinRadius = async (telegramId) => {
             location: { coordinates }
         } = await UserModel.findById(telegramId);
 
-        return await AdvertModel.find({
+        return AdvertModel.find({
             location: {
                 $nearSphere: {
                     $geometry: {
@@ -38,7 +38,7 @@ const findAdsWithinRadius = async (telegramId) => {
 
 const findMyAds = async (criteria) => {
     try {
-        return await AdvertModel.find({ author: criteria.author, isActive: true });
+        return AdvertModel.find({ author: criteria.author, isActive: true });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -47,7 +47,7 @@ const findMyAds = async (criteria) => {
 
 const findAdsByCategory = async (criteria) => {
     try {
-        return await AdvertModel.find({
+        return AdvertModel.find({
             location: {
                 $nearSphere: {
                     $geometry: {

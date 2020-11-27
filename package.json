@@ -52,10 +52,12 @@
         "claudia-bot-builder": "^4.5.0",
         "dotenv": "^8.2.0",
         "mongoose": "^5.10.16",
+        "lodash": "^4.17.20",
         "mongoose-autopopulate": "^0.12.3",
         "validator": "^13.1.17"
     },
     "devDependencies": {
+        "aws-sdk": "^2.799.0",
         "axios": "^0.21.0",
         "claudia": "^5.12.0",
         "eslint": "^7.14.0",

@@ -5,7 +5,7 @@ const { logger } = require('../helpers');
 
 const updateUser = async (telegramId, data) => {
     try {
-        return await UserModel.updateOne({ _id: telegramId }, data);
+        return UserModel.updateOne({ _id: telegramId }, data);
     } catch (e) {
         throw new Error('Unable update user');
     }
@@ -13,7 +13,7 @@ const updateUser = async (telegramId, data) => {
 
 const updateAd = async (_id, data) => {
     try {
-        return await AdvertModel.updateOne({ _id }, data);
+        return AdvertModel.updateOne({ _id }, data);
     } catch (e) {
         throw new Error('Unable update advertisement');
     }
@@ -48,6 +48,7 @@ const markAsSpam = async (userId, adId) => {
         if (ad.spam.length >= 5) {
             await deleteAd(adId);
         }
+        return ad.imgId;
     } catch (e) {
         throw new Error('Unable mark as spam');
     }
@@ -55,7 +56,7 @@ const markAsSpam = async (userId, adId) => {
 
 const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
     try {
-        return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
+        return AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable update many advertisments', e);

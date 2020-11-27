@@ -49,6 +49,7 @@ exports.parseDataInput = (update, lang) => {
         (datainputCommand && datainputCommand.id) ||
         (update.originalRequest.callback_query && JSON.parse(update.text).key) ||
         (update.originalRequest.message && update.originalRequest.message.location) ||
+        update.originalRequest.message.photo ||
         update.text
     );
 };

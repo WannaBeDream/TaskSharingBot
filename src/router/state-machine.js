@@ -115,6 +115,12 @@ module.exports = {
     [appStates.SET_CATEGORY.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setCategory,
+            targetState: appStates.SET_IMAGE
+        }
+    },
+    [appStates.SET_IMAGE.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setImg,
             targetState: appStates.SET_RENUMERATION
         }
     },
