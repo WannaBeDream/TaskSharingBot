@@ -3,6 +3,7 @@ const labels = require('./labels');
 const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../../router/general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../../router/labels');
+const { fetchUserAndUpdateAdvLoc } = require('../../database/update');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //
@@ -78,12 +79,14 @@ exports.setRadius = (context) => {
     }
     context.userState.searchRadius = +context.inputData;
 };
-exports.setLocation = (context) => {
+exports.setLocation = async (context) => {
     if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
         throw new Error(labels.locationNotSet[context.lang]);
     }
-    context.userState.location = {
+    const newLocation = {
         type: 'Point',
         coordinates: [context.inputData.longitude, context.inputData.latitude]
     };
+    await fetchUserAndUpdateAdvLoc(context.user.id, newLocation); // NEED TO CHECK
+    context.userState.location = newLocation;
 };

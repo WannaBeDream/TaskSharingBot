@@ -1,6 +1,7 @@
 const { UserModel, AdvertModel } = require('../models');
 const { findUser } = require('./find');
 const { deleteAd } = require('./delete');
+const { logger } = require('../helpers');
 
 const updateUser = async (telegramId, data) => {
     try {
@@ -52,10 +53,20 @@ const markAsSpam = async (userId, adId) => {
     }
 };
 
+const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
+    try {
+        return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
+    } catch (e) {
+        logger.error(e);
+        throw new Error('Unable update many advertisments', e);
+    }
+};
+
 module.exports = {
     updateUserState: updateUser,
     updateAdState: updateAd,
     addToSavedAds,
     deleteFromSavedAds,
-    markAsSpam
+    markAsSpam,
+    fetchUserAndUpdateAdvLoc
 };
