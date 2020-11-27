@@ -3,7 +3,7 @@ const { findUser } = require('./find');
 
 const updateUser = async (telegramId, data) => {
     try {
-        return await UserModel.updateOne({ _id: telegramId }, data);
+        return UserModel.updateOne({ _id: telegramId }, data);
     } catch (e) {
         throw new Error('Unable update user');
     }
@@ -11,7 +11,7 @@ const updateUser = async (telegramId, data) => {
 
 const updateAd = async (_id, data) => {
     try {
-        return await AdvertModel.updateOne({ _id }, data);
+        return AdvertModel.updateOne({ _id }, data);
     } catch (e) {
         throw new Error('Unable update advertisement');
     }
@@ -38,4 +38,45 @@ const deleteFromSavedAds = async (userId, adId) => {
     }
 };
 
-module.exports = { updateUserState: updateUser, updateAdState: updateAd, addToSavedAds, deleteFromSavedAds };
+const updateTitleAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateDescriptionAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateCategoryAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateRemunerationAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+module.exports = {
+    updateUserState: updateUser,
+    updateAdState: updateAd,
+    addToSavedAds,
+    deleteFromSavedAds,
+    updateTitleAd,
+    updateDescriptionAd,
+    updateCategoryAd,
+    updateRemunerationAd
+};

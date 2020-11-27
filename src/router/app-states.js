@@ -2,6 +2,7 @@ const userHomeHandlers = require('../features/user-home/handlers');
 const settingsHandlers = require('../features/user-settings/handlers');
 const settingsAdHandlers = require('../features/ad-setting/handlers');
 const displayHandlers = require('../features/display-ads/handlers');
+const displayEditAdHandlers = require('../features/ad-edit/handlers');
 
 module.exports = {
     NEW_USER_START: { id: 'newUserStart' },
@@ -27,5 +28,11 @@ module.exports = {
     PREVIEW_AD: { id: 'previewAd', constructor: settingsAdHandlers.userPublishAdView },
 
     SET_ADS_CATEGORY: { id: 'setAdsCategory', constructor: displayHandlers.initSetAdsCategoryView },
-    VIEW_FOUND_ADS: { id: 'viewFoundAds', constructor: displayHandlers.initViewFoundAdsView }
+    VIEW_FOUND_ADS: { id: 'viewFoundAds', constructor: displayHandlers.initViewFoundAdsView },
+
+    START_EDIT_THIS_AD: { id: 'editTitle', constructor: displayEditAdHandlers.initChangeTitleAdView },
+    EDIT_DESCRIPTION: { id: 'editDescription', constructor: displayEditAdHandlers.initChangeDescriptionAdView },
+    EDIT_CATEGORY: { id: 'editCategory', constructor: displayEditAdHandlers.initChangeCategoryAdView },
+    EDIT_REMUNERATION: { id: 'editRemuneration', constructor: displayEditAdHandlers.initChangeRemunerationAdView },
+    FINISH_EDITING: { id: 'finishEditing', constructor: displayEditAdHandlers.initFinishEditingAdView }
 };

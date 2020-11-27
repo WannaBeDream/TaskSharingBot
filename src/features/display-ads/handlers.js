@@ -33,12 +33,14 @@ exports.initSetAdsCategoryView = (context) => {
         )
         .get();
 };
+
 function buildInlineButton(key, command, lang) {
     return {
         text: command.title[`${lang}`],
         callback_data: JSON.stringify({ key, cmd: command.id })
     };
 }
+
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {
@@ -101,18 +103,21 @@ function buildLocalAdsCriteria(context) {
         page: context.userState.adsPage
     };
 }
+
 function buildOwnAdsCriteria(context) {
     return {
         author: context.user.id,
         page: context.userState.adsPage
     };
 }
+
 function buildSelectedAdsCriteria(context) {
     return {
         user: context.user.id,
         page: context.userState.adsPage
     };
 }
+
 async function searchAdsByContextState(context) {
     const criteria = {
         ...(context.userState.adsViewMode === adsViewModes.LOCAL_ADS_MODE ? buildLocalAdsCriteria(context) : {}),
