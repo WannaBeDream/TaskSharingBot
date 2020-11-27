@@ -1,8 +1,9 @@
-const validate = require('validate.it.js');
+const validator = require('validator');
 
 const validators = {
-    ifStrLongerThen: async (message, value) => validate(`${message}`).longerThan(value).ok,
-    ifStrContainChart: async (message, regExp) => validate(`${message}`).match(regExp).ok
+    // eslint-disable-next-line no-unused-vars
+    ifStrCondition: async (str, value, regExp) =>
+        !validator.isLength(str, value.min, value.max) || validator.matches(str, regExp) // regExp не работает
 };
 
 module.exports = { validators };

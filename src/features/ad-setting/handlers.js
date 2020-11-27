@@ -9,12 +9,14 @@ const { findAdvertisement, findUser } = require('../../database/find');
 const { createAdvertisement } = require('../../database/create');
 const { updateAdState } = require('../../database/update');
 const { validators } = require('../../helpers/validators');
-const { longer } = require('../../helpers/validators/labels');
+const { checkMaxMinReg } = require('../../helpers/validators/labels');
 const {
-    theLongestDescriptionValue,
-    theLongestTitleValue,
-    theLongestRenumerationValue
+    longSmallTitleValue,
+    longSmallDescriptionValue,
+    longSmallRenumerationValue,
+    regExpForAdv
 } = require('../../helpers/validators/constants');
+const { logger } = require('../../helpers');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
@@ -57,18 +59,23 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestTitleValue);
+    const validationResult = await validators.ifStrCondition(context.inputData, longSmallTitleValue, regExpForAdv.app);
     if (validationResult) {
-        throw new Error(longer[context.lang](theLongestTitleValue));
+        logger.error(validationResult);
+        throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
     }
     const ad = { author: context.user.id, title: context.inputData };
     await createAdvertisement(ad);
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestDescriptionValue);
+    const validationResult = await validators.ifStrCondition(
+        context.inputData,
+        longSmallDescriptionValue,
+        regExpForAdv.app
+    );
     if (validationResult) {
-        throw new Error(longer[context.lang](theLongestDescriptionValue));
+        throw new Error(checkMaxMinReg[context.lang](longSmallDescriptionValue.min, longSmallDescriptionValue.max));
     }
     const ad = await findAdvertisement(context.user.id);
     ad.description = context.inputData;
@@ -76,9 +83,13 @@ exports.setDescription = async (context) => {
 };
 
 exports.setRenumeration = async (context) => {
-    const validationResult = await validators.ifStrLongerThen(context.inputData, theLongestRenumerationValue);
+    const validationResult = await validators.ifStrCondition(
+        context.inputData,
+        longSmallRenumerationValue,
+        regExpForAdv.app
+    );
     if (validationResult) {
-        throw new Error(longer[context.lang](theLongestRenumerationValue));
+        throw new Error(checkMaxMinReg[context.lang](longSmallRenumerationValue.min, longSmallRenumerationValue.max));
     }
     const ad = await findAdvertisement(context.user.id);
     ad.renumeration = context.inputData;

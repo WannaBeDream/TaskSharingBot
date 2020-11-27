@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const {
-    theLongestTitleValue,
-    theLongestDescriptionValue,
-    theLongestRenumerationValue
+    longSmallTitleValue,
+    longSmallDescriptionValue,
+    longSmallRenumerationValue
+    // regExpForAdv
 } = require('../helpers/validators/constants');
 
 const AdvertisementSchema = new mongoose.Schema(
@@ -16,16 +17,18 @@ const AdvertisementSchema = new mongoose.Schema(
             type: String,
             default: '',
             // match: [
-            //     // eslint-disable-next-line sonarjs/no-duplicate-string
-            //     new RegExp('[/^_./gim]'),
+            //     // eslint-disable-next-line security/detect-non-literal-regexp
+            //     new RegExp(regExpForAdv.app),
             //     "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
             // ],
-            maxlength: theLongestTitleValue
+            maxlength: longSmallTitleValue.max,
+            minLength: longSmallTitleValue.min
         },
         description: {
             type: String,
             default: '',
-            maxlength: theLongestDescriptionValue
+            maxlength: longSmallDescriptionValue.max,
+            minLength: longSmallDescriptionValue.min
         },
         location: {
             type: {
@@ -44,7 +47,8 @@ const AdvertisementSchema = new mongoose.Schema(
         renumeration: {
             type: String,
             default: '',
-            maxlength: theLongestRenumerationValue
+            maxlength: longSmallRenumerationValue.max,
+            minLength: longSmallRenumerationValue.min
         },
         isActive: {
             type: Boolean,
