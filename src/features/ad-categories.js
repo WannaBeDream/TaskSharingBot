@@ -33,3 +33,11 @@ exports.BUY_STUFF = {
         ua: 'Запозичення/покупка речей'
     }
 };
+
+exports.SKIP = {
+    id: 'Skip',
+    title: {
+        en: 'Skip',
+        ua: 'Пропустити'
+    }
+};

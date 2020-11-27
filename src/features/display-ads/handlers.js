@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-const { Text } = require('claudia-bot-builder').telegramTemplate;
+const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
+const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -53,7 +54,10 @@ exports.initViewFoundAdsView = (context) => {
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
         }
-        return adView.addInlineKeyboard([inlineButtons]).get();
+        if (!ad.imgId) {
+            return adView.addInlineKeyboard([inlineButtons]).get();
+        }
+        return [new Photo(ad.imgId, ad.title).get(), adView.addInlineKeyboard([inlineButtons]).get()];
     });
     const navLine1 = [
         ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
@@ -66,11 +70,11 @@ exports.initViewFoundAdsView = (context) => {
         ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE ? [commands.CHANGE_CATEGORY.title[context.lang]] : [])
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
-    return [
+    return _.flatten([
         new Text('--').addReplyKeyboard([[backCommand.title[context.lang]]], true).get(),
         ...adsList,
         new Text('--').addReplyKeyboard(navFull, true).get()
-    ];
+    ]);
 };
 
 // ////////////////////////////////////////////////// //
