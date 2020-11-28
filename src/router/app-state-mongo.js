@@ -1,8 +1,7 @@
-/* eslint-disable no-underscore-dangle */
 const appStates = require('./app-states');
-const { createUser } = require('../database/create');
-const { updateUserState } = require('../database/update');
-const { findUser } = require('../database/find');
+const { createUser } = require('../database/methods/create');
+const { updateUserState } = require('../database/methods/update');
+const { findUser } = require('../database/methods/find');
 
 module.exports.getUserState = async (userId) => {
     let user = await findUser(userId);

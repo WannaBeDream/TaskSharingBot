@@ -4,7 +4,7 @@ const {
     longSmallDescriptionValue,
     longSmallRenumerationValue
     // regExpForAdv
-} = require('../helpers/validators/constants');
+} = require('../validators/user-input-data/constants');
 
 const AdvertisementSchema = new mongoose.Schema(
     {

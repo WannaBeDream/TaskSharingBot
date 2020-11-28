@@ -1,9 +1,9 @@
 const { Text, Location } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
-const { GO_BACK: backCommand } = require('../../router/general-commands');
-const { unknownCommand: unknownCommandLabel } = require('../../router/labels');
-const { fetchUserAndUpdateAdvLoc } = require('../../database/update');
+const { GO_BACK: backCommand } = require('../general-commands');
+const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
+const { fetchUserAndUpdateAdvLoc } = require('../../database/methods/update');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //

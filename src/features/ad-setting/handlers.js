@@ -5,17 +5,17 @@ const commands = require('./commands');
 const inputCms = require('../ad-categories');
 const { AD_TEMPLATE } = require('../ad-template');
 
-const { findAdvertisement, findUser } = require('../../database/find');
-const { createAdvertisement } = require('../../database/create');
-const { updateAdState } = require('../../database/update');
-const { validators } = require('../../helpers/validators');
-const { checkMaxMinReg } = require('../../helpers/validators/labels');
+const { findAdvertisement, findUser } = require('../../database/methods/find');
+const { createAdvertisement } = require('../../database/methods/create');
+const { updateAdState } = require('../../database/methods/update');
+const { userInputData } = require('../../validators/user-input-data');
+const { checkMaxMinReg } = require('../../validators/user-input-data/labels');
 const {
     longSmallTitleValue,
     longSmallDescriptionValue,
     longSmallRenumerationValue,
     regExpForAdv
-} = require('../../helpers/validators/constants');
+} = require('../../validators/user-input-data/constants');
 const { logger } = require('../../helpers');
 
 // ////////////////////////////////////////////////// //
@@ -79,7 +79,12 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const validationResult = await validators.ifStrCondition(context.inputData, longSmallTitleValue, regExpForAdv.app);
+    const validationResult = await userInputData.ifStrCondition(
+        context.inputData,
+        longSmallTitleValue,
+        regExpForAdv.app
+    );
+
     if (validationResult) {
         logger.error(validationResult);
         throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
@@ -89,7 +94,7 @@ exports.setTitle = async (context) => {
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = await validators.ifStrCondition(
+    const validationResult = await userInputData.ifStrCondition(
         context.inputData,
         longSmallDescriptionValue,
         regExpForAdv.app
@@ -103,7 +108,7 @@ exports.setDescription = async (context) => {
 };
 
 exports.setRenumeration = async (context) => {
-    const validationResult = await validators.ifStrCondition(
+    const validationResult = await userInputData.ifStrCondition(
         context.inputData,
         longSmallRenumerationValue,
         regExpForAdv.app

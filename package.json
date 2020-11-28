@@ -1,7 +1,7 @@
 {
     "name": "social-bot-for-telegram",
     "version": "1.0.0",
-    "description": "task sharing bot on claudia.js and mongoDB cores basis",
+    "description": "Publication, search, viewing ads in the telegram.",
     "url": "https://github.com/WannaBeDream/TaskSharingBot",
     "authors": [
         "Magnifikate",
@@ -15,19 +15,18 @@
     },
     "keywords": [
         "aws",
-        "claudiaJS",
-        "lambda",
-        "gateway"
+        "claudia.js",
+        "telegram-api"
     ],
     "scripts": {
-        "start": "nodemon local",
-        "debug": "node --inspect local",
-        "webhook": "curl https://api.telegram.org/bot$(grep BOT_TOKEN src/config/.env | cut -d '=' -f2)/setWebhook?url=$(grep WEBHOOK_URL src/config/.env | cut -d '=' -f2)",
-        "create": "claudia create --region eu-west-2 --api-module src/bot --profile Magnifikate --role AWSLambdaBasicExecutionRole --configure-telegram-bot",
-        "update": "claudia update",
-        "deploy": "claudia update --profile Magnifikate && npm run webhook",
-        "updateFast": "claudia update --cache-api-config apiConfig",
-        "test": "claudia test-lambda",
+        "dev": "nodemon start-locally.js",
+        "node:debug": "node --inspect start-locally.js",
+        "webhook": "curl https://api.telegram.org/bot$(grep BOT_TOKEN src/config/.env.isProd | cut -d '=' -f2)/setWebhook?url=$(grep WEBHOOK_URL src/config/.env.isProd | cut -d '=' -f2)",
+        "claudia:create": "claudia create --region eu-west-2 --api-module src/bot --profile Magnifikate --role AWSLambdaBasicExecutionRole --configure-telegram-bot",
+        "claudia:update": "claudia update",
+        "claudia:deploy": "claudia update --profile Magnifikate && npm run webhook",
+        "claudia:updateFast": "claudia update --cache-api-config apiConfig",
+        "claudia:test": "claudia test-lambda",
         "lint:check": "eslint . --ext .js --color",
         "lint:fix": "eslint . --ext .js --fix --color",
         "prettier:check": "prettier --check **/*.{js,json}",
@@ -51,15 +50,15 @@
         "claudia-api-builder": "^4.1.2",
         "claudia-bot-builder": "^4.5.0",
         "dotenv": "^8.2.0",
-        "mongoose": "^5.10.16",
         "lodash": "^4.17.20",
+        "mongoose": "^5.10.17",
         "mongoose-autopopulate": "^0.12.3",
         "validator": "^13.1.17"
     },
     "devDependencies": {
-        "aws-sdk": "^2.799.0",
         "axios": "^0.21.0",
         "claudia": "^5.12.0",
+        "envalid": "^6.0.2",
         "eslint": "^7.14.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-node": "^4.1.0",
@@ -75,6 +74,6 @@
         "lint-staged": "^10.5.2",
         "ngrok": "^3.3.0",
         "nodemon": "^2.0.6",
-        "prettier": "^2.2.0"
+        "prettier": "^2.2.1"
     }
 }

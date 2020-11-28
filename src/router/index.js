@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 const { MONGO_URI } = require('../config');
 const appStateDao = require('./app-state-mongo');
-const messageParser = require('./messageParser');
+const messageParser = require('./message-parser');
 const STATE_MACHINE = require('./state-machine');
-const langResources = require('./labels');
+const langResources = require('../features/unknown-labels');
 const { connectToDatabase } = require('../database/create-connection');
 const { verificationDataForCompliance, noSpace } = require('../validators');
 

@@ -3,7 +3,7 @@ const settingsCommands = require('../features/user-settings/commands');
 const viewAdsCommands = require('../features/display-ads/commands');
 const settingsAdCommands = require('../features/ad-setting/commands');
 const adsDatainputCommands = require('../features/ad-categories');
-const generalCommands = require('./general-commands');
+const generalCommands = require('../features/general-commands');
 
 const allCommands = Object.values(settingsCommands)
     .concat(Object.values(userHomeCommands))

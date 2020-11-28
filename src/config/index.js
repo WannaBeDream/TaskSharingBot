@@ -1,11 +1,10 @@
 const dotenv = require('dotenv');
 
-const ENV = process.env;
-const envName = ENV.NODE_ENV === 'PROD' ? 'env' : 'env.test';
+const envFile = process.env.NODE_ENV === 'production' ? '.env.isProd' : '.env.isDev';
 
-dotenv.config({ path: `src/config/.${envName}` });
+dotenv.config({ path: `src/config/${envFile}` });
 
-module.exports = {
-    BOT_TOKEN: ENV.BOT_TOKEN,
-    MONGO_URI: ENV.MONGO_URI
-};
+module.exports = Object.freeze({
+    BOT_TOKEN: process.env.BOT_TOKEN,
+    MONGO_URI: process.env.MONGO_URI
+});

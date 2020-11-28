@@ -3,7 +3,7 @@ const userHomeCommands = require('../features/user-home/commands');
 const userHomeHandlers = require('../features/user-home/handlers');
 const settingsCommands = require('../features/user-settings/commands');
 const settingsHandlers = require('../features/user-settings/handlers');
-const generalCommands = require('./general-commands');
+const generalCommands = require('../features/general-commands');
 
 const settingsAdCommands = require('../features/ad-setting/commands');
 const settingsAdHandlers = require('../features/ad-setting/handlers');

@@ -13,26 +13,26 @@
 ### 1.To use this App u should run these commands:
 1) aws configure
 2) cd src/config
-3) touch .env
-4) touch .env.test
+3) touch .env.isProd
+4) touch .env.isDev
 - After step 3 you need paste your env variables into .env and .env.test files (Bot tokens, webhook, mongoDB).
 5) npm install
 - Command from 6 step will run your app localy with ngrok
-6) npm run start 
+6) npm run development 
 - Before using command from 7 step check --profile flag, maybe you can use without this flag. This command will create new Api on AWS. 
-7) npm run create
+7) npm run claudia:create
 
 ### 2.If you need to update api use:
- npm run update
+ npm run claudia:update
 
 ### 3.To set up your webhook use:
  npm run webhook
 
 ### 4.To debug use:
- npm run debug
+ npm run node:debug
 
 ### 5.If you need to update app without cache:
- npm run updateFast
+ npm run claudia:updateFast
 
 
 ### Checking your bot
@@ -40,8 +40,3 @@
 2) Type some text and enjoy
 
 You need to configure the webhook after each launch of your local bot.
-
-
-# License
-
-MIT

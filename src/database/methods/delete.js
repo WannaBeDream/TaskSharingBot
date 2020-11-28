@@ -1,4 +1,4 @@
-const { AdvertModel } = require('../models');
+const { AdvertModel } = require('../../models');
 
 const deleteAd = async (id) => {
     try {

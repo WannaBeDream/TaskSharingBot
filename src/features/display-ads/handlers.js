@@ -4,13 +4,13 @@ const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
-const { GO_BACK: backCommand } = require('../../router/general-commands');
-const { unknownCommand: unknownCommandLabel } = require('../../router/labels');
+const { GO_BACK: backCommand } = require('../general-commands');
+const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { AD_TEMPLATE } = require('../ad-template');
 
-const adsDao = require('../../database/find');
-const { addToSavedAds, deleteFromSavedAds, markAsSpam } = require('../../database/update');
-const { deleteAd } = require('../../database/delete');
+const adsDao = require('../../database/methods/find');
+const { addToSavedAds, deleteFromSavedAds, markAsSpam } = require('../../database/methods/update');
+const { deleteAd } = require('../../database/methods/delete');
 
 const adsViewModes = {
     LOCAL_ADS_MODE: 'localAdsMode',

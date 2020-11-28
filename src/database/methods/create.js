@@ -1,5 +1,5 @@
-const { logger } = require('../helpers');
-const { UserModel, AdvertModel } = require('../models');
+const { logger } = require('../../helpers');
+const { UserModel, AdvertModel } = require('../../models');
 
 const createUser = async (user) => {
     try {

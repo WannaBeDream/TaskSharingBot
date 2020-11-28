@@ -1,8 +1,13 @@
 const { Text } = require('claudia-bot-builder').telegramTemplate;
 
 const { AD_TEMPLATE } = require('../ad-template');
-const { findAdAndReturnOneField, findAdAndReturn } = require('../../database/find');
-const { updateTitleAd, updateDescriptionAd, updateCategoryAd, updateRemunerationAd } = require('../../database/update');
+const { findAdAndReturnOneField, findAdAndReturn } = require('../../database/methods/find');
+const {
+    updateTitleAd,
+    updateDescriptionAd,
+    updateCategoryAd,
+    updateRemunerationAd
+} = require('../../database/methods/update');
 const command = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');

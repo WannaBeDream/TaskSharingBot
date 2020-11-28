@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-const { logger } = require('../helpers');
-const { UserModel, AdvertModel } = require('../models');
+const { logger } = require('../../helpers');
+const { UserModel, AdvertModel } = require('../../models');
 
 /**
  * Return all advertisements in specific radius
