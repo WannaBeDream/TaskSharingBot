@@ -3,6 +3,7 @@ const { findUser } = require('./find');
 const { deleteAd } = require('./delete');
 const { logger } = require('../../helpers');
 
+// ! TODO: findByIdAndUpdate
 const updateUser = async (telegramId, data) => {
     try {
         return UserModel.updateOne({ _id: telegramId }, data);
@@ -11,6 +12,7 @@ const updateUser = async (telegramId, data) => {
     }
 };
 
+// ! TODO: findByIdAndUpdate
 const updateAd = async (_id, data) => {
     try {
         return AdvertModel.updateOne({ _id }, data);
@@ -65,7 +67,7 @@ const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
 
 const updateTitleAd = async (_id, data) => {
     try {
-        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
     } catch (e) {
         throw new Error(e.message);
     }
@@ -73,7 +75,7 @@ const updateTitleAd = async (_id, data) => {
 
 const updateDescriptionAd = async (_id, data) => {
     try {
-        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
     } catch (e) {
         throw new Error(e.message);
     }
@@ -81,7 +83,15 @@ const updateDescriptionAd = async (_id, data) => {
 
 const updateCategoryAd = async (_id, data) => {
     try {
-        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateImageAd = async (_id, data) => {
+    try {
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { imgId: data } });
     } catch (e) {
         throw new Error(e.message);
     }
@@ -89,7 +99,7 @@ const updateCategoryAd = async (_id, data) => {
 
 const updateRemunerationAd = async (_id, data) => {
     try {
-        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
     } catch (e) {
         throw new Error(e.message);
     }
@@ -105,5 +115,6 @@ module.exports = {
     updateTitleAd,
     updateDescriptionAd,
     updateCategoryAd,
+    updateImageAd,
     updateRemunerationAd
 };

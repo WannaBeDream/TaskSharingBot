@@ -22,6 +22,14 @@ exports.EDIT_CATEGORY = {
     }
 };
 
+exports.EDIT_IMAGE = {
+    id: 'editImage',
+    title: {
+        en: 'Edit image',
+        ua: 'Змінити зображення'
+    }
+};
+
 exports.EDIT_REMUNERATION = {
     id: 'editRemuneration',
     title: {

@@ -183,6 +183,12 @@ module.exports = {
     [appStates.EDIT_CATEGORY.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateCategory,
+            targetState: appStates.EDIT_IMAGE
+        }
+    },
+    [appStates.EDIT_IMAGE.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateImage,
             targetState: appStates.EDIT_REMUNERATION
         }
     },

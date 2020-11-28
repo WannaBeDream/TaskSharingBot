@@ -34,6 +34,7 @@ module.exports = {
     START_EDIT_THIS_AD: { id: 'editTitle', constructor: displayEditAdHandlers.initChangeTitleAdView },
     EDIT_DESCRIPTION: { id: 'editDescription', constructor: displayEditAdHandlers.initChangeDescriptionAdView },
     EDIT_CATEGORY: { id: 'editCategory', constructor: displayEditAdHandlers.initChangeCategoryAdView },
+    EDIT_IMAGE: { id: 'editImage', constructor: displayEditAdHandlers.initChangeImageAdView },
     EDIT_REMUNERATION: { id: 'editRemuneration', constructor: displayEditAdHandlers.initChangeRemunerationAdView },
     FINISH_EDITING: { id: 'finishEditing', constructor: displayEditAdHandlers.initFinishEditingAdView }
 };

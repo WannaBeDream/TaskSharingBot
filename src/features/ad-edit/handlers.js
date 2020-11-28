@@ -1,4 +1,4 @@
-const { Text } = require('claudia-bot-builder').telegramTemplate;
+const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
 
 const { AD_TEMPLATE } = require('../ad-template');
 const { findAdAndReturnOneField, findAdAndReturn } = require('../../database/methods/find');
@@ -6,7 +6,8 @@ const {
     updateTitleAd,
     updateDescriptionAd,
     updateCategoryAd,
-    updateRemunerationAd
+    updateRemunerationAd,
+    updateImageAd
 } = require('../../database/methods/update');
 const command = require('./commands');
 const labels = require('./labels');
@@ -39,6 +40,22 @@ exports.initChangeCategoryAdView = async (context) => {
         .get();
 };
 
+exports.initChangeImageAdView = async (context) => {
+    const { imgId } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'imgId');
+    let message;
+
+    if (imgId) {
+        message = `${labels.editWithImage[context.lang]}`;
+        return [
+            new Photo(imgId).get(),
+            new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get()
+        ];
+    }
+
+    message = labels.editWithoutImage[context.lang];
+    return new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get();
+};
+
 exports.initChangeRemunerationAdView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
     const message = `${labels.editRemuneration[context.lang]} ${renumeration}`;
@@ -48,6 +65,14 @@ exports.initChangeRemunerationAdView = async (context) => {
 exports.initFinishEditingAdView = async (context) => {
     const ad = await findAdAndReturn(context.userState.currentUpdateAd);
     const adView = new Text(AD_TEMPLATE(ad, context.lang));
+
+    if (ad.imgId) {
+        return [
+            new Photo(ad.imgId).get(),
+            adView.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get()
+        ];
+    }
+
     return adView.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get();
 };
 
@@ -76,6 +101,17 @@ exports.updateCategory = async (context) => {
         return;
     }
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
+};
+
+exports.updateImage = async (context) => {
+    const buttonText = command.NEXT_STEP.title[context.lang];
+    const { inputData } = context;
+    const notImage = typeof inputData[0].file_id === 'undefined';
+    if (inputData === buttonText || notImage) {
+        return;
+    }
+    const imgId = inputData[0].file_id;
+    await updateImageAd(context.userState.currentUpdateAd, imgId);
 };
 
 exports.updateRemuneration = async (context) => {
