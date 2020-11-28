@@ -63,11 +63,47 @@ const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
     }
 };
 
+const updateTitleAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateDescriptionAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateCategoryAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const updateRemunerationAd = async (_id, data) => {
+    try {
+        return AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
 module.exports = {
     updateUserState: updateUser,
     updateAdState: updateAd,
     addToSavedAds,
     deleteFromSavedAds,
     markAsSpam,
-    fetchUserAndUpdateAdvLoc
+    fetchUserAndUpdateAdvLoc,
+    updateTitleAd,
+    updateDescriptionAd,
+    updateCategoryAd,
+    updateRemunerationAd
 };

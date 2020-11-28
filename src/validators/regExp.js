@@ -1,0 +1,1 @@
+module.exports.noSpace = /^\S*$/;

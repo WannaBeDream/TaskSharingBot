@@ -98,6 +98,30 @@ const findAdvertisement = async (telegramId) => {
     }
 };
 
+const findAdAndReturnOneField = async (id, data) => {
+    try {
+        return AdvertModel.findById({ _id: id }, data);
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const findAdAndReturn = async (id) => {
+    try {
+        return AdvertModel.findById({ _id: id });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+const findUserAndReturnOneField = async (id) => {
+    try {
+        return AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
 const PAGE_SIZE = 5;
 
 /* logic might be optimized
@@ -122,5 +146,8 @@ module.exports = {
     findAdsByCategory,
     findSavedAds,
     findUser,
-    findAdvertisement
+    findAdvertisement,
+    findAdAndReturnOneField,
+    findAdAndReturn,
+    findUserAndReturnOneField
 };

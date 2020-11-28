@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     adsPage: {
         type: Number
     },
+    currentUpdateAd: {
+        type: String,
+        require: false
+    },
     savedAdvertisements: [
         {
             ref: 'advertisements',

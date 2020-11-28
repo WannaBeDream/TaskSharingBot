@@ -10,6 +10,8 @@ const settingsAdHandlers = require('../features/ad-setting/handlers');
 const viewAdsCommands = require('../features/display-ads/commands');
 const viewAdsHandlers = require('../features/display-ads/handlers');
 
+const editSettingsAdHandlers = require('../features/ad-edit/handlers');
+
 const globalTransitions = {
     [userHomeCommands.USER_SETTINGS.id]: { targetState: appStates.USER_SETTINGS },
     [settingsCommands.CHANGE_LANG.id]: { targetState: appStates.CHANGE_LANGUAGE },
@@ -46,8 +48,7 @@ const adsInlineCommands = {
     [viewAdsCommands.ADD_TO_FAV.id]: { handler: viewAdsHandlers.addToSaved },
     [viewAdsCommands.REMOVE_FROM_FAV.id]: { handler: viewAdsHandlers.deleteFromSaved },
     [viewAdsCommands.DEACTIVATE_AD.id]: { handler: viewAdsHandlers.deleteMyAd },
-    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd },
-    [viewAdsCommands.EDIT_AD.id]: { handler: viewAdsHandlers.editAd }
+    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd }
 };
 
 module.exports = {
@@ -162,6 +163,38 @@ module.exports = {
             handler: viewAdsHandlers.checkChangeCategoryAuthorization,
             targetState: appStates.SET_ADS_CATEGORY
         },
+        [viewAdsCommands.EDIT_AD.id]: {
+            targetState: appStates.START_EDIT_THIS_AD
+        },
         ...adsInlineCommands
+    },
+    [appStates.START_EDIT_THIS_AD.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateTitle,
+            targetState: appStates.EDIT_DESCRIPTION
+        }
+    },
+    [appStates.EDIT_DESCRIPTION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateDescription,
+            targetState: appStates.EDIT_CATEGORY
+        }
+    },
+    [appStates.EDIT_CATEGORY.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateCategory,
+            targetState: appStates.EDIT_REMUNERATION
+        }
+    },
+    [appStates.EDIT_REMUNERATION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateRemuneration,
+            targetState: appStates.FINISH_EDITING
+        }
+    },
+    [appStates.FINISH_EDITING.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            targetState: appStates.USER_HOME
+        }
     }
 };

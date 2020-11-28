@@ -5,6 +5,7 @@ const messageParser = require('./messageParser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('./labels');
 const { connectToDatabase } = require('../database/create-connection');
+const { verificationDataForCompliance, noSpace } = require('../validators');
 
 async function tryExecuteFunction(func, params, result) {
     if (func) {
@@ -38,6 +39,20 @@ module.exports = async (update) => {
         const reply = [];
         await tryExecuteFunction(transition.handler, context, reply);
         await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
+
+        if (inputData.length === 24 && noSpace.test(inputData)) {
+            const result = await verificationDataForCompliance(inputData);
+
+            if (result) {
+                await appStateDao.setUserState(user.id, {
+                    ...userState,
+                    ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
+                    lang: context.lang,
+                    currentUpdateAd: inputData
+                });
+                return reply;
+            }
+        }
 
         await appStateDao.setUserState(user.id, {
             ...userState,
