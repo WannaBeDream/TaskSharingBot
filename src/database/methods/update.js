@@ -1,5 +1,4 @@
 const { UserModel, AdvertModel } = require('../../models');
-const { findUser } = require('./find');
 const { deleteAd } = require('./delete');
 const { logger } = require('../../helpers');
 
@@ -21,9 +20,9 @@ const updateAd = async (_id, data) => {
 
 const addToSavedAds = async (userId, adId) => {
     try {
-        const user = await findUser(userId);
-        user.savedAdvertisements.push(adId);
-        await updateUser(userId, user);
+        const ad = await AdvertModel.findByIdAndUpdate(adId);
+        ad.usersSaved.push(userId);
+        await updateAd(adId, ad);
     } catch (e) {
         throw new Error('Unable add to saved');
     }
@@ -31,10 +30,11 @@ const addToSavedAds = async (userId, adId) => {
 
 const deleteFromSavedAds = async (userId, adId) => {
     try {
-        const user = await findUser(userId);
-        const updatedAds = user.savedAdvertisements.filter(({ _id: id }) => id.toString() !== adId);
-        user.savedAdvertisements = updatedAds;
-        await updateUser(userId, user);
+        const ad = await AdvertModel.findByIdAndUpdate(adId);
+        const updatedAds = ad.usersSaved.filter((item) => item !== userId);
+        ad.usersSaved = updatedAds;
+        await updateAd(adId, ad);
+        return ad;
     } catch (e) {
         throw new Error('Unable delete from saved');
     }
@@ -65,7 +65,6 @@ const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
 
 const updateAdActiveStatus = async (_id, data) => {
     try {
-        console.log(_id + data);
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { isActive: data } });
     } catch (e) {
         throw new Error(e.message);
