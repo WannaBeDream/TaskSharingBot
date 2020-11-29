@@ -32,7 +32,9 @@ exports.userSetAdDescriptionView = (context) => {
 };
 
 exports.userSetAdRenumerationView = (context) => {
-    return new Text(labels.newUserEnterRenumeration[context.lang]).replyKeyboardHide().get();
+    return new Text(labels.newUserEnterRenumeration[context.lang])
+        .addReplyKeyboard([[inputCms.SKIP.title[context.lang]]], true)
+        .get();
 };
 
 exports.userSetAdCategotyView = (context) => {
@@ -110,6 +112,9 @@ exports.setDescription = async (context) => {
 };
 
 exports.setRenumeration = async (context) => {
+    if (Array.isArray(context.inputData)) {
+        throw new Error(labels.imgInRenumerationError[context.lang]);
+    }
     const validationResult = await userInputData.ifStrCondition(
         context.inputData,
         longSmallRenumerationValue,
@@ -119,7 +124,7 @@ exports.setRenumeration = async (context) => {
         throw new Error(checkMaxMinReg[context.lang](longSmallRenumerationValue.min, longSmallRenumerationValue.max));
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.renumeration = context.inputData;
+    ad.renumeration = context.inputData !== inputCms.SKIP.id ? context.inputData : null;
     await updateAdState(ad._id, ad);
 };
 

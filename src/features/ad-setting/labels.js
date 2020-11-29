@@ -34,5 +34,9 @@ module.exports = {
     imgError: {
         en: 'Incorrect image format,\nPlease send compressed image or type "Skip"',
         ua: 'Неправильно завантажене зображення,\n Відправте зображення у стислому вигляді чи напишіть "Пропустити" '
+    },
+    imgInRenumerationError: {
+        en: 'Only one image was expected.\nThe first one will be used for the ad.\n\nSet renumeration',
+        ua: 'Очікувалась лише одне зображення.\nДля оголошення буде використано перше.\n\nЗадайте винагороду'
     }
 };
