@@ -57,10 +57,12 @@ exports.initViewFoundAdsView = (context) => {
             inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
-        } else {
-            const favCmd = adsViewMode === adsViewModes.LOCAL_ADS_MODE ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV;
+        } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
+            const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
+        } else {
+            inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
         if (!ad.imgId) {
             return adView.addInlineKeyboard([inlineButtons]).get();
@@ -166,6 +168,42 @@ exports.searchNewerAds = async (context) => {
     await searchAdsByContextState(context);
 };
 
+function answerCallbackQuery(queryId, alert) {
+    return {
+        method: 'answerCallbackQuery',
+        body: {
+            callback_query_id: queryId,
+            ...(alert ? { text: alert, show_alert: true } : {})
+        }
+    };
+}
+
+function editChatMessage(context, newText, actions, adId) {
+    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+    return {
+        method: 'editMessageText',
+        body: {
+            chat_id: context.chat_id,
+            message_id: context.message_id,
+            text: newText,
+            parse_mode: 'Markdown',
+            reply_markup: { inline_keyboard: [inlineButtons] }
+        }
+    };
+}
+
+function editChatMessageActions(context, actions, adId) {
+    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+    return {
+        method: 'editMessageReplyMarkup',
+        body: {
+            chat_id: context.chat_id,
+            message_id: context.message_id,
+            reply_markup: { inline_keyboard: [inlineButtons] }
+        }
+    };
+}
+
 // ////////////////////////////////////////////////// //
 //                  Delete logic                      //
 // ////////////////////////////////////////////////// //
@@ -191,64 +229,47 @@ function deleteMessageFromChat(context, imgId) {
     ];
 }
 
-function answerCallbackQuery(queryId, alert) {
-    return {
-        method: 'answerCallbackQuery',
-        body: {
-            callback_query_id: queryId,
-            ...(alert ? { text: alert, show_alert: true } : {})
-        }
-    };
-}
-
-function editChatMessage(context, newText, actions, adId) {
-    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
-    return {
-        method: 'editMessageText',
-        body: {
-            chat_id: context.chat_id,
-            message_id: context.message_id,
-            text: newText,
-            parse_mode: 'Markdown',
-            reply_markup: { inline_keyboard: [inlineButtons] }
-        }
-    };
-}
-function editChatMessageActions(context, actions, adId) {
-    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
-    return {
-        method: 'editMessageReplyMarkup',
-        body: {
-            chat_id: context.chat_id,
-            message_id: context.message_id,
-            reply_markup: { inline_keyboard: [inlineButtons] }
-        }
-    };
-}
+// ////////////////////////////////////////////////// //
+//           Inline buttons generators                //
+// ////////////////////////////////////////////////// //
 
 function getMyAdActions(isAdActive) {
     return [isAdActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD, commands.EDIT_AD, commands.DELETE_REQUEST];
 }
 
+function getMySavedAdActions(isAdFav) {
+    return [isAdFav ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV, commands.REPORT];
+}
+
 // ////////////////////////////////////////////////// //
-//                  Inline actions                    //
+//            Inline actions  ALL ads                 //
 // ////////////////////////////////////////////////// //
-exports.startEditAd = (context) => {
-    context.userState.currentUpdateAd = context.inputData;
-    return answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
-};
 
 exports.addToSaved = async (context) => {
     await addToSavedAds(context.user.id, context.inputData);
+    return editChatMessageActions(context, getMySavedAdActions(false), context.inputData);
 };
+
 exports.deleteFromSaved = async (context) => {
-    await deleteFromSavedAds(context.user.id, context.inputData);
-    return deleteMessageFromChat(context);
+    const { imgId } = await deleteFromSavedAds(context.user.id, context.inputData);
+    if (context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE) {
+        return deleteMessageFromChat(context, imgId);
+    }
+    return editChatMessageActions(context, getMySavedAdActions(true), context.inputData);
 };
 
 exports.reportSpam = async (context) => {
     const imgId = await markAsSpam(context.user.id, context.inputData);
     return deleteMessageFromChat(context, imgId);
+};
+
+// ////////////////////////////////////////////////// //
+//            Inline actions  MY ads                  //
+// ////////////////////////////////////////////////// //
+
+exports.startEditAd = (context) => {
+    context.userState.currentUpdateAd = context.inputData;
+    return answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
 };
 
 exports.requestDeleteAd = (context) => {
@@ -265,6 +286,7 @@ exports.cancelDeleteAd = async (context) => {
         editChatMessage(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
     ];
 };
+
 exports.confirmDeleteAd = async (context) => {
     const ad = await deleteAd(context.inputData);
     return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context, ad.imgId)];

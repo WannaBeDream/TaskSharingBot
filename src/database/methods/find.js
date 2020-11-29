@@ -70,8 +70,7 @@ const findAdsByCategory = async (criteria) => {
 
 const findSavedAds = async (criteria) => {
     try {
-        const user = await UserModel.findById(criteria.user);
-        return user.savedAdvertisements;
+        return AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find saved advertisements');

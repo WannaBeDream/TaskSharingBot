@@ -61,6 +61,10 @@ const AdvertisementSchema = new mongoose.Schema(
         spam: {
             type: [Number],
             default: []
+        },
+        usersSaved: {
+            type: [Number],
+            default: []
         }
     },
     { timestamps: true }
