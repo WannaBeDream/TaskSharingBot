@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 const { MONGO_URI } = require('../config');
 const appStateDao = require('./app-state-mongo');
 const messageParser = require('./message-parser');

@@ -1,9 +1,8 @@
 const { AdvertModel } = require('../../models');
 
-// ! TODO: findByIdAndDelete
 const deleteAd = async (id) => {
     try {
-        return AdvertModel.findOneAndDelete({ _id: id });
+        return AdvertModel.findByIdAndDelete({ _id: id });
     } catch (e) {
         throw new Error('Unable delete advertisement');
     }

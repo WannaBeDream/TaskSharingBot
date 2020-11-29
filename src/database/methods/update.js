@@ -3,19 +3,17 @@ const { findUser } = require('./find');
 const { deleteAd } = require('./delete');
 const { logger } = require('../../helpers');
 
-// ! TODO: findByIdAndUpdate
 const updateUser = async (telegramId, data) => {
     try {
-        return UserModel.updateOne({ _id: telegramId }, data);
+        return UserModel.findByIdAndUpdate({ _id: telegramId }, data);
     } catch (e) {
         throw new Error('Unable update user');
     }
 };
 
-// ! TODO: findByIdAndUpdate
 const updateAd = async (_id, data) => {
     try {
-        return AdvertModel.updateOne({ _id }, data);
+        return AdvertModel.findByIdAndUpdate({ _id }, data);
     } catch (e) {
         throw new Error('Unable update advertisement');
     }
