@@ -106,20 +106,20 @@ module.exports = {
 
     [appStates.CREATE_AD.id]: {
         [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setTitle,
-            targetState: appStates.SET_DESCRIPTION
+            handler: settingsAdHandlers.setCategory,
+            targetState: appStates.SET_TITLE
         }
     },
     [appStates.SET_DESCRIPTION.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setDescription,
-            targetState: appStates.SET_CATEGORY
+            targetState: appStates.SET_IMAGE
         }
     },
-    [appStates.SET_CATEGORY.id]: {
+    [appStates.SET_TITLE.id]: {
         [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setCategory,
-            targetState: appStates.SET_IMAGE
+            handler: settingsAdHandlers.setTitle,
+            targetState: appStates.SET_DESCRIPTION
         }
     },
     [appStates.SET_IMAGE.id]: {

@@ -21,9 +21,9 @@ module.exports = {
     VIEW_PROFILE: { id: 'viewProfile', constructor: settingsHandlers.initViewProfileView },
     CHANGE_LANGUAGE: { id: 'changeLang', constructor: settingsHandlers.initChangeLangView },
 
-    CREATE_AD: { id: 'createAd', constructor: settingsAdHandlers.userSetAdNameView },
+    CREATE_AD: { id: 'createAd', constructor: settingsAdHandlers.userSetAdCategotyView },
     SET_DESCRIPTION: { id: 'setDescription', constructor: settingsAdHandlers.userSetAdDescriptionView },
-    SET_CATEGORY: { id: 'setCategory', constructor: settingsAdHandlers.userSetAdCategotyView },
+    SET_TITLE: { id: 'setTitle', constructor: settingsAdHandlers.userSetAdNameView },
     SET_IMAGE: { id: 'setImg', constructor: settingsAdHandlers.userSetAdImgView },
     SET_RENUMERATION: { id: 'setRenumeration', constructor: settingsAdHandlers.userSetAdRenumerationView },
     PREVIEW_AD: { id: 'previewAd', constructor: settingsAdHandlers.userPublishAdView },
