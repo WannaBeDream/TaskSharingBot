@@ -92,9 +92,9 @@ exports.setTitle = async (context) => {
         logger.error(validationResult);
         throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
     }
-    const ad = { author: context.user.id, title: context.inputData };
-    const adId = await createAdvertisement(ad);
-    context.userState.currentUpdateAd = adId;
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
+    ad.title = context.inputData;
+    await updateAdState(ad._id, ad);
 };
 
 exports.setDescription = async (context) => {
@@ -129,9 +129,9 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.category = context.inputData;
-    await updateAdState(ad._id, ad);
+    const ad = { author: context.user.id, category: context.inputData };
+    const adId = await createAdvertisement(ad);
+    context.userState.currentUpdateAd = adId;
 };
 
 exports.setImg = async (context) => {
