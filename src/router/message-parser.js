@@ -32,11 +32,13 @@ exports.parseCommand = (update, lang) => {
 exports.parseChatData = (update) => {
     return !update.originalRequest.callback_query
         ? {
-              /* currently supported only for calback queries */
+              chat_id: update.originalRequest.message.from.id,
+              message_id: update.originalRequest.message.message_id
           }
         : {
               chat_id: update.originalRequest.callback_query.from.id,
-              message_id: update.originalRequest.callback_query.message.message_id
+              message_id: update.originalRequest.callback_query.message.message_id,
+              callback_query_id: update.originalRequest.callback_query.id
           };
 };
 

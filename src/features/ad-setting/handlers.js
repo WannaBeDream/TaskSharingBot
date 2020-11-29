@@ -16,6 +16,7 @@ const {
     longSmallRenumerationValue,
     regExpForAdv
 } = require('../../validators/user-input-data/constants');
+const { deleteAd } = require('../../database/methods/delete');
 const { logger } = require('../../helpers');
 
 // ////////////////////////////////////////////////// //
@@ -54,7 +55,7 @@ exports.userSetAdImgView = (context) => {
 };
 
 exports.userPublishAdView = async (context) => {
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     if (!ad.imgId) {
         return new Text(AD_TEMPLATE(ad, context.lang))
             .addReplyKeyboard(
@@ -90,7 +91,8 @@ exports.setTitle = async (context) => {
         throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
     }
     const ad = { author: context.user.id, title: context.inputData };
-    await createAdvertisement(ad);
+    const adId = await createAdvertisement(ad);
+    context.userState.currentUpdateAd = adId;
 };
 
 exports.setDescription = async (context) => {
@@ -102,7 +104,7 @@ exports.setDescription = async (context) => {
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](longSmallDescriptionValue.min, longSmallDescriptionValue.max));
     }
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.description = context.inputData;
     await updateAdState(ad._id, ad);
 };
@@ -116,13 +118,13 @@ exports.setRenumeration = async (context) => {
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](longSmallRenumerationValue.min, longSmallRenumerationValue.max));
     }
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.renumeration = context.inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setCategory = async (context) => {
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.category = context.inputData;
     await updateAdState(ad._id, ad);
 };
@@ -131,14 +133,14 @@ exports.setImg = async (context) => {
     if (context.inputData !== inputCms.SKIP.id && !Array.isArray(context.inputData)) {
         throw new Error(labels.imgError[context.lang]);
     }
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.imgId = context.inputData[0].file_id;
     await updateAdState(ad._id, ad);
 };
 
 exports.publish = async (context) => {
     const user = await findUser(context.user.id);
-    const ad = await findAdvertisement(context.user.id);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.location = {
         ...user.location
     };
@@ -147,6 +149,7 @@ exports.publish = async (context) => {
     return new Text(`👌🏿`).get();
 };
 
-exports.cancel = () => {
+exports.cancel = async (context) => {
+    await deleteAd(context.userState.currentUpdateAd);
     return new Text(`👌🏿`).get();
 };

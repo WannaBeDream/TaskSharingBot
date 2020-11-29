@@ -38,7 +38,7 @@ const findAdsWithinRadius = async (telegramId) => {
 
 const findMyAds = async (criteria) => {
     try {
-        return AdvertModel.find({ author: criteria.author, isActive: true });
+        return AdvertModel.find({ author: criteria.author });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -88,16 +88,6 @@ const findUser = async (telegramId) => {
     }
 };
 
-const findAdvertisement = async (telegramId) => {
-    try {
-        const ad = await AdvertModel.findOne({ author: telegramId, isActive: false });
-        return ad._doc;
-    } catch (e) {
-        logger.error(e);
-        throw new Error('Unable find advertisement');
-    }
-};
-
 const findAdAndReturnOneField = async (id, data) => {
     try {
         return AdvertModel.findById({ _id: id }, data);
@@ -106,7 +96,7 @@ const findAdAndReturnOneField = async (id, data) => {
     }
 };
 
-const findAdAndReturn = async (id) => {
+const findAdvertisement = async (id) => {
     try {
         return AdvertModel.findById({ _id: id });
     } catch (e) {
@@ -148,6 +138,5 @@ module.exports = {
     findUser,
     findAdvertisement,
     findAdAndReturnOneField,
-    findAdAndReturn,
     findUserAndReturnOneField
 };

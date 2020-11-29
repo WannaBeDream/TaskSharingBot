@@ -33,6 +33,27 @@ exports.ACTIVATE_AD = {
         ua: 'Aктивувати'
     }
 };
+exports.DELETE_REQUEST = {
+    id: 'dlr',
+    title: {
+        en: 'Delete',
+        ua: 'Видалити'
+    }
+};
+exports.CONFIRM_DELETE = {
+    id: 'dlok',
+    title: {
+        en: 'OK',
+        ua: 'OK'
+    }
+};
+exports.CANCEL_DELETE = {
+    id: 'dlbc',
+    title: {
+        en: 'Cancel',
+        ua: 'Відмінити'
+    }
+};
 exports.EDIT_AD = {
     id: 'edt',
     title: {

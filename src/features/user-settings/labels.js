@@ -1,18 +1,24 @@
 module.exports = {
     newUserEnterLocation: {
-        en: 'Please specify your location',
-        ua: 'Будь ласка, задайте вашу локацію'
+        en: `You are required to specify your location.\n
+The Bot doesn't reveal your location to others. This location is only used to show the ads of users who are the nearest to you. It can be any place in your area.\n
+Press 'Attach' button to send location.`,
+        ua: `Ви маєте задати вашу локацію.\n
+Бот не показує це місцезнаходження нікому. Воно використовується тільки, щоб показати оголошення людей, які є найближчими до вас. Можна обрати будь-яке місце у вашій області.\n
+Щоб встановити локацію, натисніть 'Скріпку'.`
     },
     newUserEnterRadius: {
-        en: 'Please specify the radius of searches, km',
-        ua: 'Будь ласка, вкажіть радіус пошуків, км'
+        en: 'Please specify also the radius of searches, km',
+        ua: 'Будь ласка, вкажіть також радіус пошуків, км'
     },
     existingUserChangeLocation: {
-        en: 'Change location\nYour current location is',
-        ua: 'Введіть нову локацію\nВаша поточна локація наступна:'
+        en: `You are about to change the location of area for ads searches. Note that all your existing ads will also be associated with new location and be shown for users of another target area.\n
+Your current location is:`,
+        ua: `Ви намагаєтесь змінити локацію області пошуку оголошеннь. Увага! Усі ваші поточні оголошення також будуть переналаштовані на нову локацію, і їх будуть бачити люди із місцезнаходженням у відповідній області\n.
+Ваша поточна локація наступна:`
     },
     existingUserChangeRadius: {
-        en: (value) => `Your current radius is ${value}\nPlease select new radius, km`,
+        en: (value) => `Your current radius of searches is ${value}\nPlease select new radius, km`,
         ua: (value) => `Ваш поточний радіус пошуку -- ${value}\nБудь ласка, оберіть новий, км`
     },
     userProfileData: {

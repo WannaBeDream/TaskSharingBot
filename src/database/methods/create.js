@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const { logger } = require('../../helpers');
 const { UserModel, AdvertModel } = require('../../models');
 
@@ -13,8 +14,8 @@ const createUser = async (user) => {
 
 const createAdvertisement = async (advertisement) => {
     try {
-        const model = new AdvertModel(advertisement);
-        await model.save();
+        const createdAd = await new AdvertModel(advertisement).save();
+        return createdAd._id;
     } catch (e) {
         logger.error(e);
         throw new Error('Unable save advertisement');

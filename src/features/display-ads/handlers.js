@@ -9,7 +9,12 @@ const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { AD_TEMPLATE } = require('../ad-template');
 
 const adsDao = require('../../database/methods/find');
-const { addToSavedAds, deleteFromSavedAds, markAsSpam } = require('../../database/methods/update');
+const {
+    addToSavedAds,
+    deleteFromSavedAds,
+    markAsSpam,
+    updateAdActiveStatus
+} = require('../../database/methods/update');
 const { deleteAd } = require('../../database/methods/delete');
 
 const adsViewModes = {
@@ -51,6 +56,7 @@ exports.initViewFoundAdsView = (context) => {
             const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
             inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
+            inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
         } else {
             const favCmd = adsViewMode === adsViewModes.LOCAL_ADS_MODE ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV;
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
@@ -166,10 +172,12 @@ exports.searchNewerAds = async (context) => {
 
 function deleteMessageFromChat(context, imgId) {
     if (!imgId) {
-        return {
-            method: 'deleteMessage',
-            body: { chat_id: context.chat_id, message_id: context.message_id }
-        };
+        return [
+            {
+                method: 'deleteMessage',
+                body: { chat_id: context.chat_id, message_id: context.message_id }
+            }
+        ];
     }
     return [
         {
@@ -183,9 +191,52 @@ function deleteMessageFromChat(context, imgId) {
     ];
 }
 
+function answerCallbackQuery(queryId, alert) {
+    return {
+        method: 'answerCallbackQuery',
+        body: {
+            callback_query_id: queryId,
+            ...(alert ? { text: alert, show_alert: true } : {})
+        }
+    };
+}
+
+function editChatMessage(context, newText, actions, adId) {
+    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+    return {
+        method: 'editMessageText',
+        body: {
+            chat_id: context.chat_id,
+            message_id: context.message_id,
+            text: newText,
+            parse_mode: 'Markdown',
+            reply_markup: { inline_keyboard: [inlineButtons] }
+        }
+    };
+}
+function editChatMessageActions(context, actions, adId) {
+    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+    return {
+        method: 'editMessageReplyMarkup',
+        body: {
+            chat_id: context.chat_id,
+            message_id: context.message_id,
+            reply_markup: { inline_keyboard: [inlineButtons] }
+        }
+    };
+}
+
+function getMyAdActions(isAdActive) {
+    return [isAdActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD, commands.EDIT_AD, commands.DELETE_REQUEST];
+}
+
 // ////////////////////////////////////////////////// //
 //                  Inline actions                    //
 // ////////////////////////////////////////////////// //
+exports.startEditAd = (context) => {
+    context.userState.currentUpdateAd = context.inputData;
+    return answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
+};
 
 exports.addToSaved = async (context) => {
     await addToSavedAds(context.user.id, context.inputData);
@@ -195,12 +246,41 @@ exports.deleteFromSaved = async (context) => {
     return deleteMessageFromChat(context);
 };
 
-exports.deleteMyAd = async (context) => {
-    const ad = await deleteAd(context.inputData);
-    return deleteMessageFromChat(context, ad.imgId);
-};
-
 exports.reportSpam = async (context) => {
     const imgId = await markAsSpam(context.user.id, context.inputData);
     return deleteMessageFromChat(context, imgId);
+};
+
+exports.requestDeleteAd = (context) => {
+    const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
+    return [
+        answerCallbackQuery(context.callback_query_id),
+        editChatMessage(context, labels.deleteAdConfirmation[context.lang], actions, context.inputData)
+    ];
+};
+exports.cancelDeleteAd = async (context) => {
+    const ad = await adsDao.findAdvertisement(context.inputData);
+    return [
+        answerCallbackQuery(context.callback_query_id),
+        editChatMessage(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
+    ];
+};
+exports.confirmDeleteAd = async (context) => {
+    const ad = await deleteAd(context.inputData);
+    return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context, ad.imgId)];
+};
+
+exports.deactivateAd = async (context) => {
+    await updateAdActiveStatus(context.inputData, false);
+    return [
+        answerCallbackQuery(context.callback_query_id, labels.deactivateIsSet[context.lang]),
+        editChatMessageActions(context, getMyAdActions(false), context.inputData)
+    ];
+};
+exports.activateAd = async (context) => {
+    await updateAdActiveStatus(context.inputData, true);
+    return [
+        answerCallbackQuery(context.callback_query_id, labels.activateIsSet[context.lang]),
+        editChatMessageActions(context, getMyAdActions(true), context.inputData)
+    ];
 };

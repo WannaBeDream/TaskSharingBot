@@ -65,6 +65,15 @@ const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
     }
 };
 
+const updateAdActiveStatus = async (_id, data) => {
+    try {
+        console.log(_id + data);
+        await AdvertModel.findByIdAndUpdate({ _id }, { $set: { isActive: data } });
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
 const updateTitleAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
@@ -112,6 +121,7 @@ module.exports = {
     deleteFromSavedAds,
     markAsSpam,
     fetchUserAndUpdateAdvLoc,
+    updateAdActiveStatus,
     updateTitleAd,
     updateDescriptionAd,
     updateCategoryAd,

@@ -47,8 +47,11 @@ const adsInlineCommands = {
     [viewAdsCommands.CANCEL_REPORT.id]: { handler: viewAdsHandlers.unreportAd },
     [viewAdsCommands.ADD_TO_FAV.id]: { handler: viewAdsHandlers.addToSaved },
     [viewAdsCommands.REMOVE_FROM_FAV.id]: { handler: viewAdsHandlers.deleteFromSaved },
-    [viewAdsCommands.DEACTIVATE_AD.id]: { handler: viewAdsHandlers.deleteMyAd },
-    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd }
+    [viewAdsCommands.DEACTIVATE_AD.id]: { handler: viewAdsHandlers.deactivateAd },
+    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd },
+    [viewAdsCommands.DELETE_REQUEST.id]: { handler: viewAdsHandlers.requestDeleteAd },
+    [viewAdsCommands.CONFIRM_DELETE.id]: { handler: viewAdsHandlers.confirmDeleteAd },
+    [viewAdsCommands.CANCEL_DELETE.id]: { handler: viewAdsHandlers.cancelDeleteAd }
 };
 
 module.exports = {
@@ -164,6 +167,7 @@ module.exports = {
             targetState: appStates.SET_ADS_CATEGORY
         },
         [viewAdsCommands.EDIT_AD.id]: {
+            handler: viewAdsHandlers.startEditAd,
             targetState: appStates.START_EDIT_THIS_AD
         },
         ...adsInlineCommands

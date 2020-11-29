@@ -1,7 +1,7 @@
 const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
 
 const { AD_TEMPLATE } = require('../ad-template');
-const { findAdAndReturnOneField, findAdAndReturn } = require('../../database/methods/find');
+const { findAdAndReturnOneField, findAdvertisement } = require('../../database/methods/find');
 const {
     updateTitleAd,
     updateDescriptionAd,
@@ -63,7 +63,7 @@ exports.initChangeRemunerationAdView = async (context) => {
 };
 
 exports.initFinishEditingAdView = async (context) => {
-    const ad = await findAdAndReturn(context.userState.currentUpdateAd);
+    const ad = await findAdvertisement(context.userState.currentUpdateAd);
     const adView = new Text(AD_TEMPLATE(ad, context.lang));
 
     if (ad.imgId) {
