@@ -9,15 +9,15 @@ const { findAdvertisement, findUser } = require('../../database/methods/find');
 const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/user-input-data');
-const { checkMaxMinReg } = require('../../validators/user-input-data/labels');
+const { checkMaxMinReg, checkMatchWords } = require('../../validators/user-input-data/labels');
 const {
     longSmallTitleValue,
     longSmallDescriptionValue,
     longSmallRenumerationValue,
-    regExpForAdv
+    regExpForAdv,
+    regExpForCateg
 } = require('../../validators/user-input-data/constants');
 const { deleteAd } = require('../../database/methods/delete');
-const { logger } = require('../../helpers');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
@@ -82,14 +82,8 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const validationResult = await userInputData.ifStrCondition(
-        context.inputData,
-        longSmallTitleValue,
-        regExpForAdv.app
-    );
-
+    const validationResult = userInputData.ifStrCondition(context.inputData, longSmallTitleValue, regExpForAdv.app);
     if (validationResult) {
-        logger.error(validationResult);
         throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
@@ -98,7 +92,7 @@ exports.setTitle = async (context) => {
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = await userInputData.ifStrCondition(
+    const validationResult = userInputData.ifStrCondition(
         context.inputData,
         longSmallDescriptionValue,
         regExpForAdv.app
@@ -115,7 +109,7 @@ exports.setRenumeration = async (context) => {
     if (Array.isArray(context.inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    const validationResult = await userInputData.ifStrCondition(
+    const validationResult = userInputData.ifStrCondition(
         context.inputData,
         longSmallRenumerationValue,
         regExpForAdv.app
@@ -129,6 +123,10 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
+    const validationResult = userInputData.ifStrContain(context.inputData, regExpForCateg);
+    if (validationResult) {
+        throw new Error(checkMatchWords[context.lang]);
+    }
     const ad = { author: context.user.id, category: context.inputData };
     const adId = await createAdvertisement(ad);
     context.userState.currentUpdateAd = adId;
