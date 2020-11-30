@@ -12,7 +12,7 @@ module.exports = {
         ua: `Оберіть відповідну тему`
     },
     newUserEnterRenumeration: {
-        en: 'Please specify renumeration',
+        en: 'Please specify remuneration',
         ua: 'Задайте винагороду'
     },
     newUserEnterImg: {
@@ -36,7 +36,7 @@ module.exports = {
         ua: 'Неправильно завантажене зображення,\n Відправте зображення у стислому вигляді чи напишіть "Пропустити" '
     },
     imgInRenumerationError: {
-        en: 'Only one image was expected.\nThe first one will be used for the ad.\n\nSet renumeration',
+        en: 'Only one image was expected.\nThe first one will be used for the ad.\n\nSet remuneration',
         ua: 'Очікувалась лише одне зображення.\nДля оголошення буде використано перше.\n\nЗадайте винагороду'
     }
 };

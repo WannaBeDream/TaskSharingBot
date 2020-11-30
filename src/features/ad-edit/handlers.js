@@ -19,7 +19,6 @@ const { checkMaxMinReg } = require('../../validators/user-input-data/labels');
 const {
     longSmallTitleValue,
     longSmallDescriptionValue,
-    // longSmallRenumerationValue,
     regExpForAdv
 } = require('../../validators/user-input-data/constants');
 
@@ -91,7 +90,14 @@ exports.initChangeImageAdView = async (context) => {
 
 exports.initChangeRemunerationAdView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
-    const message = `${labels.editRemuneration[context.lang]} ${renumeration}`;
+    let message;
+
+    if (renumeration === null) {
+        message = labels.editRemunerationWithoutData[context.lang];
+        return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
+    }
+
+    message = `${labels.editRemunerationWithData[context.lang]} ${renumeration}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
@@ -110,23 +116,20 @@ exports.initFinishEditingAdView = async (context) => {
 };
 
 exports.updateTitle = async (context) => {
-    const validationResult = await userInputData.ifStrCondition(
-        context.inputData,
-        longSmallTitleValue,
-        regExpForAdv.app
-    );
+    const { inputData } = context;
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
+    const validationResult = await userInputData.ifStrCondition(inputData, longSmallTitleValue, regExpForAdv.app);
 
     if (validationResult) {
         logger.error(validationResult);
         throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
     }
 
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
-    const { inputData } = context;
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
+
     await updateTitleAd(context.userState.currentUpdateAd, inputData);
 };
 
@@ -153,29 +156,46 @@ exports.updateCategory = async (context) => {
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
+
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
+
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
 };
 
+// ! TODO: доробити
 exports.updateImage = async (context) => {
+    console.log('=============================  updateImage  =============================');
+    console.log(context);
+    console.log('=============================  updateImage  =============================');
+
+    const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const { inputData } = context;
     const notImage = typeof inputData[0].file_id === 'undefined';
 
-    if (inputData === buttonTextEn || inputData === buttonTextUa || inputData === notImage) {
+    if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
+
+    if (!Array.isArray(inputData) || notImage) {
+        throw new Error(labels.imgError[context.lang]);
+    }
+
     const imgId = inputData[0].file_id;
     await updateImageAd(context.userState.currentUpdateAd, imgId);
 };
 
 exports.updateRemuneration = async (context) => {
+    const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const { inputData } = context;
+
+    if (Array.isArray(inputData)) {
+        throw new Error(labels.imgErrorInRemuneration[context.lang]);
+    }
+
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }

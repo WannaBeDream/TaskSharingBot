@@ -19,8 +19,20 @@ module.exports = {
         en: 'Do you want to attach an image?',
         ua: 'Бажаєте прикріпити зображення?'
     },
-    editRemuneration: {
+    editRemunerationWithData: {
         en: 'Edit remuneration\n\nYour reward at the moment: ',
         ua: 'Змінити винагороду\n\nВаша винагорода на даний момент: '
+    },
+    editRemunerationWithoutData: {
+        en: 'Edit remuneration\n\nRight now there is no reward in your advertisement.',
+        ua: 'Змінити винагороду\n\nНаразі у Вашому оголошені вісутня винагорода.'
+    },
+    imgError: {
+        en: 'Incorrect image format.\nPlease send image or click on the button "Skip".',
+        ua: 'Не вірний формат файлу.\n Відправте зображення або натисніть на кнопку "Пропустити".'
+    },
+    imgErrorInRemuneration: {
+        en: 'Only one image was expected. The first image will be used for the advertisement.',
+        ua: 'Очікувалось одне зображення, тому для оголошення буде використано перше зображення.'
     }
 };
