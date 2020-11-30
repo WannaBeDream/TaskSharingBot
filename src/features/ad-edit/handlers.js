@@ -33,7 +33,7 @@ exports.initChangeCategoryAdView = async (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [command.NEXT_STEP.title[context.lang]]
+                [command.NEXT_STEP.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
             ],
             true
         )

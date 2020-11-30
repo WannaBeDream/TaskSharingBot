@@ -47,6 +47,7 @@ function buildInlineButton(key, command, lang) {
     };
 }
 
+// eslint-disable-next-line
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {
