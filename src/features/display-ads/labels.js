@@ -7,6 +7,14 @@ module.exports = {
         en: `Author`,
         ua: `Автор`
     },
+    deleted: {
+        en: `Advertisement was deleted !!!`,
+        ua: `Оголошення було видалене !!!`
+    },
+    deletedSpam: {
+        en: `Advertisement was deleted, SPAM !!!`,
+        ua: `Оголошення було видалене через підозру на спам !!!`
+    },
     selectAdsCategory: {
         en: 'Please select Category',
         ua: 'Будь ласка, оберіть категорію'
