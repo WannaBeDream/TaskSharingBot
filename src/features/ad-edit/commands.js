@@ -46,10 +46,10 @@ exports.FINISH_EDITING = {
     }
 };
 
-exports.NEXT_STEP = {
+exports.SKIP = {
     id: 'nextStep',
     title: {
-        en: '<< Next',
-        ua: '<< Далі'
+        en: 'Skip',
+        ua: 'Пропустити'
     }
 };

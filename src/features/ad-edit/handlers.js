@@ -16,7 +16,7 @@ const inputCms = require('../ad-categories');
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.inputData, 'title');
     const message = `${labels.editTitle[context.lang]} ${title}`;
-    return new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get();
+    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
 exports.initChangeDescriptionAdView = async (context) => {
@@ -33,7 +33,7 @@ exports.initChangeCategoryAdView = async (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [command.NEXT_STEP.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [command.SKIP.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
             ],
             true
         )
@@ -48,18 +48,18 @@ exports.initChangeImageAdView = async (context) => {
         message = `${labels.editWithImage[context.lang]}`;
         return [
             new Photo(imgId).get(),
-            new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get()
+            new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get()
         ];
     }
 
     message = labels.editWithoutImage[context.lang];
-    return new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get();
+    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
 exports.initChangeRemunerationAdView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
     const message = `${labels.editRemuneration[context.lang]} ${renumeration}`;
-    return new Text(message).addReplyKeyboard([[command.NEXT_STEP.title[context.lang]]], true).get();
+    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
 exports.initFinishEditingAdView = async (context) => {
@@ -77,37 +77,42 @@ exports.initFinishEditingAdView = async (context) => {
 };
 
 exports.updateTitle = async (context) => {
-    const buttonText = command.NEXT_STEP.title[context.lang];
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
-    if (inputData === buttonText) {
+    if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
     await updateTitleAd(context.userState.currentUpdateAd, inputData);
 };
 
 exports.updateDescription = async (context) => {
-    const buttonText = command.NEXT_STEP.title[context.lang];
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
-    if (inputData === buttonText) {
+    if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
     await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
 };
 
 exports.updateCategory = async (context) => {
-    const buttonText = command.NEXT_STEP.title[context.lang];
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
-    if (inputData === buttonText) {
+    if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
 };
 
 exports.updateImage = async (context) => {
-    const buttonText = command.NEXT_STEP.title[context.lang];
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
     const notImage = typeof inputData[0].file_id === 'undefined';
-    if (inputData === buttonText || notImage) {
+
+    if (inputData === buttonTextEn || inputData === buttonTextUa || inputData === notImage) {
         return;
     }
     const imgId = inputData[0].file_id;
@@ -115,9 +120,10 @@ exports.updateImage = async (context) => {
 };
 
 exports.updateRemuneration = async (context) => {
-    const buttonText = command.NEXT_STEP.title[context.lang];
+    const buttonTextEn = command.SKIP.title.en;
+    const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
-    if (inputData === buttonText) {
+    if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
     await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
