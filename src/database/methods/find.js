@@ -91,6 +91,7 @@ const findAdAndReturnOneField = async (id, data) => {
     try {
         return AdvertModel.findById({ _id: id }, data);
     } catch (e) {
+        logger.error(e);
         throw new Error(e.message);
     }
 };
@@ -99,6 +100,7 @@ const findAdvertisement = async (id) => {
     try {
         return AdvertModel.findById({ _id: id });
     } catch (e) {
+        logger.error(e);
         throw new Error(e.message);
     }
 };
@@ -107,6 +109,7 @@ const findUserAndReturnOneField = async (id) => {
     try {
         return AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
     } catch (e) {
+        logger.error(e);
         throw new Error(e.message);
     }
 };
