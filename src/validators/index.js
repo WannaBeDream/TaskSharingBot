@@ -1,3 +1,3 @@
-const userInputData = require('./user-input-data');
+const userInputData = require('./ad-create-validation');
 
 module.exports = { userInputData };

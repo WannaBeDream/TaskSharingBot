@@ -1,6 +1,6 @@
 const { UserModel, AdvertModel } = require('../../models');
 const { logger } = require('../../helpers');
-const { SPAM_COUNTER } = require('../constants');
+const { SPAM_COUNTER } = require('../../constants/db-values');
 
 const updateUser = async (telegramId, data) => {
     try {

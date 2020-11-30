@@ -7,7 +7,7 @@ const inputCms = require('../ad-categories');
 const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { AD_TEMPLATE } = require('../ad-template');
-const { SPAM_COUNTER } = require('../../database/constants');
+const { SPAM_COUNTER } = require('../../constants/db-values');
 
 const adsDao = require('../../database/methods/find');
 const {

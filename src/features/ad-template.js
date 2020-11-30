@@ -1,5 +1,5 @@
 const labels = require('./display-ads/labels');
-const { SPAM_COUNTER } = require('../database/constants');
+const { SPAM_COUNTER } = require('../constants/db-values');
 
 exports.AD_TEMPLATE = (ad, lang) => {
     const renumeration = ad.renumeration ? `${ad.renumeration} 💰` : '';

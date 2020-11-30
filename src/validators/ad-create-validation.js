@@ -1,5 +1,5 @@
 const validator = require('validator');
-const { logger } = require('../../helpers');
+const { logger } = require('../helpers');
 
 const userInputData = {
     ifStrCondition: (str, value, regExp) =>

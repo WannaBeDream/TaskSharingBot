@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const {
-    longSmallTitleValue,
-    longSmallDescriptionValue,
-    longSmallRenumerationValue
+    titleLength,
+    descriptionLength,
+    remunerationLength
     // regExpForAdv
-} = require('../validators/user-input-data/constants');
+} = require('../constants/ad-values');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
@@ -21,14 +21,14 @@ const AdvertisementSchema = new mongoose.Schema(
             //     new RegExp(regExpForAdv.app),
             //     "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
             // ],
-            maxlength: longSmallTitleValue.max,
-            minLength: longSmallTitleValue.min
+            maxlength: titleLength.max,
+            minLength: titleLength.min
         },
         description: {
             type: String,
             default: '',
-            maxlength: longSmallDescriptionValue.max,
-            minLength: longSmallDescriptionValue.min
+            maxlength: descriptionLength.max,
+            minLength: descriptionLength.min
         },
         location: {
             type: {
@@ -51,8 +51,8 @@ const AdvertisementSchema = new mongoose.Schema(
         renumeration: {
             type: String,
             default: '',
-            maxlength: longSmallRenumerationValue.max,
-            minLength: longSmallRenumerationValue.min
+            maxlength: remunerationLength.max,
+            minLength: remunerationLength.min
         },
         isActive: {
             type: Boolean,
