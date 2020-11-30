@@ -23,7 +23,7 @@ const {
 } = require('../../validators/user-input-data/constants');
 
 exports.initChangeTitleAdView = async (context) => {
-    const { title } = await findAdAndReturnOneField(context.inputData, 'title');
+    const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
     const message = `${labels.editTitle[context.lang]} ${title}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
