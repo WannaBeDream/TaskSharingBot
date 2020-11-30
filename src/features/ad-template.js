@@ -1,10 +1,18 @@
 const labels = require('./display-ads/labels');
+const { SPAM_COUNTER } = require('../database/constants');
 
 exports.AD_TEMPLATE = (ad, lang) => {
     const renumeration = ad.renumeration ? `${ad.renumeration} 💰` : '';
+    const author =
+        // eslint-disable-next-line no-nested-ternary
+        ad.spam.length >= SPAM_COUNTER
+            ? `*${labels.deletedSpam[`${lang}`]}*`
+            : ad.author
+            ? `[   ${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
+            : `*${labels.deleted[`${lang}`]}*`;
     return `
 
-[   ${labels.author[`${lang}`]}](tg://user?id=${ad.author})
+${author}
 
 ❗️*${ad.title}*❗️
 

@@ -1,6 +1,6 @@
 const { UserModel, AdvertModel } = require('../../models');
-const { deleteAd } = require('./delete');
 const { logger } = require('../../helpers');
+const { SPAM_COUNTER } = require('../constants');
 
 const updateUser = async (telegramId, data) => {
     try {
@@ -49,8 +49,9 @@ const markAsSpam = async (userId, adId) => {
         const ad = await AdvertModel.findByIdAndUpdate(adId);
         ad.spam.push(userId);
         await updateAd(adId, ad);
-        if (ad.spam.length >= 5) {
-            await deleteAd(adId);
+        if (ad.spam.length >= SPAM_COUNTER) {
+            ad.isActive = false;
+            await updateAd(adId, ad);
         }
         return ad.imgId;
     } catch (e) {
