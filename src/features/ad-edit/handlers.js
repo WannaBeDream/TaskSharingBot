@@ -27,7 +27,30 @@ exports.initChangeDescriptionAdView = async (context) => {
 
 exports.initChangeCategoryAdView = async (context) => {
     const { category } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'category');
-    const message = `${labels.editCategory[context.lang]} ${category}`;
+    let categoryText;
+
+    switch (category) {
+        case 'lostFoundAds':
+            categoryText = inputCms.LOST_FOUND_ADS.title[context.lang];
+            break;
+        case 'sales':
+            categoryText = inputCms.SALES.title[context.lang];
+            break;
+        case 'servicesOffer':
+            categoryText = inputCms.SERVICES_OFFER.title[context.lang];
+            break;
+        case 'assistanceSearch':
+            categoryText = inputCms.ASSISTANCE_SEARCH.title[context.lang];
+            break;
+        case 'buyStuff':
+            categoryText = inputCms.BUY_STUFF.title[context.lang];
+            break;
+        default:
+            categoryText = category;
+            break;
+    }
+
+    const message = `${labels.editCategory[context.lang]} ${categoryText}`;
     return new Text(message)
         .addReplyKeyboard(
             [
