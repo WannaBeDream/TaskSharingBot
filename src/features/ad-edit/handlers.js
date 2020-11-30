@@ -12,15 +12,6 @@ const {
 const command = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
-const { logger } = require('../../helpers');
-
-const { userInputData } = require('../../validators/user-input-data');
-const { checkMaxMinReg } = require('../../validators/user-input-data/labels');
-const {
-    longSmallTitleValue,
-    longSmallDescriptionValue,
-    regExpForAdv
-} = require('../../validators/user-input-data/constants');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
@@ -103,28 +94,22 @@ exports.initChangeRemunerationAdView = async (context) => {
 
 exports.initFinishEditingAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    const adView = new Text(AD_TEMPLATE(ad, context.lang));
+    const adTemplate = new Text(AD_TEMPLATE(ad, context.lang));
 
     if (ad.imgId) {
         return [
             new Photo(ad.imgId).get(),
-            adView.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get()
+            adTemplate.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get()
         ];
     }
 
-    return adView.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get();
+    return adTemplate.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get();
 };
 
 exports.updateTitle = async (context) => {
     const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const validationResult = await userInputData.ifStrCondition(inputData, longSmallTitleValue, regExpForAdv.app);
-
-    if (validationResult) {
-        logger.error(validationResult);
-        throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
-    }
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
@@ -134,18 +119,10 @@ exports.updateTitle = async (context) => {
 };
 
 exports.updateDescription = async (context) => {
-    const validationResult = await userInputData.ifStrCondition(
-        context.inputData,
-        longSmallDescriptionValue,
-        regExpForAdv.app
-    );
-    if (validationResult) {
-        throw new Error(checkMaxMinReg[context.lang](longSmallDescriptionValue.min, longSmallDescriptionValue.max));
-    }
-
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
+
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
@@ -173,15 +150,15 @@ exports.updateImage = async (context) => {
     const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const notImage = typeof inputData[0].file_id === 'undefined';
+    // const notImage = typeof inputData[0].file_id === 'undefined';
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
         return;
     }
 
-    if (!Array.isArray(inputData) || notImage) {
-        throw new Error(labels.imgError[context.lang]);
-    }
+    // if (!Array.isArray(inputData) || notImage) {
+    //     throw new Error(labels.imgError[context.lang]);
+    // }
 
     const imgId = inputData[0].file_id;
     await updateImageAd(context.userState.currentUpdateAd, imgId);
