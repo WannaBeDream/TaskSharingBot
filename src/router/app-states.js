@@ -31,7 +31,7 @@ module.exports = {
     SET_ADS_CATEGORY: { id: 'setAdsCategory', constructor: displayHandlers.initSetAdsCategoryView },
     VIEW_FOUND_ADS: { id: 'viewFoundAds', constructor: displayHandlers.initViewFoundAdsView },
 
-    START_EDIT_THIS_AD: { id: 'editTitle', constructor: displayEditAdHandlers.initChangeTitleAdView },
+    EDIT_TITLE: { id: 'editTitle', constructor: displayEditAdHandlers.initChangeTitleAdView },
     EDIT_DESCRIPTION: { id: 'editDescription', constructor: displayEditAdHandlers.initChangeDescriptionAdView },
     EDIT_CATEGORY: { id: 'editCategory', constructor: displayEditAdHandlers.initChangeCategoryAdView },
     EDIT_IMAGE: { id: 'editImage', constructor: displayEditAdHandlers.initChangeImageAdView },

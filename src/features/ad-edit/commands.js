@@ -1,8 +1,8 @@
-exports.START_EDIT_THIS_AD = {
-    id: 'startEditingThisAd',
+exports.EDIT_TITLE = {
+    id: 'editTitle',
     title: {
-        en: 'Start editing',
-        ua: 'Розпочати редагування'
+        en: 'Edit title',
+        ua: 'Редагувати заголовок'
     }
 };
 

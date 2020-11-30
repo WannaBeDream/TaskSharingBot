@@ -168,11 +168,11 @@ module.exports = {
         },
         [viewAdsCommands.EDIT_AD.id]: {
             handler: viewAdsHandlers.startEditAd,
-            targetState: appStates.START_EDIT_THIS_AD
+            targetState: appStates.EDIT_TITLE
         },
         ...adsInlineCommands
     },
-    [appStates.START_EDIT_THIS_AD.id]: {
+    [appStates.EDIT_TITLE.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateTitle,
             targetState: appStates.EDIT_DESCRIPTION
