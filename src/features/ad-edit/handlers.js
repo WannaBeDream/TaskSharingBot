@@ -12,6 +12,11 @@ const {
 const command = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
+const { logger } = require('../../helpers');
+
+const { userInputData } = require('../../validators/user-input-data');
+const { checkMaxMinReg } = require('../../validators/user-input-data/labels');
+const { longSmallTitleValue, regExpForAdv } = require('../../validators/user-input-data/constants');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.inputData, 'title');
@@ -100,6 +105,17 @@ exports.initFinishEditingAdView = async (context) => {
 };
 
 exports.updateTitle = async (context) => {
+    const validationResult = await userInputData.ifStrCondition(
+        context.inputData,
+        longSmallTitleValue,
+        regExpForAdv.app
+    );
+
+    if (validationResult) {
+        logger.error(validationResult);
+        throw new Error(checkMaxMinReg[context.lang](longSmallTitleValue.min, longSmallTitleValue.max));
+    }
+
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
     const { inputData } = context;
