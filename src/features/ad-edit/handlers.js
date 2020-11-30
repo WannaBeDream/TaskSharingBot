@@ -12,16 +12,17 @@ const {
 const command = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
+const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
-    const message = `${labels.editTitle[context.lang]} ${title}`;
+    const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(title)}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
 exports.initChangeDescriptionAdView = async (context) => {
     const { description } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'description');
-    const message = `${labels.editDescription[context.lang]} ${description}`;
+    const message = `${labels.editDescription[context.lang]}\n${markdownUtils.formatItalicText(description)}`;
     return new Text(message).get();
 };
 
@@ -50,7 +51,7 @@ exports.initChangeCategoryAdView = async (context) => {
             break;
     }
 
-    const message = `${labels.editCategory[context.lang]} ${categoryText}`;
+    const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
             [
@@ -88,7 +89,7 @@ exports.initChangeRemunerationAdView = async (context) => {
         return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
     }
 
-    message = `${labels.editRemunerationWithData[context.lang]} ${renumeration}`;
+    message = `${labels.editRemuneration[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
