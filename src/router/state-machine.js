@@ -168,9 +168,15 @@ module.exports = {
         },
         [viewAdsCommands.EDIT_AD.id]: {
             handler: viewAdsHandlers.startEditAd,
-            targetState: appStates.EDIT_TITLE
+            targetState: appStates.EDIT_CATEGORY
         },
         ...adsInlineCommands
+    },
+    [appStates.EDIT_CATEGORY.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.updateCategory,
+            targetState: appStates.EDIT_TITLE
+        }
     },
     [appStates.EDIT_TITLE.id]: {
         [generalCommands.DATA_INPUT.id]: {
@@ -181,12 +187,6 @@ module.exports = {
     [appStates.EDIT_DESCRIPTION.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateDescription,
-            targetState: appStates.EDIT_CATEGORY
-        }
-    },
-    [appStates.EDIT_CATEGORY.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateCategory,
             targetState: appStates.EDIT_IMAGE
         }
     },
