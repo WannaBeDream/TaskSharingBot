@@ -9,7 +9,7 @@ const { AD_TEMPLATE } = require('../ad-template');
 const { findAdvertisement, findUser } = require('../../database/methods/find');
 const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
-const { userInputData } = require('../../validators/ad-create-validation');
+const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, checkMatchWords } = require('../validations-labels');
 const {
     titleLength,

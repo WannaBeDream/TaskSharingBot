@@ -9,7 +9,7 @@ const {
     updateRemunerationAd,
     updateImageAd
 } = require('../../database/methods/update');
-const { userInputData } = require('../../validators/ad-create-validation');
+const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, checkMatchWords } = require('../validations-labels');
 const {
     titleLength,
@@ -69,7 +69,7 @@ exports.initChangeRemunerationAdView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
     let message;
 
-    if (renumeration === null) {
+    if (renumeration === null || renumeration.length === 0) {
         message = labels.editRemunerationWithoutData[context.lang];
         return new Text(message).get();
     }
@@ -120,7 +120,6 @@ exports.updateDescription = async (context) => {
     await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
 };
 
-// ! TODO: доробити
 exports.updateCategory = async (context) => {
     const { inputData } = context;
 
@@ -132,17 +131,12 @@ exports.updateCategory = async (context) => {
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
 };
 
-// ! TODO: доробити
 exports.updateImage = async (context) => {
-    console.log('=============================  updateImage  =============================');
-    console.log(context);
-    console.log('=============================  updateImage  =============================');
-
     const { inputData } = context;
-    // const notImage = typeof inputData[0].file_id === 'undefined';
-    // if (!Array.isArray(inputData) || notImage) {
-    //     throw new Error(labels.imgError[context.lang]);
-    // }
+
+    if (!Array.isArray(context.inputData)) {
+        throw new Error(labels.imgError[context.lang]);
+    }
 
     const imgId = inputData[0].file_id;
     await updateImageAd(context.userState.currentUpdateAd, imgId);
