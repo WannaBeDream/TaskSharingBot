@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
@@ -49,32 +49,59 @@ function buildInlineButton(key, command, lang) {
     };
 }
 
+function buildInlineButtonforImg(key, command, lang) {
+    return [
+        {
+            text: command.title[`${lang}`],
+            callback_data: JSON.stringify({ key, cmd: command.id })
+        }
+    ];
+}
 // eslint-disable-next-line sonarjs/cognitive-complexity
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {
-        const adView = new Text(AD_TEMPLATE(ad, context.lang));
-        const inlineButtons = [];
+        if (!ad.imgId) {
+            const adView = new Text(AD_TEMPLATE(ad, context.lang));
+            const inlineButtons = [];
+            if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
+                if (ad.spam.length >= SPAM_COUNTER) {
+                    inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                } else {
+                    const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
+                    inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
+                    inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
+                    inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                }
+            } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
+                const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
+                inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
+            } else {
+                inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+            }
+            return adView.addInlineKeyboard([inlineButtons]).get();
+        }
+        const inlineButtons2 = [];
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
-                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.DELETE_REQUEST, context.lang));
             } else {
                 const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
-                inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
-                inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
-                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons2.push(buildInlineButtonforImg(ad._id, activateCmd, context.lang));
+                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.EDIT_AD, context.lang));
+                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.DELETE_REQUEST, context.lang));
             }
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
-            inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
-            inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
+            inlineButtons2.push(buildInlineButtonforImg(ad._id, favCmd, context.lang));
+            inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.REPORT, context.lang));
         } else {
-            inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+            inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
-        if (!ad.imgId) {
-            return adView.addInlineKeyboard([inlineButtons]).get();
-        }
-        return [new Photo(ad.imgId, ad.title).get(), adView.addInlineKeyboard([inlineButtons]).get()];
+        return AD_TEMPLATE(ad, context.lang, {
+            inline_keyboard: inlineButtons2
+        });
     });
     const navLine1 = [
         ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
@@ -87,7 +114,7 @@ exports.initViewFoundAdsView = (context) => {
         ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE ? [commands.CHANGE_CATEGORY.title[context.lang]] : [])
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
-    return _.flatten([
+    return _.flattenDeep([
         new Text('--').addReplyKeyboard([[backCommand.title[context.lang]]], true).get(),
         ...adsList,
         new Text('--').addReplyKeyboard(navFull, true).get()
@@ -199,6 +226,20 @@ function editChatMessage(context, newText, actions, adId) {
     };
 }
 
+function editChatCaption(context, newText, actions, adId) {
+    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+    return {
+        method: 'editMessageCaption',
+        body: {
+            chat_id: context.chat_id,
+            message_id: context.message_id,
+            caption: newText,
+            parse_mode: 'Markdown',
+            reply_markup: { inline_keyboard: [inlineButtons] }
+        }
+    };
+}
+
 function editChatMessageActions(context, actions, adId) {
     const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
     return {
@@ -215,23 +256,11 @@ function editChatMessageActions(context, actions, adId) {
 //                  Delete logic                      //
 // ////////////////////////////////////////////////// //
 
-function deleteMessageFromChat(context, imgId) {
-    if (!imgId) {
-        return [
-            {
-                method: 'deleteMessage',
-                body: { chat_id: context.chat_id, message_id: context.message_id }
-            }
-        ];
-    }
+function deleteMessageFromChat(context) {
     return [
         {
             method: 'deleteMessage',
             body: { chat_id: context.chat_id, message_id: context.message_id }
-        },
-        {
-            method: 'deleteMessage',
-            body: { chat_id: context.chat_id, message_id: context.message_id - 1 }
         }
     ];
 }
@@ -263,13 +292,13 @@ exports.deleteFromSaved = async (context) => {
         await deleteAd(context.inputData);
     }
     return context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE
-        ? deleteMessageFromChat(context, ad.imgId)
+        ? deleteMessageFromChat(context)
         : editChatMessageActions(context, getMySavedAdActions(true), context.inputData);
 };
 
 exports.reportSpam = async (context) => {
-    const imgId = await markAsSpam(context.user.id, context.inputData);
-    return deleteMessageFromChat(context, imgId);
+    await markAsSpam(context.user.id, context.inputData);
+    return deleteMessageFromChat(context);
 };
 
 // ////////////////////////////////////////////////// //
@@ -281,8 +310,15 @@ exports.startEditAd = (context) => {
     return answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
 };
 
-exports.requestDeleteAd = (context) => {
+exports.requestDeleteAd = async (context) => {
     const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
+    const ad = await adsDao.findAdvertisement(context.inputData);
+    if (ad.imgId) {
+        return [
+            answerCallbackQuery(context.callback_query_id),
+            editChatCaption(context, labels.deleteAdConfirmation[context.lang], actions, context.inputData)
+        ];
+    }
     return [
         answerCallbackQuery(context.callback_query_id),
         editChatMessage(context, labels.deleteAdConfirmation[context.lang], actions, context.inputData)
@@ -290,6 +326,13 @@ exports.requestDeleteAd = (context) => {
 };
 exports.cancelDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
+    if (ad.imgId) {
+        // TODO - !!! need template
+        return [
+            answerCallbackQuery(context.callback_query_id),
+            editChatCaption(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
+        ];
+    }
     return [
         answerCallbackQuery(context.callback_query_id),
         editChatMessage(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
@@ -302,10 +345,10 @@ exports.confirmDeleteAd = async (context) => {
         ad.author = null;
         ad.isActive = false;
         await updateAdState(context.inputData, ad);
-        return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context, ad.imgId)];
+        return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context)];
     }
     await deleteAd(context.inputData);
-    return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context, ad.imgId)];
+    return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context)];
 };
 
 exports.deactivateAd = async (context) => {

@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -67,15 +67,10 @@ exports.userPublishAdView = async (context) => {
             )
             .get();
     }
-    return [
-        new Photo(ad.imgId, ad.title).get(),
-        new Text(AD_TEMPLATE(ad, context.lang))
-            .addReplyKeyboard(
-                [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
-                true
-            )
-            .get()
-    ];
+    return AD_TEMPLATE(ad, context.lang, {
+        keyboard: [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+        resize_keyboard: true
+    });
 };
 
 // ////////////////////////////////////////////////// //

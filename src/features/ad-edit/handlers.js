@@ -80,16 +80,14 @@ exports.initChangeRemunerationAdView = async (context) => {
 
 exports.initFinishEditingAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    const adTemplate = new Text(AD_TEMPLATE(ad, context.lang));
-
     if (ad.imgId) {
-        return [
-            new Photo(ad.imgId).get(),
-            adTemplate.addReplyKeyboard([[finishCommand.title[context.lang]]], true).get()
-        ];
+        return AD_TEMPLATE(ad, context.lang, {
+            keyboard: [[finishCommand.title[context.lang]]],
+            resize_keyboard: true
+        });
     }
 
-    return adTemplate.addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
+    return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
 };
 
 exports.updateTitle = async (context) => {
