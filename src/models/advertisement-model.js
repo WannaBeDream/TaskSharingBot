@@ -6,7 +6,7 @@ const {
     regExpForAd,
     strArrForCategory
 } = require('../constants/ad-values');
-const { userInputData } = require('../validators/ad-create-validation');
+const { userInputData } = require('../validators/ad-validation');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
