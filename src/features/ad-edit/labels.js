@@ -27,6 +27,15 @@ module.exports = {
         en: 'Edit remuneration\n\nRight now there is no reward in your advertisement.',
         ua: 'Змінити винагороду\n\nНаразі у Вашому оголошені вісутня винагорода.'
     },
+
+    titleError: {
+        en: 'You can only put letters and numbers in the title.',
+        ua: 'В заголовок Ви можете помістити тільки букви та цифри.'
+    },
+    descriptionError: {
+        en: 'You can only put letters and numbers in the description.',
+        ua: 'В опис Ви можете помістити тільки букви та цифри.'
+    },
     imgError: {
         en: 'Incorrect image format.\nPlease send image or click on the button "Skip".',
         ua: 'Не вірний формат файлу.\n Відправте зображення або натисніть на кнопку "Пропустити".'

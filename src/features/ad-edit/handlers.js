@@ -12,6 +12,8 @@ const {
 const command = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
+const validationLabels = require('../validations-labels');
+const adValues = require('../../constants/ad-values');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
@@ -110,35 +112,46 @@ exports.updateTitle = async (context) => {
     const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
+    const minLength = adValues.titleLength.min;
+    const maxLength = adValues.titleLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
+    } else if (Array.isArray(inputData)) {
+        throw new Error(labels.titleError[context.lang]);
+    } else if (inputData.length < minLength || inputData.length > maxLength) {
+        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
+    } else {
+        await updateTitleAd(context.userState.currentUpdateAd, inputData);
     }
-
-    await updateTitleAd(context.userState.currentUpdateAd, inputData);
 };
 
 exports.updateDescription = async (context) => {
+    const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const { inputData } = context;
+    const minLength = adValues.descriptionLength.min;
+    const maxLength = adValues.descriptionLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
+    } else if (Array.isArray(inputData)) {
+        throw new Error(labels.descriptionError[context.lang]);
+    } else if (inputData.length < minLength || inputData.length > maxLength) {
+        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
+    } else {
+        await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
     }
-    await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
 };
 
+// ! TODO: доробити
 exports.updateCategory = async (context) => {
+    const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-    const { inputData } = context;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
+    } else {
+        await updateCategoryAd(context.userState.currentUpdateAd, inputData);
     }
-
-    await updateCategoryAd(context.userState.currentUpdateAd, inputData);
 };
 
 // ! TODO: доробити
@@ -168,13 +181,15 @@ exports.updateRemuneration = async (context) => {
     const { inputData } = context;
     const buttonTextEn = command.SKIP.title.en;
     const buttonTextUa = command.SKIP.title.en;
-
-    if (Array.isArray(inputData)) {
-        throw new Error(labels.imgErrorInRemuneration[context.lang]);
-    }
+    const minLength = adValues.remunerationLength.min;
+    const maxLength = adValues.remunerationLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
+    } else if (Array.isArray(inputData)) {
+        throw new Error(labels.imgErrorInRemuneration[context.lang]);
+    } else if (inputData.length < minLength || inputData.length > maxLength) {
+        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
+    } else {
+        await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
     }
-    await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
 };
