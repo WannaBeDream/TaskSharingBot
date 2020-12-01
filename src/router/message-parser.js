@@ -11,9 +11,9 @@ const allCommands = Object.values(settingsCommands)
     .concat(Object.values(viewAdsCommands))
     .concat(Object.values(settingsAdCommands));
 
-function parseRegularCommand(update, lang) {
+function parseRegularCommand(update, availableCmds, lang) {
     return allCommands.find((c) => {
-        return c.title[`${lang}`] === update.text;
+        return c.title[`${lang}`] === update.text && availableCmds.some((id) => id === c.id);
     });
 }
 function parseCallbackCommand(update) {
@@ -23,9 +23,9 @@ function parseCallbackCommand(update) {
     });
 }
 
-exports.parseCommand = (update, lang) => {
+exports.parseCommand = (update, availableCmds, lang) => {
     const isNotCallback = !update.originalRequest.callback_query;
-    const command = isNotCallback ? parseRegularCommand(update, lang) : parseCallbackCommand(update);
+    const command = isNotCallback ? parseRegularCommand(update, availableCmds, lang) : parseCallbackCommand(update);
     return command || generalCommands.DATA_INPUT;
 };
 

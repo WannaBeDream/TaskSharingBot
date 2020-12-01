@@ -25,7 +25,11 @@ module.exports = async (update) => {
         const user = messageParser.parseUser(update);
         const userState = await appStateDao.getUserState(user.id);
 
-        const command = messageParser.parseCommand(update, userState.lang);
+        const command = messageParser.parseCommand(
+            update,
+            Object.keys(STATE_MACHINE[userState.appStateId]),
+            userState.lang
+        );
         const transition = STATE_MACHINE[userState.appStateId][command.id];
         if (!transition) {
             return langResources.unknownCommand[userState.lang];
