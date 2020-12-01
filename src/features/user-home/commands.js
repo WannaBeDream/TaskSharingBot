@@ -30,7 +30,7 @@ exports.OWN_ADS = {
 exports.CREATE_AD = {
     id: 'createAd',
     title: {
-        en: 'Create ad',
+        en: 'Create Ad',
         ua: 'Створити оголошення'
     }
 };

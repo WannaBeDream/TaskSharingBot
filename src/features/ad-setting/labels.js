@@ -27,10 +27,6 @@ module.exports = {
         en: 'Cancel',
         ua: 'Відмінити'
     },
-    locationNotSet: {
-        en: "Geolocation isn't set in your message",
-        ua: 'Геолокація не встановлена у вашому повідомлені'
-    },
     imgError: {
         en: 'Incorrect image format,\nPlease send compressed image or type "Skip"',
         ua: 'Неправильно завантажене зображення,\n Відправте зображення у стислому вигляді чи напишіть "Пропустити" '

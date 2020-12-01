@@ -21,3 +21,11 @@ exports.DATA_INPUT = {
         ua: '*'
     }
 };
+
+exports.SKIP = {
+    id: 'Skip',
+    title: {
+        en: 'Skip >>',
+        ua: 'Пропустити >>'
+    }
+};

@@ -110,25 +110,31 @@ module.exports = {
             targetState: appStates.SET_TITLE
         }
     },
-    [appStates.SET_DESCRIPTION.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setDescription,
-            targetState: appStates.SET_IMAGE
-        }
-    },
     [appStates.SET_TITLE.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setTitle,
             targetState: appStates.SET_DESCRIPTION
         }
     },
+    [appStates.SET_DESCRIPTION.id]: {
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingsAdHandlers.setDescription,
+            targetState: appStates.SET_IMAGE
+        }
+    },
     [appStates.SET_IMAGE.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.SET_RENUMERATION
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setImg,
             targetState: appStates.SET_RENUMERATION
         }
     },
     [appStates.SET_RENUMERATION.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.PREVIEW_AD
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setRenumeration,
             targetState: appStates.PREVIEW_AD
@@ -173,30 +179,45 @@ module.exports = {
         ...adsInlineCommands
     },
     [appStates.EDIT_CATEGORY.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.EDIT_TITLE
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateCategory,
             targetState: appStates.EDIT_TITLE
         }
     },
     [appStates.EDIT_TITLE.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.EDIT_DESCRIPTION
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateTitle,
             targetState: appStates.EDIT_DESCRIPTION
         }
     },
     [appStates.EDIT_DESCRIPTION.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.EDIT_IMAGE
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateDescription,
             targetState: appStates.EDIT_IMAGE
         }
     },
     [appStates.EDIT_IMAGE.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.EDIT_REMUNERATION
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateImage,
             targetState: appStates.EDIT_REMUNERATION
         }
     },
     [appStates.EDIT_REMUNERATION.id]: {
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.FINISH_EDITING
+        },
         [generalCommands.DATA_INPUT.id]: {
             handler: editSettingsAdHandlers.updateRemuneration,
             targetState: appStates.FINISH_EDITING

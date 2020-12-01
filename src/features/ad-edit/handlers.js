@@ -9,17 +9,25 @@ const {
     updateRemunerationAd,
     updateImageAd
 } = require('../../database/methods/update');
-const command = require('./commands');
+const { userInputData } = require('../../validators/ad-create-validation');
+const { checkMaxMinReg, checkMatchWords } = require('../validations-labels');
+const {
+    titleLength,
+    descriptionLength,
+    remunerationLength,
+    regExpForAd,
+    regExpForCategory
+} = require('../../constants/ad-values');
+const { SKIP: skipCommand } = require('../general-commands');
+const { FINISH_EDITING: finishCommand } = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
-const validationLabels = require('../validations-labels');
-const adValues = require('../../constants/ad-values');
 const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
     const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(title)}`;
-    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
+    return new Text(message).addReplyKeyboard([[skipCommand.title[context.lang]]], true).get();
 };
 
 exports.initChangeDescriptionAdView = async (context) => {
@@ -30,36 +38,14 @@ exports.initChangeDescriptionAdView = async (context) => {
 
 exports.initChangeCategoryAdView = async (context) => {
     const { category } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'category');
-    let categoryText;
-
-    switch (category) {
-        case 'lostFoundAds':
-            categoryText = inputCms.LOST_FOUND_ADS.title[context.lang];
-            break;
-        case 'sales':
-            categoryText = inputCms.SALES.title[context.lang];
-            break;
-        case 'servicesOffer':
-            categoryText = inputCms.SERVICES_OFFER.title[context.lang];
-            break;
-        case 'assistanceSearch':
-            categoryText = inputCms.ASSISTANCE_SEARCH.title[context.lang];
-            break;
-        case 'buyStuff':
-            categoryText = inputCms.BUY_STUFF.title[context.lang];
-            break;
-        default:
-            categoryText = category;
-            break;
-    }
-
+    const categoryText = Object.values(inputCms).find((cmd) => cmd.id === category).title[context.lang];
     const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [command.SKIP.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [inputCms.LOST_FOUND_ADS.title[context.lang], skipCommand.title[context.lang]]
             ],
             true
         )
@@ -72,14 +58,11 @@ exports.initChangeImageAdView = async (context) => {
 
     if (imgId) {
         message = `${labels.editWithImage[context.lang]}`;
-        return [
-            new Photo(imgId).get(),
-            new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get()
-        ];
+        return [new Photo(imgId).get(), new Text(message).get()];
     }
 
     message = labels.editWithoutImage[context.lang];
-    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
+    return new Text(message).get();
 };
 
 exports.initChangeRemunerationAdView = async (context) => {
@@ -88,11 +71,11 @@ exports.initChangeRemunerationAdView = async (context) => {
 
     if (renumeration === null) {
         message = labels.editRemunerationWithoutData[context.lang];
-        return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
+        return new Text(message).get();
     }
 
-    message = `${labels.editRemuneration[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
-    return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
+    message = `${labels.editRemunerationWithData[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
+    return new Text(message).get();
 };
 
 exports.initFinishEditingAdView = async (context) => {
@@ -102,61 +85,46 @@ exports.initFinishEditingAdView = async (context) => {
     if (ad.imgId) {
         return [
             new Photo(ad.imgId).get(),
-            adTemplate.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get()
+            adTemplate.addReplyKeyboard([[finishCommand.title[context.lang]]], true).get()
         ];
     }
 
-    return adTemplate.addReplyKeyboard([[command.FINISH_EDITING.title[context.lang]]], true).get();
+    return adTemplate.addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
 };
 
 exports.updateTitle = async (context) => {
     const { inputData } = context;
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
-    const minLength = adValues.titleLength.min;
-    const maxLength = adValues.titleLength.max;
-
-    if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
-    }
 
     if (Array.isArray(inputData)) {
         throw new Error(labels.titleError[context.lang]);
-    } else if (inputData.length < minLength || inputData.length > maxLength) {
-        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
-    } else {
-        await updateTitleAd(context.userState.currentUpdateAd, inputData);
     }
+    if (userInputData.ifStrCondition(inputData, titleLength, regExpForAd.app)) {
+        throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
+    }
+
+    await updateTitleAd(context.userState.currentUpdateAd, inputData);
 };
 
 exports.updateDescription = async (context) => {
     const { inputData } = context;
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
-    const minLength = adValues.descriptionLength.min;
-    const maxLength = adValues.descriptionLength.max;
-
-    if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
-    }
 
     if (Array.isArray(inputData)) {
         throw new Error(labels.descriptionError[context.lang]);
-    } else if (inputData.length < minLength || inputData.length > maxLength) {
-        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
-    } else {
-        await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
     }
+    if (userInputData.ifStrCondition(inputData, descriptionLength, regExpForAd.app)) {
+        throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
+    }
+
+    await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
 };
 
 // ! TODO: доробити
 exports.updateCategory = async (context) => {
     const { inputData } = context;
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
 
-    if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
+    const validationResult = userInputData.ifStrContain(inputData, regExpForCategory);
+    if (validationResult) {
+        throw new Error(checkMatchWords[context.lang]);
     }
 
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
@@ -169,14 +137,7 @@ exports.updateImage = async (context) => {
     console.log('=============================  updateImage  =============================');
 
     const { inputData } = context;
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
     // const notImage = typeof inputData[0].file_id === 'undefined';
-
-    if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
-    }
-
     // if (!Array.isArray(inputData) || notImage) {
     //     throw new Error(labels.imgError[context.lang]);
     // }
@@ -187,20 +148,13 @@ exports.updateImage = async (context) => {
 
 exports.updateRemuneration = async (context) => {
     const { inputData } = context;
-    const buttonTextEn = command.SKIP.title.en;
-    const buttonTextUa = command.SKIP.title.en;
-    const minLength = adValues.remunerationLength.min;
-    const maxLength = adValues.remunerationLength.max;
-
-    if (inputData === buttonTextEn || inputData === buttonTextUa) {
-        return;
-    }
 
     if (Array.isArray(inputData)) {
         throw new Error(labels.imgErrorInRemuneration[context.lang]);
-    } else if (inputData.length < minLength || inputData.length > maxLength) {
-        throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
-    } else {
-        await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
     }
+    if (userInputData.ifStrCondition(inputData, remunerationLength, regExpForAd.app)) {
+        throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
+    }
+
+    await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
 };

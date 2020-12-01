@@ -3,6 +3,7 @@ const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
+const { SKIP: skipCommand } = require('../general-commands');
 const { AD_TEMPLATE } = require('../ad-template');
 
 const { findAdvertisement, findUser } = require('../../database/methods/find');
@@ -33,7 +34,7 @@ exports.userSetAdDescriptionView = (context) => {
 
 exports.userSetAdRenumerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
-        .addReplyKeyboard([[inputCms.SKIP.title[context.lang]]], true)
+        .addReplyKeyboard([[skipCommand.title[context.lang]]], true)
         .get();
 };
 
@@ -52,7 +53,7 @@ exports.userSetAdCategotyView = (context) => {
 
 exports.userSetAdImgView = (context) => {
     return new Text(labels.newUserEnterImg[context.lang])
-        .addReplyKeyboard([[inputCms.SKIP.title[context.lang]]], true)
+        .addReplyKeyboard([[skipCommand.title[context.lang]]], true)
         .get();
 };
 
@@ -110,7 +111,7 @@ exports.setRenumeration = async (context) => {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.renumeration = context.inputData !== inputCms.SKIP.id ? context.inputData : null;
+    ad.renumeration = context.inputData;
     await updateAdState(ad._id, ad);
 };
 
@@ -125,7 +126,7 @@ exports.setCategory = async (context) => {
 };
 
 exports.setImg = async (context) => {
-    if (context.inputData !== inputCms.SKIP.id && !Array.isArray(context.inputData)) {
+    if (!Array.isArray(context.inputData)) {
         throw new Error(labels.imgError[context.lang]);
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
