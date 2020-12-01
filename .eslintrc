@@ -28,7 +28,6 @@
         ],
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "no-console": "off",
-        "no-underscore-dangle": "off",
-        "no-else-return": 1
+        "no-underscore-dangle": "off"
     }
 }
