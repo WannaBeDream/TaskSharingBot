@@ -2,43 +2,9 @@
 const { logger } = require('../../helpers');
 const { UserModel, AdvertModel } = require('../../models');
 
-/**
- * Return all advertisements in specific radius
- *
- * @async
- * @param {Number} telegramId
- * @returns {Array} Array of advertisements if they are exist, otherwise return empty array []
- */
-const findAdsWithinRadius = async (telegramId) => {
-    try {
-        const {
-            _id,
-            searchRadius,
-            location: { coordinates }
-        } = await UserModel.findById(telegramId);
-
-        return AdvertModel.find({
-            location: {
-                $nearSphere: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates
-                    },
-                    $maxDistance: searchRadius * 1000000 // DON`T FORGET TO CHANGE -> 1000
-                }
-            },
-            isActive: true,
-            author: { $ne: _id } // not return own user`s advertisements
-        });
-    } catch (e) {
-        logger.error(e);
-        throw new Error('Unable find advertisements');
-    }
-};
-
 const findMyAds = async (criteria) => {
     try {
-        return AdvertModel.find({ author: criteria.author });
+        return AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -61,7 +27,7 @@ const findAdsByCategory = async (criteria) => {
             category: criteria.category,
             spam: { $nin: [criteria.user] },
             author: { $ne: criteria.user } // not return own user`s advertisements
-        });
+        }).sort({ updatedAt: 1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find advertisements');
@@ -70,7 +36,9 @@ const findAdsByCategory = async (criteria) => {
 
 const findSavedAds = async (criteria) => {
     try {
-        return AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } });
+        return AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
+            updatedAt: 1
+        });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find saved advertisements');
@@ -133,7 +101,6 @@ const findAdsByCriteria = async (criteria) => {
 
 module.exports = {
     findAdsByCriteria,
-    findAdsWithinRadius,
     findMyAds,
     findAdsByCategory,
     findSavedAds,
