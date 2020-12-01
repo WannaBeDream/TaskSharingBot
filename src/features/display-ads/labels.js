@@ -4,8 +4,8 @@ module.exports = {
         ua: `Оголошень не знайдено`
     },
     author: {
-        en: `Author`,
-        ua: `Автор`
+        en: `\uD83D\uDC49link to the author`,
+        ua: `\uD83D\uDC49посилання на автора`
     },
     deleted: {
         en: `Advertisement was deleted !!!`,

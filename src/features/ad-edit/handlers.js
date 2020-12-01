@@ -14,16 +14,17 @@ const labels = require('./labels');
 const inputCms = require('../ad-categories');
 const validationLabels = require('../validations-labels');
 const adValues = require('../../constants/ad-values');
+const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initChangeTitleAdView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
-    const message = `${labels.editTitle[context.lang]} ${title}`;
+    const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(title)}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
 exports.initChangeDescriptionAdView = async (context) => {
     const { description } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'description');
-    const message = `${labels.editDescription[context.lang]} ${description}`;
+    const message = `${labels.editDescription[context.lang]}\n${markdownUtils.formatItalicText(description)}`;
     return new Text(message).get();
 };
 
@@ -52,7 +53,7 @@ exports.initChangeCategoryAdView = async (context) => {
             break;
     }
 
-    const message = `${labels.editCategory[context.lang]} ${categoryText}`;
+    const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
             [
@@ -90,7 +91,7 @@ exports.initChangeRemunerationAdView = async (context) => {
         return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
     }
 
-    message = `${labels.editRemunerationWithData[context.lang]} ${renumeration}`;
+    message = `${labels.editRemuneration[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
     return new Text(message).addReplyKeyboard([[command.SKIP.title[context.lang]]], true).get();
 };
 
@@ -116,7 +117,10 @@ exports.updateTitle = async (context) => {
     const maxLength = adValues.titleLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-    } else if (Array.isArray(inputData)) {
+        return;
+    }
+
+    if (Array.isArray(inputData)) {
         throw new Error(labels.titleError[context.lang]);
     } else if (inputData.length < minLength || inputData.length > maxLength) {
         throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
@@ -133,7 +137,10 @@ exports.updateDescription = async (context) => {
     const maxLength = adValues.descriptionLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-    } else if (Array.isArray(inputData)) {
+        return;
+    }
+
+    if (Array.isArray(inputData)) {
         throw new Error(labels.descriptionError[context.lang]);
     } else if (inputData.length < minLength || inputData.length > maxLength) {
         throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));
@@ -149,9 +156,10 @@ exports.updateCategory = async (context) => {
     const buttonTextUa = command.SKIP.title.en;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-    } else {
-        await updateCategoryAd(context.userState.currentUpdateAd, inputData);
+        return;
     }
+
+    await updateCategoryAd(context.userState.currentUpdateAd, inputData);
 };
 
 // ! TODO: доробити
@@ -185,7 +193,10 @@ exports.updateRemuneration = async (context) => {
     const maxLength = adValues.remunerationLength.max;
 
     if (inputData === buttonTextEn || inputData === buttonTextUa) {
-    } else if (Array.isArray(inputData)) {
+        return;
+    }
+
+    if (Array.isArray(inputData)) {
         throw new Error(labels.imgErrorInRemuneration[context.lang]);
     } else if (inputData.length < minLength || inputData.length > maxLength) {
         throw new Error(validationLabels.checkMaxMinReg[context.lang](minLength, maxLength));

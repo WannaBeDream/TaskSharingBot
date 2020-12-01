@@ -49,7 +49,7 @@ function buildInlineButton(key, command, lang) {
     };
 }
 
-// eslint-disable-next-line
+// eslint-disable-next-line sonarjs/cognitive-complexity
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {

@@ -1,6 +1,7 @@
 const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
+const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initUserHomeView = (context) => {
     return new Text('🏠')
@@ -15,12 +16,14 @@ exports.initUserHomeView = (context) => {
         .get();
 };
 
+function formatName(context) {
+    return markdownUtils.formatPlainText(`${context.user.firstName || ''} ${context.user.lastName || ''}`);
+}
+
 exports.getUserGreeting = (context) => {
-    const name = `${context.user.firstName} ${context.user.lastName}`;
-    return new Text(labels.existingUserGreeting[context.lang](name)).get();
+    return new Text(labels.existingUserGreeting[context.lang](formatName(context))).get();
 };
 
 exports.getNewUserGreeting = (context) => {
-    const name = `${context.user.firstName} ${context.user.lastName}`;
-    return new Text(labels.newUserGreeting[context.lang](name)).get();
+    return new Text(labels.newUserGreeting[context.lang](formatName(context))).get();
 };
