@@ -83,7 +83,8 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const validationResult = userInputData.ifStrCondition(context.inputData, titleLength, regExpForAd.app);
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    const validationResult = userInputData.ifStrCondition(context.inputData, titleLength, new RegExp(regExpForAd));
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
@@ -93,7 +94,12 @@ exports.setTitle = async (context) => {
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = userInputData.ifStrCondition(context.inputData, descriptionLength, regExpForAd.app);
+    const validationResult = userInputData.ifStrCondition(
+        context.inputData,
+        descriptionLength,
+        // eslint-disable-next-line security/detect-non-literal-regexp
+        new RegExp(regExpForAd)
+    );
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
@@ -106,7 +112,12 @@ exports.setRenumeration = async (context) => {
     if (Array.isArray(context.inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    const validationResult = userInputData.ifStrCondition(context.inputData, remunerationLength, regExpForAd.app);
+    const validationResult = userInputData.ifStrCondition(
+        context.inputData,
+        remunerationLength,
+        // eslint-disable-next-line security/detect-non-literal-regexp
+        new RegExp(regExpForAd)
+    );
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }

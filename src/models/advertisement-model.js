@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
-const {
-    titleLength,
-    descriptionLength,
-    remunerationLength
-    // regExpForAdv
-} = require('../constants/ad-values');
+const { titleLength, descriptionLength, remunerationLength, regExpForAd } = require('../constants/ad-values');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
@@ -16,17 +11,23 @@ const AdvertisementSchema = new mongoose.Schema(
         title: {
             type: String,
             default: '',
-            // match: [
-            //     // eslint-disable-next-line security/detect-non-literal-regexp
-            //     new RegExp(regExpForAdv.app),
-            //     "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
-            // ],
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                // eslint-disable-next-line sonarjs/no-duplicate-string
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: titleLength.max,
             minLength: titleLength.min
         },
         description: {
             type: String,
             default: '',
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: descriptionLength.max,
             minLength: descriptionLength.min
         },
@@ -51,6 +52,11 @@ const AdvertisementSchema = new mongoose.Schema(
         renumeration: {
             type: String,
             default: '',
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: remunerationLength.max,
             minLength: remunerationLength.min
         },
