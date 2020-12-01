@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
-const { titleLength, descriptionLength, remunerationLength, regExpForAd } = require('../constants/ad-values');
+const {
+    titleLength,
+    descriptionLength,
+    remunerationLength,
+    regExpForAd,
+    strArrForCategory
+} = require('../constants/ad-values');
+const { userInputData } = require('../validators/ad-create-validation');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
@@ -43,7 +50,12 @@ const AdvertisementSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            default: ''
+            default: '',
+            validate: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                (inputData) => !userInputData.ifStrContain(inputData, strArrForCategory),
+                "{PATH} '{VALUE}' is not valid"
+            ]
         },
         imgId: {
             type: String,

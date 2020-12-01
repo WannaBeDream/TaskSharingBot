@@ -16,7 +16,7 @@ const {
     descriptionLength,
     remunerationLength,
     regExpForAd,
-    regExpForCategory
+    strArrForCategory
 } = require('../../constants/ad-values');
 const { SKIP: skipCommand } = require('../general-commands');
 const { FINISH_EDITING: finishCommand } = require('./commands');
@@ -98,7 +98,8 @@ exports.updateTitle = async (context) => {
     if (Array.isArray(inputData)) {
         throw new Error(labels.titleError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, titleLength, regExpForAd.app)) {
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    if (userInputData.ifStrCondition(inputData, titleLength, new RegExp(regExpForAd))) {
         throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
@@ -111,7 +112,8 @@ exports.updateDescription = async (context) => {
     if (Array.isArray(inputData)) {
         throw new Error(labels.descriptionError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, descriptionLength, regExpForAd.app)) {
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    if (userInputData.ifStrCondition(inputData, descriptionLength, new RegExp(regExpForAd))) {
         throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
 
@@ -122,7 +124,7 @@ exports.updateDescription = async (context) => {
 exports.updateCategory = async (context) => {
     const { inputData } = context;
 
-    const validationResult = userInputData.ifStrContain(inputData, regExpForCategory);
+    const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
     if (validationResult) {
         throw new Error(checkMatchWords[context.lang]);
     }
@@ -152,7 +154,8 @@ exports.updateRemuneration = async (context) => {
     if (Array.isArray(inputData)) {
         throw new Error(labels.imgErrorInRemuneration[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, remunerationLength, regExpForAd.app)) {
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    if (userInputData.ifStrCondition(inputData, remunerationLength, new RegExp(regExpForAd))) {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
 

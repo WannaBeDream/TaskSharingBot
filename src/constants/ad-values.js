@@ -5,7 +5,7 @@ const constants = {
     descriptionLength: { min: 10, max: 1200 },
     remunerationLength: { min: 0, max: 80 },
     regExpForAd: `^[а-яА-яЁёЇїІіЄєҐґ'-zA-Z0-9 ]*$`,
-    regExpForCategory: [LOST_FOUND_ADS.id, SALES.id, SERVICES_OFFER.id, ASSISTANCE_SEARCH.id, BUY_STUFF.id]
+    strArrForCategory: [LOST_FOUND_ADS.id, SALES.id, SERVICES_OFFER.id, ASSISTANCE_SEARCH.id, BUY_STUFF.id]
 };
 
 module.exports = constants;

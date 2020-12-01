@@ -16,7 +16,7 @@ const {
     descriptionLength,
     remunerationLength,
     regExpForAd,
-    regExpForCategory
+    strArrForCategory
 } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 
@@ -127,7 +127,7 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
-    const validationResult = userInputData.ifStrContain(context.inputData, regExpForCategory);
+    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
     if (validationResult) {
         throw new Error(checkMatchWords[context.lang]);
     }
