@@ -32,7 +32,7 @@ ${author}`;
                 photo: `${ad.imgId}`,
                 caption,
                 parse_mode: 'Markdown',
-                reply_markup: JSON.stringify(keyboard)
+                reply_markup: keyboard
             }
         };
     }

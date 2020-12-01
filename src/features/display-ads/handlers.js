@@ -49,14 +49,6 @@ function buildInlineButton(key, command, lang) {
     };
 }
 
-function buildInlineButtonforImg(key, command, lang) {
-    return [
-        {
-            text: command.title[`${lang}`],
-            callback_data: JSON.stringify({ key, cmd: command.id })
-        }
-    ];
-}
 // eslint-disable-next-line sonarjs/cognitive-complexity
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
@@ -85,22 +77,22 @@ exports.initViewFoundAdsView = (context) => {
         const inlineButtons2 = [];
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
-                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons2.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             } else {
                 const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
-                inlineButtons2.push(buildInlineButtonforImg(ad._id, activateCmd, context.lang));
-                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.EDIT_AD, context.lang));
-                inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons2.push(buildInlineButton(ad._id, activateCmd, context.lang));
+                inlineButtons2.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
+                inlineButtons2.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             }
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
-            inlineButtons2.push(buildInlineButtonforImg(ad._id, favCmd, context.lang));
-            inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.REPORT, context.lang));
+            inlineButtons2.push(buildInlineButton(ad._id, favCmd, context.lang));
+            inlineButtons2.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
         } else {
-            inlineButtons2.push(buildInlineButtonforImg(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+            inlineButtons2.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
         return AD_TEMPLATE(ad, context.lang, {
-            inline_keyboard: inlineButtons2
+            inline_keyboard: [inlineButtons2]
         });
     });
     const navLine1 = [
