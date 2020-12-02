@@ -14,14 +14,6 @@ exports.NEWER_ADS = {
     }
 };
 
-exports.CHANGE_CATEGORY = {
-    id: 'changeCategory',
-    title: {
-        en: '<< Go back',
-        ua: '<< Повернутися '
-    }
-};
-
 exports.DEACTIVATE_AD = {
     id: 'nactv',
     title: {
