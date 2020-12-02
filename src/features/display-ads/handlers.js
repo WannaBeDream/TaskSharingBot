@@ -35,7 +35,11 @@ exports.initSetAdsCategoryView = (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [backCommand.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [
+                    backCommand.title[context.lang],
+                    inputCms.LOST_FOUND_ADS.title[context.lang],
+                    inputCms.ALL.title[context.lang]
+                ]
             ],
             true
         )
@@ -94,8 +98,9 @@ exports.initViewFoundAdsView = (context) => {
             : [])
     ];
     const navLine2 = [
-        backCommand.title[context.lang],
-        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE ? [commands.CHANGE_CATEGORY.title[context.lang]] : [])
+        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE
+            ? [commands.CHANGE_CATEGORY.title[context.lang]]
+            : [backCommand.title[context.lang]])
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
     return _.flattenDeep([

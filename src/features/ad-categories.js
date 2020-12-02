@@ -33,3 +33,10 @@ exports.BUY_STUFF = {
         ua: 'Запозичення/покупка речей'
     }
 };
+exports.ALL = {
+    id: 'all',
+    title: {
+        en: 'All',
+        ua: 'Усі'
+    }
+};

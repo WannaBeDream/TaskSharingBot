@@ -1,32 +1,55 @@
 /* eslint-disable no-underscore-dangle */
 const { logger } = require('../../helpers');
 const { UserModel, AdvertModel } = require('../../models');
+const { ALL } = require('../../features/ad-categories');
 
 const findMyAds = async (criteria) => {
     try {
-        return AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
+        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
     }
 };
 
-const findAdsByCategory = async (criteria) => {
+const findAdsAll = async ({ location, radius, user }) => {
     try {
-        return AdvertModel.find({
+        return await AdvertModel.find({
             location: {
                 $nearSphere: {
                     $geometry: {
                         type: 'Point',
-                        coordinates: [criteria.location.longitude, criteria.location.latitude]
+                        coordinates: [location.longitude, location.latitude]
                     },
-                    $maxDistance: criteria.radius * 1000 // DON`T FORGET TO CHANGE -> 1000 => solved
+                    $maxDistance: radius * 10000000000000000000000000
                 }
             },
             isActive: true,
-            category: criteria.category,
-            spam: { $nin: [criteria.user] },
-            author: { $ne: criteria.user } // not return own user`s advertisements
+            spam: { $nin: [user] },
+            author: { $ne: user } // not return own user`s advertisements
+        }).sort({ updatedAt: 1 });
+    } catch (e) {
+        logger.error(e);
+        throw new Error('Unable find advertisements');
+    }
+};
+
+const findAdsByCategory = async ({ location, radius, category, user }) => {
+    try {
+        return await AdvertModel.find({
+            location: {
+                $nearSphere: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [location.longitude, location.latitude]
+                    },
+                    $maxDistance: radius * 100000000000000000000000
+                }
+            },
+            isActive: true,
+            category,
+            spam: { $nin: [user] },
+            author: { $ne: user } // not return own user`s advertisements
         }).sort({ updatedAt: 1 });
     } catch (e) {
         logger.error(e);
@@ -36,7 +59,7 @@ const findAdsByCategory = async (criteria) => {
 
 const findSavedAds = async (criteria) => {
     try {
-        return AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
+        return await AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
             updatedAt: 1
         });
     } catch (e) {
@@ -57,7 +80,7 @@ const findUser = async (telegramId) => {
 
 const findAdAndReturnOneField = async (id, data) => {
     try {
-        return AdvertModel.findById({ _id: id }, data);
+        return await AdvertModel.findById({ _id: id }, data);
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
@@ -66,7 +89,7 @@ const findAdAndReturnOneField = async (id, data) => {
 
 const findAdvertisement = async (id) => {
     try {
-        return AdvertModel.findById({ _id: id });
+        return await AdvertModel.findById({ _id: id });
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
@@ -75,7 +98,7 @@ const findAdvertisement = async (id) => {
 
 const findUserAndReturnOneField = async (id) => {
     try {
-        return AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
+        return await AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
@@ -89,11 +112,14 @@ const PAGE_SIZE = 5;
 */
 const findAdsByCriteria = async (criteria) => {
     // eslint-disable-next-line no-nested-ternary
-    const foundAds = criteria.category
-        ? await findAdsByCategory(criteria)
-        : criteria.author
-        ? await findMyAds(criteria)
-        : await findSavedAds(criteria);
+    const foundAds =
+        criteria.category === ALL.id
+            ? await findAdsAll(criteria)
+            : criteria.category
+            ? await findAdsByCategory(criteria)
+            : criteria.author
+            ? await findMyAds(criteria)
+            : await findSavedAds(criteria);
     const offset = criteria.page * PAGE_SIZE;
     const adsSlice = foundAds.slice(offset, offset + PAGE_SIZE).map((ad) => ad._doc);
     return { adsSlice, numberOfPages: Math.ceil(foundAds.length / PAGE_SIZE) };
