@@ -122,8 +122,8 @@ exports.updateDescription = async (context) => {
 
 exports.updateCategory = async (context) => {
     const { inputData } = context;
-
     const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
+
     if (validationResult) {
         throw new Error(checkMatchWords[context.lang]);
     }
