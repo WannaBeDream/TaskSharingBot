@@ -42,3 +42,31 @@ ${renumeration}
 ${ad.description}
 ${author}`;
 };
+
+exports.AD_TEMPLATE_TEXT = (ad, lang) => {
+    const renumeration = ad.renumeration ? `💰 ${ad.renumeration}` : '';
+    const author =
+        // eslint-disable-next-line no-nested-ternary
+        ad.spam.length >= SPAM_COUNTER
+            ? `*${labels.deletedSpam[`${lang}`]}*`
+            : ad.author
+            ? `[${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
+            : `*${labels.deleted[`${lang}`]}*`;
+
+    let caption = `\u26A1 *${ad.title}*
+${renumeration}
+            
+${ad.description}
+            
+${author}`;
+    if (caption.length > 1024) {
+        const description = ad.description.slice(0, ad.description.length - (caption.length - 1024) - 3);
+        caption = `\u26A1 *${ad.title}*
+${renumeration}
+        
+${description}...
+        
+${author}`;
+    }
+    return caption;
+};

@@ -6,7 +6,7 @@ const commands = require('./commands');
 const inputCms = require('../ad-categories');
 const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
-const { AD_TEMPLATE } = require('../ad-template');
+const { AD_TEMPLATE, AD_TEMPLATE_TEXT } = require('../ad-template');
 const { SPAM_COUNTER } = require('../../constants/db-values');
 
 const adsDao = require('../../database/methods/find');
@@ -53,46 +53,29 @@ function buildInlineButton(key, command, lang) {
 exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {
-        if (!ad.imgId) {
-            const adView = new Text(AD_TEMPLATE(ad, context.lang));
-            const inlineButtons = [];
-            if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
-                if (ad.spam.length >= SPAM_COUNTER) {
-                    inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
-                } else {
-                    const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
-                    inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
-                    inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
-                    inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
-                }
-            } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
-                const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
-                inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
-                inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
-            } else {
-                inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
-            }
-            return adView.addInlineKeyboard([inlineButtons]).get();
-        }
-        const inlineButtons2 = [];
+        const inlineButtons = [];
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
-                inlineButtons2.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             } else {
                 const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
-                inlineButtons2.push(buildInlineButton(ad._id, activateCmd, context.lang));
-                inlineButtons2.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
-                inlineButtons2.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             }
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
-            inlineButtons2.push(buildInlineButton(ad._id, favCmd, context.lang));
-            inlineButtons2.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
+            inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
+            inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
         } else {
-            inlineButtons2.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+            inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+        }
+        if (!ad.imgId) {
+            const adView = new Text(AD_TEMPLATE(ad, context.lang));
+            return adView.addInlineKeyboard([inlineButtons]).get();
         }
         return AD_TEMPLATE(ad, context.lang, {
-            inline_keyboard: [inlineButtons2]
+            inline_keyboard: [inlineButtons]
         });
     });
     const navLine1 = [
@@ -319,10 +302,9 @@ exports.requestDeleteAd = async (context) => {
 exports.cancelDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     if (ad.imgId) {
-        // TODO - !!! need template
         return [
             answerCallbackQuery(context.callback_query_id),
-            editChatCaption(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
+            editChatCaption(context, AD_TEMPLATE_TEXT(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
         ];
     }
     return [
