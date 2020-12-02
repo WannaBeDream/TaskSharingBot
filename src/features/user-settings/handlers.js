@@ -75,10 +75,11 @@ exports.setLanguage = (context) => {
     }
 };
 exports.setRadius = (context) => {
-    if (!Number.isInteger(+context.inputData) || +context.inputData < 1 || +context.inputData > 50) {
+    const radius = +context.inputData;
+    if (!Number.isInteger(radius) || radius < 1 || radius > 50) {
         throw new Error(labels.incorrectRadius[context.lang]);
     }
-    context.userState.searchRadius = +context.inputData;
+    context.userState.searchRadius = radius;
 };
 exports.setLocation = async (context) => {
     if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
