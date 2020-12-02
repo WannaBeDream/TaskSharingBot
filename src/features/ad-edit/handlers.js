@@ -10,7 +10,7 @@ const {
     updateImageAd
 } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
-const { checkMaxMinReg, checkMatchWords } = require('../validations-labels');
+const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const {
     titleLength,
     descriptionLength,
@@ -57,7 +57,7 @@ exports.initChangeImageAdView = async (context) => {
     let message;
 
     if (imgId) {
-        message = `${labels.editWithImage[context.lang]}`;
+        message = labels.editWithImage[context.lang];
         return [new Photo(imgId).get(), new Text(message).get()];
     }
 
@@ -125,7 +125,7 @@ exports.updateCategory = async (context) => {
     const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
 
     if (validationResult) {
-        throw new Error(checkMatchWords[context.lang]);
+        throw new Error(categoryError[context.lang]);
     }
 
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);

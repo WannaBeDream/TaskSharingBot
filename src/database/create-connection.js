@@ -16,4 +16,5 @@ const connectToDatabase = async (uri) => {
     cachedDb = db;
     return cachedDb;
 };
+
 module.exports = { connectToDatabase };

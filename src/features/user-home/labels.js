@@ -4,7 +4,7 @@ module.exports = {
         ua: (name) => `Привіт, ${name}`
     },
     existingUserGreeting: {
-        en: (name) => `Wellcome back ${name}`,
+        en: (name) => `Welcome back ${name}`,
         ua: (name) => `З поверненням, ${name}`
     }
 };
