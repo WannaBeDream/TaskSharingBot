@@ -6,7 +6,7 @@ const commands = require('./commands');
 const inputCms = require('../ad-categories');
 const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
-const { AD_TEMPLATE, AD_TEMPLATE_TEXT } = require('../ad-template');
+const { AD_TEMPLATE } = require('../ad-template');
 const { SPAM_COUNTER } = require('../../constants/db-values');
 
 const adsDao = require('../../database/methods/find');
@@ -74,9 +74,18 @@ exports.initViewFoundAdsView = (context) => {
             const adView = new Text(AD_TEMPLATE(ad, context.lang));
             return adView.addInlineKeyboard([inlineButtons]).get();
         }
-        return AD_TEMPLATE(ad, context.lang, {
-            inline_keyboard: [inlineButtons]
-        });
+        return {
+            method: 'sendPhoto',
+            body: {
+                photo: `${ad.imgId}`,
+                caption: AD_TEMPLATE(ad, context.lang),
+                parse_mode: 'Markdown',
+                reply_markup: {
+                    inline_keyboard: [inlineButtons],
+                    resize_keyboard: true
+                }
+            }
+        };
     });
     const navLine1 = [
         ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
@@ -304,7 +313,7 @@ exports.cancelDeleteAd = async (context) => {
     if (ad.imgId) {
         return [
             answerCallbackQuery(context.callback_query_id),
-            editChatCaption(context, AD_TEMPLATE_TEXT(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
+            editChatCaption(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
         ];
     }
     return [

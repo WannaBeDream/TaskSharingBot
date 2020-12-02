@@ -67,10 +67,18 @@ exports.userPublishAdView = async (context) => {
             )
             .get();
     }
-    return AD_TEMPLATE(ad, context.lang, {
-        keyboard: [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
-        resize_keyboard: true
-    });
+    return {
+        method: 'sendPhoto',
+        body: {
+            photo: `${ad.imgId}`,
+            caption: AD_TEMPLATE(ad, context.lang),
+            parse_mode: 'Markdown',
+            reply_markup: {
+                keyboard: [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+                resize_keyboard: true
+            }
+        }
+    };
 };
 
 // ////////////////////////////////////////////////// //
