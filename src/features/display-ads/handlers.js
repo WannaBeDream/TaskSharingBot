@@ -35,7 +35,11 @@ exports.initSetAdsCategoryView = (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [backCommand.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [
+                    backCommand.title[context.lang],
+                    inputCms.LOST_FOUND_ADS.title[context.lang],
+                    inputCms.ALL.title[context.lang]
+                ]
             ],
             true
         )
