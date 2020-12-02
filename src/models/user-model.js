@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const UserSchema = new mongoose.Schema({
     _id: {
         type: Number,
-        required: true
+        required: true,
+        validate: [(str) => validator.isNumeric(`${str}`), "{PATH} '{VALUE}' is not valid"]
     },
     location: {
         type: {
@@ -21,7 +23,8 @@ const UserSchema = new mongoose.Schema({
     },
     appStateId: {
         type: String,
-        require: true
+        require: true,
+        validate: [validator.isAlpha, "{PATH} '{VALUE}' is not valid"]
     },
     lang: {
         type: String

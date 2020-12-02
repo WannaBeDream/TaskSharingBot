@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const { Text } = require('claudia-bot-builder').telegramTemplate;
+const { Text, Sticker } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -9,14 +9,14 @@ const { AD_TEMPLATE } = require('../ad-template');
 const { findAdvertisement, findUser } = require('../../database/methods/find');
 const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
-const { userInputData } = require('../../validators/ad-create-validation');
-const { checkMaxMinReg, checkMatchWords } = require('../validations-labels');
+const { userInputData } = require('../../validators/ad-validation');
+const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const {
     titleLength,
     descriptionLength,
     remunerationLength,
     regExpForAd,
-    regExpForCategory
+    strArrForCategory
 } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 
@@ -86,17 +86,25 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const validationResult = userInputData.ifStrCondition(context.inputData, titleLength, regExpForAd.app);
+    // eslint-disable-next-line security/detect-non-literal-regexp
+    const validationResult = userInputData.ifStrCondition(context.inputData, titleLength, new RegExp(regExpForAd));
+
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
+
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.title = context.inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = userInputData.ifStrCondition(context.inputData, descriptionLength, regExpForAd.app);
+    const validationResult = userInputData.ifStrCondition(
+        context.inputData,
+        descriptionLength,
+        // eslint-disable-next-line security/detect-non-literal-regexp
+        new RegExp(regExpForAd)
+    );
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
@@ -109,7 +117,12 @@ exports.setRenumeration = async (context) => {
     if (Array.isArray(context.inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    const validationResult = userInputData.ifStrCondition(context.inputData, remunerationLength, regExpForAd.app);
+    const validationResult = userInputData.ifStrCondition(
+        context.inputData,
+        remunerationLength,
+        // eslint-disable-next-line security/detect-non-literal-regexp
+        new RegExp(regExpForAd)
+    );
     if (validationResult) {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
@@ -119,9 +132,9 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
-    const validationResult = userInputData.ifStrContain(context.inputData, regExpForCategory);
+    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
     if (validationResult) {
-        throw new Error(checkMatchWords[context.lang]);
+        throw new Error(categoryError[context.lang]);
     }
     const ad = { author: context.user.id, category: context.inputData };
     const adId = await createAdvertisement(ad);
@@ -145,10 +158,10 @@ exports.publish = async (context) => {
     };
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
-    return new Text(`👌🏿`).get();
+    return new Sticker('CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA').get();
 };
 
 exports.cancel = async (context) => {
     await deleteAd(context.userState.currentUpdateAd);
-    return new Text(`👌🏿`).get();
+    return new Sticker('CAACAgIAAxkBAAEBpRFfxxYEAwwAAUcOC8pQeftsyqCsPZUAAvN3AQABY4tGDLoxyUviSr8AAR4E').get();
 };

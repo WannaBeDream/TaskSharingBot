@@ -5,6 +5,7 @@ exports.OLDER_ADS = {
         ua: 'Старіші оголошення'
     }
 };
+
 exports.NEWER_ADS = {
     id: 'newerAds',
     title: {
@@ -12,6 +13,7 @@ exports.NEWER_ADS = {
         ua: 'Новіші оголошення'
     }
 };
+
 exports.CHANGE_CATEGORY = {
     id: 'changeCategory',
     title: {
@@ -19,6 +21,7 @@ exports.CHANGE_CATEGORY = {
         ua: 'Змінити категорію'
     }
 };
+
 exports.DEACTIVATE_AD = {
     id: 'nactv',
     title: {
@@ -26,6 +29,7 @@ exports.DEACTIVATE_AD = {
         ua: 'Деактивувати'
     }
 };
+
 exports.ACTIVATE_AD = {
     id: 'actv',
     title: {
@@ -33,6 +37,7 @@ exports.ACTIVATE_AD = {
         ua: 'Aктивувати'
     }
 };
+
 exports.DELETE_REQUEST = {
     id: 'dlr',
     title: {
@@ -40,6 +45,7 @@ exports.DELETE_REQUEST = {
         ua: 'Видалити'
     }
 };
+
 exports.CONFIRM_DELETE = {
     id: 'dlok',
     title: {
@@ -47,6 +53,7 @@ exports.CONFIRM_DELETE = {
         ua: 'OK'
     }
 };
+
 exports.CANCEL_DELETE = {
     id: 'dlbc',
     title: {
@@ -54,6 +61,7 @@ exports.CANCEL_DELETE = {
         ua: 'Відмінити'
     }
 };
+
 exports.EDIT_AD = {
     id: 'edt',
     title: {
@@ -61,6 +69,7 @@ exports.EDIT_AD = {
         ua: 'Редагувати'
     }
 };
+
 exports.REPORT = {
     id: 'rprt',
     title: {
@@ -68,6 +77,7 @@ exports.REPORT = {
         ua: 'Поскаржитись на вміст'
     }
 };
+
 exports.CANCEL_REPORT = {
     id: 'nrprt',
     title: {
@@ -75,6 +85,7 @@ exports.CANCEL_REPORT = {
         ua: 'Відмінити скаргу'
     }
 };
+
 exports.ADD_TO_FAV = {
     id: 'fav',
     title: {
@@ -82,6 +93,7 @@ exports.ADD_TO_FAV = {
         ua: 'Додати у відібрані'
     }
 };
+
 exports.REMOVE_FROM_FAV = {
     id: 'nfav',
     title: {

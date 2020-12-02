@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const {
     titleLength,
     descriptionLength,
-    remunerationLength
-    // regExpForAdv
+    remunerationLength,
+    regExpForAd,
+    strArrForCategory
 } = require('../constants/ad-values');
+const { userInputData } = require('../validators/ad-validation');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
@@ -16,17 +18,23 @@ const AdvertisementSchema = new mongoose.Schema(
         title: {
             type: String,
             default: '',
-            // match: [
-            //     // eslint-disable-next-line security/detect-non-literal-regexp
-            //     new RegExp(regExpForAdv.app),
-            //     "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
-            // ],
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                // eslint-disable-next-line sonarjs/no-duplicate-string
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: titleLength.max,
             minLength: titleLength.min
         },
         description: {
             type: String,
             default: '',
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: descriptionLength.max,
             minLength: descriptionLength.min
         },
@@ -42,7 +50,12 @@ const AdvertisementSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            default: ''
+            default: '',
+            validate: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                (inputData) => !userInputData.ifStrContain(inputData, strArrForCategory),
+                "{PATH} '{VALUE}' is not valid"
+            ]
         },
         imgId: {
             type: String,
@@ -51,6 +64,11 @@ const AdvertisementSchema = new mongoose.Schema(
         renumeration: {
             type: String,
             default: '',
+            match: [
+                // eslint-disable-next-line security/detect-non-literal-regexp
+                new RegExp(regExpForAd),
+                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
+            ],
             maxlength: remunerationLength.max,
             minLength: remunerationLength.min
         },

@@ -4,6 +4,7 @@ const messageParser = require('./message-parser');
 const STATE_MACHINE = require('./state-machine');
 const langResources = require('../features/unknown-labels');
 const { connectToDatabase } = require('../database/create-connection');
+const { logger } = require('../helpers');
 
 async function tryExecuteFunction(func, params, result) {
     if (func) {
@@ -49,7 +50,7 @@ module.exports = async (update) => {
         });
         return reply;
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return error.message;
     }
 };
