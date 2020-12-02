@@ -4,7 +4,7 @@ const { UserModel, AdvertModel } = require('../../models');
 
 const findMyAds = async (criteria) => {
     try {
-        return AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
+        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -13,7 +13,7 @@ const findMyAds = async (criteria) => {
 
 const findAdsByCategory = async (criteria) => {
     try {
-        return AdvertModel.find({
+        return await AdvertModel.find({
             location: {
                 $nearSphere: {
                     $geometry: {
@@ -36,7 +36,7 @@ const findAdsByCategory = async (criteria) => {
 
 const findSavedAds = async (criteria) => {
     try {
-        return AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
+        return await AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
             updatedAt: 1
         });
     } catch (e) {
@@ -57,7 +57,7 @@ const findUser = async (telegramId) => {
 
 const findAdAndReturnOneField = async (id, data) => {
     try {
-        return AdvertModel.findById({ _id: id }, data);
+        return await AdvertModel.findById({ _id: id }, data);
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
@@ -66,7 +66,7 @@ const findAdAndReturnOneField = async (id, data) => {
 
 const findAdvertisement = async (id) => {
     try {
-        return AdvertModel.findById({ _id: id });
+        return await AdvertModel.findById({ _id: id });
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
@@ -75,7 +75,7 @@ const findAdvertisement = async (id) => {
 
 const findUserAndReturnOneField = async (id) => {
     try {
-        return AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
+        return await AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
     } catch (e) {
         logger.error(e);
         throw new Error(e.message);
