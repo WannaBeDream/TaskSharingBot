@@ -17,8 +17,8 @@ exports.NEWER_ADS = {
 exports.CHANGE_CATEGORY = {
     id: 'changeCategory',
     title: {
-        en: 'Change Category',
-        ua: 'Змінити категорію'
+        en: '<< Go back',
+        ua: '<< Повернутися '
     }
 };
 
