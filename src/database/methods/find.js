@@ -27,7 +27,7 @@ const findAdsAll = async ({ location, radius, user }) => {
                         type: 'Point',
                         coordinates: [location.longitude, location.latitude]
                     },
-                    $maxDistance: radius * 10000000000000000000000000
+                    $maxDistance: radius * 1000
                 }
             },
             isActive: true,
@@ -56,7 +56,7 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
                         type: 'Point',
                         coordinates: [location.longitude, location.latitude]
                     },
-                    $maxDistance: radius * 100000000000000000000000
+                    $maxDistance: radius * 1000
                 }
             },
             isActive: true,

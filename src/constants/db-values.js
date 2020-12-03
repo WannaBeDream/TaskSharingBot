@@ -1,1 +1,1 @@
-exports.SPAM_COUNTER = 5;
+exports.SPAM_COUNTER = 1;
