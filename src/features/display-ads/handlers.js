@@ -102,7 +102,11 @@ exports.initViewFoundAdsView = (context) => {
             : [])
     ];
 
-    const navLine2 = [backCommand.title[context.lang]];
+    const navLine2 = [
+        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE
+            ? [commands.CHANGE_CATEGORY.title[context.lang]]
+            : [backCommand.title[context.lang]])
+    ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
 
     return _.flattenDeep([

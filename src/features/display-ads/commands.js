@@ -93,3 +93,11 @@ exports.REMOVE_FROM_FAV = {
         ua: 'Видалити з відібраних'
     }
 };
+
+exports.CHANGE_CATEGORY = {
+    id: 'changeCategory',
+    title: {
+        en: '<< Go back',
+        ua: '<< Повернутися'
+    }
+};

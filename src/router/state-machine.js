@@ -188,7 +188,10 @@ module.exports = {
             handler: viewAdsHandlers.searchNewerAds,
             targetState: appStates.VIEW_FOUND_ADS
         },
-        [generalCommands.GO_BACK.id]: { targetState: appStates.SET_ADS_CATEGORY },
+        [viewAdsCommands.CHANGE_CATEGORY.id]: {
+            handler: viewAdsHandlers.checkChangeCategoryAuthorization,
+            targetState: appStates.SET_ADS_CATEGORY
+        },
         [viewAdsCommands.EDIT_AD.id]: {
             handler: viewAdsHandlers.startEditAd,
             targetState: appStates.EDIT_CATEGORY
