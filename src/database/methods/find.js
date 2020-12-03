@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 const { logger } = require('../../helpers');
 const { UserModel, AdvertModel } = require('../../models');
 const { ALL } = require('../../features/ad-categories');
