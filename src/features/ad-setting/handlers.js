@@ -86,7 +86,7 @@ exports.userPublishAdView = async (context) => {
 exports.setTitle = async (context) => {
     const { inputData } = context;
 
-    if (typeof inputData !== 'string') {
+    if (typeof inputData !== 'string' || inputData === '') {
         throw new Error(labels.titleError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, titleLength)) {
@@ -101,7 +101,7 @@ exports.setTitle = async (context) => {
 exports.setDescription = async (context) => {
     const { inputData } = context;
 
-    if (typeof inputData !== 'string') {
+    if (typeof inputData !== 'string' || inputData === '') {
         throw new Error(labels.descriptionError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, descriptionLength)) {
