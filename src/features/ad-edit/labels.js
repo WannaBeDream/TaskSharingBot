@@ -29,12 +29,16 @@ module.exports = {
     },
 
     titleError: {
-        en: 'You can only put letters and numbers in the title.',
-        ua: 'В заголовок Ви можете помістити тільки букви та цифри.'
+        en: 'You can only enter text value in the title.',
+        ua: 'В заголовок Ви можете помістити тільки текстові дані.'
     },
     descriptionError: {
-        en: 'You can only put letters and numbers in the description.',
-        ua: 'В опис Ви можете помістити тільки букви та цифри.'
+        en: 'You can only enter text value in the description.',
+        ua: 'В опис Ви можете помістити тільки текстові дані.'
+    },
+    renumerationError: {
+        en: 'You can only enter text value in the renumeration.',
+        ua: 'У нагороду Ви можете помістити тільки текстові дані.'
     },
     imgError: {
         en: 'Incorrect image format.\nPlease send image or click on the button "Skip".',

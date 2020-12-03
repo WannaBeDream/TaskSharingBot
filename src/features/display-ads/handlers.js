@@ -69,7 +69,7 @@ exports.initViewFoundAdsView = (context) => {
                 inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             }
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
-            const favCmd = ad.usersSaved.includes(context.chat_id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
+            const favCmd = ad.usersSaved.includes(context.user.id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
             inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
         } else {
@@ -252,12 +252,10 @@ function editChatMessageActions(context, actions, adId) {
 // ////////////////////////////////////////////////// //
 
 function deleteMessageFromChat(context) {
-    return [
-        {
-            method: 'deleteMessage',
-            body: { chat_id: context.chat_id, message_id: context.message_id }
-        }
-    ];
+    return {
+        method: 'deleteMessage',
+        body: { chat_id: context.chat_id, message_id: context.message_id }
+    };
 }
 
 // ////////////////////////////////////////////////// //
@@ -270,6 +268,13 @@ function getMyAdActions(isAdActive) {
 
 function getMySavedAdActions(isAdFav) {
     return [isAdFav ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV, commands.REPORT];
+}
+
+function editAdContent(context, content, actions, ad) {
+    if (ad.imgId) {
+        return [answerCallbackQuery(context.callback_query_id), editChatCaption(context, content, actions, ad._id)];
+    }
+    return [answerCallbackQuery(context.callback_query_id), editChatMessage(context, content, actions, ad._id)];
 }
 
 // ////////////////////////////////////////////////// //
@@ -291,9 +296,19 @@ exports.deleteFromSaved = async (context) => {
         : editChatMessageActions(context, getMySavedAdActions(true), context.inputData);
 };
 
-exports.reportSpam = async (context) => {
+exports.requestReportAd = async (context) => {
+    const actions = [commands.CANCEL_REPORT, commands.CONFIRM_REPORT];
+    const ad = await adsDao.findAdvertisement(context.inputData);
+    return editAdContent(context, labels.reportAdConfirmation[context.lang], actions, ad);
+};
+exports.cancelReportAd = async (context) => {
+    const ad = await adsDao.findAdvertisement(context.inputData);
+    const actions = getMySavedAdActions(ad.usersSaved.includes(context.user.id));
+    return editAdContent(context, AD_TEMPLATE(ad, context.lang), actions, ad);
+};
+exports.confirmReportAd = async (context) => {
     await markAsSpam(context.user.id, context.inputData);
-    return deleteMessageFromChat(context);
+    return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
 };
 
 // ////////////////////////////////////////////////// //
@@ -308,41 +323,22 @@ exports.startEditAd = (context) => {
 exports.requestDeleteAd = async (context) => {
     const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
     const ad = await adsDao.findAdvertisement(context.inputData);
-    if (ad.imgId) {
-        return [
-            answerCallbackQuery(context.callback_query_id),
-            editChatCaption(context, labels.deleteAdConfirmation[context.lang], actions, context.inputData)
-        ];
-    }
-    return [
-        answerCallbackQuery(context.callback_query_id),
-        editChatMessage(context, labels.deleteAdConfirmation[context.lang], actions, context.inputData)
-    ];
+    return editAdContent(context, labels.deleteAdConfirmation[context.lang], actions, ad);
 };
 exports.cancelDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
-    if (ad.imgId) {
-        return [
-            answerCallbackQuery(context.callback_query_id),
-            editChatCaption(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
-        ];
-    }
-    return [
-        answerCallbackQuery(context.callback_query_id),
-        editChatMessage(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad._id)
-    ];
+    return editAdContent(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad);
 };
-
 exports.confirmDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     if (ad.usersSaved.length > 0) {
         ad.author = null;
         ad.isActive = false;
         await updateAdState(context.inputData, ad);
-        return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context)];
+        return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
     }
     await deleteAd(context.inputData);
-    return [answerCallbackQuery(context.callback_query_id), ...deleteMessageFromChat(context)];
+    return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
 };
 
 exports.deactivateAd = async (context) => {

@@ -24,11 +24,11 @@ module.exports = {
         ua: `Процес редагування оголошення розпочато. Прокрутіть вниз, щоб вводити дані.`
     },
     deactivateIsSet: {
-        en: `The ad is got deactivated and hidden from others`,
+        en: `The Ad is got deactivated and hidden from others`,
         ua: `Оголошення тепер деактивовано\nта буде приховано від інших`
     },
     activateIsSet: {
-        en: `The ad is activated again\nand become available to others`,
+        en: `The Ad is activated again\nand become available to others`,
         ua: `Оголошення знову активоване\nі буде доступним для інших`
     },
     deleteAdConfirmation: {
@@ -43,8 +43,8 @@ module.exports = {
     },
     reportAdConfirmation: {
         en:
-            `You are going to report offensive content or spam in the ad.\n` +
-            `After confirming this action you will no longer see this ad. And its author can be blocked, if the ad gets a lot of complaints.`,
+            `You are going to report offensive content or spam in the Ad.\n` +
+            `After confirming this action you will no longer see this Ad. And its author can be blocked, if the ad gets a lot of complaints.`,
         ua:
             `Ви збираєтесь повідомити про образливий вміст або спам в оголошенні.\n` +
             `Після підтердження цієї дії ви більше не будете бачити це оголошення. А його автор може бути заблокований, якщо оголошення набере багато скарг.`

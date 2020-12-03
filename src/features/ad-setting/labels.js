@@ -27,6 +27,18 @@ module.exports = {
         en: 'Cancel',
         ua: 'Відмінити'
     },
+    titleError: {
+        en: 'You can only enter text value in the title.',
+        ua: 'В заголовок Ви можете помістити тільки текстові дані.'
+    },
+    descriptionError: {
+        en: 'You can only enter text value in the description.',
+        ua: 'В опис Ви можете помістити тільки текстові дані.'
+    },
+    renumerationError: {
+        en: 'You can only enter text value in the renumeration.',
+        ua: 'У нагороду Ви можете помістити тільки текстові дані.'
+    },
     imgError: {
         en: 'Incorrect image format,\nPlease send compressed image or type "Skip"',
         ua: 'Неправильно завантажене зображення,\n Відправте зображення у стислому вигляді чи напишіть "Пропустити" '

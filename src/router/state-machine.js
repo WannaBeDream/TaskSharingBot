@@ -43,15 +43,19 @@ const settingsTransitions = {
 };
 
 const adsInlineCommands = {
-    [viewAdsCommands.REPORT.id]: { handler: viewAdsHandlers.reportSpam },
-    [viewAdsCommands.CANCEL_REPORT.id]: { handler: viewAdsHandlers.unreportAd },
+    [viewAdsCommands.REPORT_REQUEST.id]: { handler: viewAdsHandlers.requestReportAd },
+    [viewAdsCommands.CANCEL_REPORT.id]: { handler: viewAdsHandlers.cancelReportAd },
+    [viewAdsCommands.CONFIRM_REPORT.id]: { handler: viewAdsHandlers.confirmReportAd },
+
+    [viewAdsCommands.DELETE_REQUEST.id]: { handler: viewAdsHandlers.requestDeleteAd },
+    [viewAdsCommands.CANCEL_DELETE.id]: { handler: viewAdsHandlers.cancelDeleteAd },
+    [viewAdsCommands.CONFIRM_DELETE.id]: { handler: viewAdsHandlers.confirmDeleteAd },
+    [viewAdsCommands.INSTANT_DELETE.id]: { handler: viewAdsHandlers.confirmDeleteAd },
+
     [viewAdsCommands.ADD_TO_FAV.id]: { handler: viewAdsHandlers.addToSaved },
     [viewAdsCommands.REMOVE_FROM_FAV.id]: { handler: viewAdsHandlers.deleteFromSaved },
     [viewAdsCommands.DEACTIVATE_AD.id]: { handler: viewAdsHandlers.deactivateAd },
-    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd },
-    [viewAdsCommands.DELETE_REQUEST.id]: { handler: viewAdsHandlers.requestDeleteAd },
-    [viewAdsCommands.CONFIRM_DELETE.id]: { handler: viewAdsHandlers.confirmDeleteAd },
-    [viewAdsCommands.CANCEL_DELETE.id]: { handler: viewAdsHandlers.cancelDeleteAd }
+    [viewAdsCommands.ACTIVATE_AD.id]: { handler: viewAdsHandlers.activateAd }
 };
 
 module.exports = {
