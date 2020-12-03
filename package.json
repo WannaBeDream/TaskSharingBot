@@ -49,7 +49,6 @@
         ]
     },
     "dependencies": {
-        "claudia-api-builder": "^4.1.2",
         "claudia-bot-builder": "^4.5.0",
         "dotenv": "^8.2.0",
         "lodash": "^4.17.20",
@@ -60,6 +59,7 @@
     "devDependencies": {
         "axios": "^0.21.0",
         "claudia": "^5.12.0",
+        "claudia-api-builder": "^4.1.2",
         "eslint": "^7.14.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-node": "^4.1.0",
