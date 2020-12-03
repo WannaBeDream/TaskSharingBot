@@ -1,5 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 const { Text } = require('claudia-bot-builder').telegramTemplate;
+
 const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
@@ -121,7 +121,6 @@ exports.initViewFoundAdsView = (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.startLocalAdsSearch = (context) => {
-    // eslint-disable-next-line no-param-reassign
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
 };
 

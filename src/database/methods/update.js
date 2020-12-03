@@ -5,8 +5,15 @@ const { SPAM_COUNTER } = require('../../constants/db-values');
 const updateUser = async (telegramId, data) => {
     try {
         return await UserModel.findByIdAndUpdate({ _id: telegramId }, data);
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateUser',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable update user');
     }
 };
@@ -14,8 +21,15 @@ const updateUser = async (telegramId, data) => {
 const updateAd = async (_id, data) => {
     try {
         return await AdvertModel.findByIdAndUpdate({ _id }, data);
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable update advertisement');
     }
 };
@@ -25,8 +39,15 @@ const addToSavedAds = async (userId, adId) => {
         const ad = await AdvertModel.findByIdAndUpdate(adId);
         ad.usersSaved.push(userId);
         await updateAd(adId, ad);
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/addToSavedAds',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable add to saved');
     }
 };
@@ -38,8 +59,15 @@ const deleteFromSavedAds = async (userId, adId) => {
         ad.usersSaved = updatedAds;
         await updateAd(adId, ad);
         return ad;
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/deleteFromSavedAds',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable delete from saved');
     }
 };
@@ -54,8 +82,15 @@ const markAsSpam = async (userId, adId) => {
             await updateAd(adId, ad);
         }
         return ad.imgId;
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/markAsSpam',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable mark as spam');
     }
 };
@@ -63,63 +98,112 @@ const markAsSpam = async (userId, adId) => {
 const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
     try {
         return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(`Unable update many advertisements\n${e.messages}`);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/fetchUserAndUpdateAdvLoc',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(`Unable update many advertisements\n${error.messages}`);
     }
 };
 
 const updateAdActiveStatus = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { isActive: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateAdActiveStatus',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const updateTitleAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateTitleAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const updateDescriptionAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateDescriptionAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const updateCategoryAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateCategoryAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const updateImageAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { imgId: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateImageAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const updateRemunerationAd = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/update.js/updateRemunerationAd',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 

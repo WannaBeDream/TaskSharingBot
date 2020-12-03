@@ -21,8 +21,7 @@ async function tryExecuteFunction(func, params, result) {
 
 module.exports = async (update) => {
     try {
-        console.log(update.originalRequest.message || update.originalRequest.callback_query);
-        // https://docs.atlas.mongodb.com/best-practices-connecting-to-aws-lambda/#example
+        // console.log(update.originalRequest.message || update.originalRequest.callback_query);
         await connectToDatabase(MONGO_URI);
 
         const user = messageParser.parseUser(update);
@@ -52,7 +51,14 @@ module.exports = async (update) => {
         });
         return reply;
     } catch (error) {
-        logger.error(error);
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'router/index.js',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         return error.message;
     }
 };

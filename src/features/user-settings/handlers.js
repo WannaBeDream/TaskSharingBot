@@ -1,4 +1,5 @@
 const { Text, Location } = require('claudia-bot-builder').telegramTemplate;
+
 const labels = require('./labels');
 const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../general-commands');
@@ -13,11 +14,13 @@ const markdownUtils = require('../../helpers/markdown-utils');
 exports.initNewUserSetLocationView = (context) => {
     return new Text(labels.newUserEnterLocation[context.lang]).replyKeyboardHide().get();
 };
+
 exports.initNewUserSetRadiusView = (context) => {
     return new Text(labels.newUserEnterRadius[context.lang])
         .addReplyKeyboard([['1', '3', '5'], ['10', '20', '50'], []], true)
         .get();
 };
+
 exports.initUserSettingsView = (context) => {
     return new Text('🙎')
         .addReplyKeyboard(
@@ -30,6 +33,7 @@ exports.initUserSettingsView = (context) => {
         )
         .get();
 };
+
 exports.initChangeLocationView = (context) => {
     return [
         new Text(labels.existingUserChangeLocation[context.lang]).get(),
@@ -38,11 +42,13 @@ exports.initChangeLocationView = (context) => {
             .get()
     ];
 };
+
 exports.initChangeRadiusView = (context) => {
     return new Text(labels.existingUserChangeRadius[context.lang](context.userState.searchRadius))
         .addReplyKeyboard([['1', '3', '5'], ['10', '20', '50'], [backCommand.title[context.lang]]], true)
         .get();
 };
+
 exports.initViewProfileView = (context) => {
     const name = markdownUtils.formatPlainText(`${context.user.firstName || ''} ${context.user.lastName || ''}`);
     return [
@@ -52,11 +58,13 @@ exports.initViewProfileView = (context) => {
             .get()
     ];
 };
+
 exports.initChangeLangView = (context) => {
     return new Text('\uD83D\uDE01')
         .addReplyKeyboard([[labels.language.en, labels.language.ua], [backCommand.title[context.lang]]], true)
         .get();
 };
+
 exports.initNewUserChangeLangView = () => {
     return new Text('\uD83D\uDE01').addReplyKeyboard([[labels.language.en, labels.language.ua]], true).get();
 };
@@ -74,17 +82,22 @@ exports.setLanguage = (context) => {
         throw new Error(unknownCommandLabel[context.lang]);
     }
 };
+
 exports.setRadius = (context) => {
     const radius = +context.inputData;
+
     if (!Number.isInteger(radius) || radius < 1 || radius > 50) {
         throw new Error(labels.incorrectRadius[context.lang]);
     }
+
     context.userState.searchRadius = radius;
 };
+
 exports.setLocation = async (context) => {
     if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
         throw new Error(labels.locationNotSet[context.lang]);
     }
+
     const newLocation = {
         type: 'Point',
         coordinates: [context.inputData.longitude, context.inputData.latitude]

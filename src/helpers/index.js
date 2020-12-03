@@ -1,2 +1,1 @@
-module.exports.logger = require('./logger');
-module.exports.Logger = require('./winston-logger');
+module.exports.logger = require('./winston-logger');

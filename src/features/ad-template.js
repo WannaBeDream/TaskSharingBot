@@ -19,7 +19,7 @@ function checkAd(ad, lang) {
 }
 
 exports.AD_TEMPLATE = (ad, lang) => {
-    const renumeration = ad.renumeration ? `💰 ${ad.renumeration}` : '';
+    const remuneration = ad.renumeration ? `💰 ${ad.renumeration}` : '';
     const author = checkAd(ad, lang);
-    return createTemplateText(ad.title, ad.description, renumeration, author);
+    return createTemplateText(ad.title, ad.description, remuneration, author);
 };

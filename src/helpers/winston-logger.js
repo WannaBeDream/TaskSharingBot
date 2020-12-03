@@ -7,7 +7,7 @@ const customFormat = () => {
     return combine(timestamp({ format: 'HH:mm:ss DD-MM-YYYY' }), prettyPrint(), colorize({ all: true }));
 };
 
-const Logger = createLogger({
+const logger = createLogger({
     transports: [
         new transports.Console({
             level: 'error',
@@ -16,4 +16,4 @@ const Logger = createLogger({
     ]
 });
 
-module.exports = Logger;
+module.exports = logger;

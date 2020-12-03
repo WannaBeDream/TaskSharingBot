@@ -63,7 +63,7 @@ exports.initChangeRemunerationAdView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
     let message;
 
-    if (renumeration === null || renumeration.length === 0) {
+    if (renumeration.length === 0) {
         message = labels.editRemunerationWithoutData[context.lang];
         return new Text(message).get();
     }
@@ -74,6 +74,7 @@ exports.initChangeRemunerationAdView = async (context) => {
 
 exports.initFinishEditingAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
+
     if (ad.imgId) {
         return {
             method: 'sendPhoto',

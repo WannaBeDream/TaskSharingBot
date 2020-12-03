@@ -1,5 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 const { Text, Sticker } = require('claudia-bot-builder').telegramTemplate;
+
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -30,13 +30,13 @@ exports.userSetAdDescriptionView = (context) => {
         .get();
 };
 
-exports.userSetAdRenumerationView = (context) => {
+exports.userSetAdRemunerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
         .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
         .get();
 };
 
-exports.userSetAdCategotyView = (context) => {
+exports.userSetAdCategoryView = (context) => {
     return new Text(labels.newUserSetAdCategotyView[context.lang])
         .addReplyKeyboard(
             [
@@ -84,50 +84,60 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    if (typeof context.inputData !== 'string') {
+    const { inputData } = context;
+
+    if (typeof inputData !== 'string') {
         throw new Error(labels.titleError[context.lang]);
     }
-    if (userInputData.ifStrCondition(context.inputData, titleLength)) {
+    if (userInputData.ifStrCondition(inputData, titleLength)) {
         throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.title = context.inputData;
+    ad.title = inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setDescription = async (context) => {
-    if (typeof context.inputData !== 'string') {
+    const { inputData } = context;
+
+    if (typeof inputData !== 'string') {
         throw new Error(labels.descriptionError[context.lang]);
     }
-    if (userInputData.ifStrCondition(context.inputData, descriptionLength)) {
+    if (userInputData.ifStrCondition(inputData, descriptionLength)) {
         throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
+
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.description = context.inputData;
+    ad.description = inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setRenumeration = async (context) => {
-    if (Array.isArray(context.inputData)) {
+    const { inputData } = context;
+
+    if (Array.isArray(inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    if (typeof context.inputData !== 'string') {
+    if (typeof inputData !== 'string') {
         throw new Error(labels.renumerationError[context.lang]);
     }
-    if (userInputData.ifStrCondition(context.inputData, remunerationLength)) {
+    if (userInputData.ifStrCondition(inputData, remunerationLength)) {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
+
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.renumeration = context.inputData;
+    ad.renumeration = inputData;
     await updateAdState(ad._id, ad);
 };
 
 exports.setCategory = async (context) => {
     const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
+
     if (validationResult) {
         throw new Error(categoryError[context.lang]);
     }
+
     const ad = { author: context.user.id, category: context.inputData };
     const adId = await createAdvertisement(ad);
     context.userState.currentUpdateAd = adId;
@@ -137,6 +147,7 @@ exports.setImg = async (context) => {
     if (!Array.isArray(context.inputData)) {
         throw new Error(labels.imgError[context.lang]);
     }
+
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
     ad.imgId = context.inputData[0].file_id;
     await updateAdState(ad._id, ad);
@@ -150,10 +161,14 @@ exports.publish = async (context) => {
     };
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
-    return new Sticker('CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA').get();
+    const stickerId = 'CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA';
+
+    return new Sticker(stickerId).get();
 };
 
 exports.cancel = async (context) => {
     await deleteAd(context.userState.currentUpdateAd);
-    return new Sticker('CAACAgIAAxkBAAEBpRFfxxYEAwwAAUcOC8pQeftsyqCsPZUAAvN3AQABY4tGDLoxyUviSr8AAR4E').get();
+    const stickerId = 'CAACAgIAAxkBAAEBpRFfxxYEAwwAAUcOC8pQeftsyqCsPZUAAvN3AQABY4tGDLoxyUviSr8AAR4E';
+
+    return new Sticker(stickerId).get();
 };

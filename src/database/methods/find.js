@@ -5,8 +5,15 @@ const { ALL } = require('../../features/ad-categories');
 const findMyAds = async (criteria) => {
     try {
         return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findMyAds',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable find your advertisements');
     }
 };
@@ -27,8 +34,15 @@ const findAdsAll = async ({ location, radius, user }) => {
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
         }).sort({ updatedAt: 1 });
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findAdsAll',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable find advertisements');
     }
 };
@@ -50,8 +64,15 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
         }).sort({ updatedAt: 1 });
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findAdsByCategory',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable find advertisements');
     }
 };
@@ -61,8 +82,15 @@ const findSavedAds = async (criteria) => {
         return await AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
             updatedAt: 1
         });
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findSavedAds',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable find saved advertisements');
     }
 };
@@ -71,8 +99,15 @@ const findUser = async (telegramId) => {
     try {
         const user = await UserModel.findById(telegramId);
         return user && user._doc;
-    } catch (e) {
-        logger.error(e);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findUser',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
         throw new Error('Unable find user');
     }
 };
@@ -80,27 +115,48 @@ const findUser = async (telegramId) => {
 const findAdAndReturnOneField = async (id, data) => {
     try {
         return await AdvertModel.findById({ _id: id }, data);
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findAdAndReturnOneField',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const findAdvertisement = async (id) => {
     try {
         return await AdvertModel.findById({ _id: id });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findAdvertisement',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
 const findUserAndReturnOneField = async (id) => {
     try {
         return await AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
-    } catch (e) {
-        logger.error(e);
-        throw new Error(e.message);
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findUserAndReturnOneField',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
     }
 };
 
@@ -110,18 +166,30 @@ const PAGE_SIZE = 5;
    criteria: category, location, radius, author, user, active, page
 */
 const findAdsByCriteria = async (criteria) => {
-    // eslint-disable-next-line no-nested-ternary
-    const foundAds =
-        criteria.category === ALL.id
-            ? await findAdsAll(criteria)
-            : criteria.category
-            ? await findAdsByCategory(criteria)
-            : criteria.author
-            ? await findMyAds(criteria)
-            : await findSavedAds(criteria);
-    const offset = criteria.page * PAGE_SIZE;
-    const adsSlice = foundAds.slice(offset, offset + PAGE_SIZE).map((ad) => ad._doc);
-    return { adsSlice, numberOfPages: Math.ceil(foundAds.length / PAGE_SIZE) };
+    try {
+        // eslint-disable-next-line no-nested-ternary
+        const foundAds =
+            criteria.category === ALL.id
+                ? await findAdsAll(criteria)
+                : criteria.category
+                ? await findAdsByCategory(criteria)
+                : criteria.author
+                ? await findMyAds(criteria)
+                : await findSavedAds(criteria);
+        const offset = criteria.page * PAGE_SIZE;
+        const adsSlice = foundAds.slice(offset, offset + PAGE_SIZE).map((ad) => ad._doc);
+        return { adsSlice, numberOfPages: Math.ceil(foundAds.length / PAGE_SIZE) };
+    } catch (error) {
+        logger.error({
+            timestamp: '',
+            level: 'error',
+            errorIn: 'database/methods/find.js/findAdsByCriteria',
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        throw new Error(error.message);
+    }
 };
 
 module.exports = {
