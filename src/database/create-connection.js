@@ -7,13 +7,13 @@ const connectToDatabase = async (uri) => {
         return cachedDb;
     }
 
-    const db = await mongoose.connect(uri, {
+    cachedDb = await mongoose.connect(uri, {
         useNewUrlParser: true,
         useFindAndModify: false,
         useUnifiedTopology: true,
         useCreateIndex: true
     });
-    cachedDb = db;
+
     return cachedDb;
 };
 
