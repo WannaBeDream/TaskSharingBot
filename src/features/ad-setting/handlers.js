@@ -119,7 +119,7 @@ exports.setRenumeration = async (context) => {
     if (Array.isArray(inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    if (typeof inputData !== 'string') {
+    if (typeof inputData !== 'string' || inputData === '') {
         throw new Error(labels.renumerationError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, remunerationLength)) {
