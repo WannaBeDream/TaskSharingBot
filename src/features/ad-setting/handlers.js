@@ -19,16 +19,20 @@ const { deleteAd } = require('../../database/methods/delete');
 // ////////////////////////////////////////////////// //
 
 exports.userSetAdNameView = (context) => {
-    return new Text(labels.newUserSetAdNameView[context.lang]).replyKeyboardHide().get();
+    return new Text(labels.newUserSetAdNameView[context.lang])
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]]], true)
+        .get();
 };
 
 exports.userSetAdDescriptionView = (context) => {
-    return new Text(labels.newUserSetAdDescriptionView[context.lang]).replyKeyboardHide().get();
+    return new Text(labels.newUserSetAdDescriptionView[context.lang])
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]]], true)
+        .get();
 };
 
 exports.userSetAdRenumerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang]]], true)
+        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
         .get();
 };
 
@@ -38,7 +42,7 @@ exports.userSetAdCategotyView = (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [inputCms.LOST_FOUND_ADS.title[context.lang], commands.CANCEL_AD.title[context.lang]]
             ],
             true
         )
@@ -47,7 +51,7 @@ exports.userSetAdCategotyView = (context) => {
 
 exports.userSetAdImgView = (context) => {
     return new Text(labels.newUserEnterImg[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang]]], true)
+        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
         .get();
 };
 

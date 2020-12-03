@@ -4,7 +4,7 @@ let cachedDb = null;
 
 const connectToDatabase = async (uri) => {
     if (cachedDb) {
-        return Promise.resolve(cachedDb);
+        return cachedDb;
     }
 
     const db = await mongoose.connect(uri, {

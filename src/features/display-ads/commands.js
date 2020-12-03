@@ -12,13 +12,6 @@ exports.NEWER_ADS = {
         ua: 'Новіші оголошення'
     }
 };
-exports.CHANGE_CATEGORY = {
-    id: 'changeCategory',
-    title: {
-        en: 'Change Category',
-        ua: 'Змінити категорію'
-    }
-};
 
 exports.DEACTIVATE_AD = {
     id: 'nactv',
@@ -106,5 +99,13 @@ exports.REMOVE_FROM_FAV = {
     title: {
         en: 'Remove from Selected',
         ua: 'Видалити з відібраних'
+    }
+};
+
+exports.CHANGE_CATEGORY = {
+    id: 'changeCategory',
+    title: {
+        en: '<< Go back',
+        ua: '<< Повернутися'
     }
 };

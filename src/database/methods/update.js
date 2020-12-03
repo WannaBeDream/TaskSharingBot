@@ -4,7 +4,7 @@ const { SPAM_COUNTER } = require('../../constants/db-values');
 
 const updateUser = async (telegramId, data) => {
     try {
-        return UserModel.findByIdAndUpdate({ _id: telegramId }, data);
+        return await UserModel.findByIdAndUpdate({ _id: telegramId }, data);
     } catch (e) {
         logger.error(e);
         throw new Error('Unable update user');
@@ -13,7 +13,7 @@ const updateUser = async (telegramId, data) => {
 
 const updateAd = async (_id, data) => {
     try {
-        return AdvertModel.findByIdAndUpdate({ _id }, data);
+        return await AdvertModel.findByIdAndUpdate({ _id }, data);
     } catch (e) {
         logger.error(e);
         throw new Error('Unable update advertisement');
@@ -62,7 +62,7 @@ const markAsSpam = async (userId, adId) => {
 
 const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
     try {
-        return AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
+        return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
     } catch (e) {
         logger.error(e);
         throw new Error(`Unable update many advertisements\n${e.messages}`);

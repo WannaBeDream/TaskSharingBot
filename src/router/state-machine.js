@@ -112,18 +112,30 @@ module.exports = {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setCategory,
             targetState: appStates.SET_TITLE
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.SET_TITLE.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setTitle,
             targetState: appStates.SET_DESCRIPTION
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.SET_DESCRIPTION.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setDescription,
             targetState: appStates.SET_IMAGE
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.SET_IMAGE.id]: {
@@ -133,6 +145,10 @@ module.exports = {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setImg,
             targetState: appStates.SET_RENUMERATION
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.SET_RENUMERATION.id]: {
@@ -142,6 +158,10 @@ module.exports = {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setRenumeration,
             targetState: appStates.PREVIEW_AD
+        },
+        [settingsAdCommands.CANCEL_AD.id]: {
+            handler: settingsAdHandlers.cancel,
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.PREVIEW_AD.id]: {

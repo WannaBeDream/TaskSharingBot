@@ -35,7 +35,11 @@ exports.initSetAdsCategoryView = (context) => {
             [
                 [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
                 [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [backCommand.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
+                [
+                    backCommand.title[context.lang],
+                    inputCms.LOST_FOUND_ADS.title[context.lang],
+                    inputCms.ALL.title[context.lang]
+                ]
             ],
             true
         )
@@ -54,6 +58,7 @@ exports.initViewFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
     const adsList = context.searchResult.foundAds.map((ad) => {
         const inlineButtons = [];
+
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
                 inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
@@ -70,10 +75,12 @@ exports.initViewFoundAdsView = (context) => {
         } else {
             inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
+
         if (!ad.imgId) {
             const adView = new Text(AD_TEMPLATE(ad, context.lang));
             return adView.addInlineKeyboard([inlineButtons]).get();
         }
+
         return {
             method: 'sendPhoto',
             body: {
@@ -87,17 +94,21 @@ exports.initViewFoundAdsView = (context) => {
             }
         };
     });
+
     const navLine1 = [
         ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
         ...(context.userState.adsPage < context.searchResult.numberOfAdsPages - 1
             ? [commands.OLDER_ADS.title[context.lang]]
             : [])
     ];
+
     const navLine2 = [
-        backCommand.title[context.lang],
-        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE ? [commands.CHANGE_CATEGORY.title[context.lang]] : [])
+        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE
+            ? [commands.CHANGE_CATEGORY.title[context.lang]]
+            : [backCommand.title[context.lang]])
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
+
     return _.flattenDeep([
         new Text('--').addReplyKeyboard([[backCommand.title[context.lang]]], true).get(),
         ...adsList,
