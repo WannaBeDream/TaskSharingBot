@@ -11,13 +11,7 @@ const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
-const {
-    titleLength,
-    descriptionLength,
-    remunerationLength,
-    regExpForAd,
-    strArrForCategory
-} = require('../../constants/ad-values');
+const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 
 // ////////////////////////////////////////////////// //
@@ -86,10 +80,10 @@ exports.userPublishAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    // eslint-disable-next-line security/detect-non-literal-regexp
-    const validationResult = userInputData.ifStrCondition(context.inputData, titleLength, new RegExp(regExpForAd));
-
-    if (validationResult) {
+    if (typeof context.inputData !== 'string') {
+        throw new Error(labels.titleError[context.lang]);
+    }
+    if (userInputData.ifStrCondition(context.inputData, titleLength)) {
         throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
@@ -99,13 +93,10 @@ exports.setTitle = async (context) => {
 };
 
 exports.setDescription = async (context) => {
-    const validationResult = userInputData.ifStrCondition(
-        context.inputData,
-        descriptionLength,
-        // eslint-disable-next-line security/detect-non-literal-regexp
-        new RegExp(regExpForAd)
-    );
-    if (validationResult) {
+    if (typeof context.inputData !== 'string') {
+        throw new Error(labels.descriptionError[context.lang]);
+    }
+    if (userInputData.ifStrCondition(context.inputData, descriptionLength)) {
         throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
@@ -117,13 +108,10 @@ exports.setRenumeration = async (context) => {
     if (Array.isArray(context.inputData)) {
         throw new Error(labels.imgInRenumerationError[context.lang]);
     }
-    const validationResult = userInputData.ifStrCondition(
-        context.inputData,
-        remunerationLength,
-        // eslint-disable-next-line security/detect-non-literal-regexp
-        new RegExp(regExpForAd)
-    );
-    if (validationResult) {
+    if (typeof context.inputData !== 'string') {
+        throw new Error(labels.renumerationError[context.lang]);
+    }
+    if (userInputData.ifStrCondition(context.inputData, remunerationLength)) {
         throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
     const ad = await findAdvertisement(context.userState.currentUpdateAd);

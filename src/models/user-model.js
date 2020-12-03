@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 
 const UserSchema = new mongoose.Schema({
     _id: {
         type: Number,
-        required: true,
-        validate: [(str) => validator.isNumeric(`${str}`), "{PATH} '{VALUE}' is not valid"]
+        required: true
     },
     location: {
         type: {
@@ -23,8 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     appStateId: {
         type: String,
-        require: true,
-        validate: [validator.isAlpha, "{PATH} '{VALUE}' is not valid"]
+        require: true
     },
     lang: {
         type: String
@@ -39,8 +36,7 @@ const UserSchema = new mongoose.Schema({
         type: Number
     },
     currentUpdateAd: {
-        type: String,
-        require: false
+        type: String
     }
 });
 

@@ -5,7 +5,6 @@ exports.OLDER_ADS = {
         ua: 'Старіші оголошення'
     }
 };
-
 exports.NEWER_ADS = {
     id: 'newerAds',
     title: {
@@ -13,7 +12,6 @@ exports.NEWER_ADS = {
         ua: 'Новіші оголошення'
     }
 };
-
 exports.CHANGE_CATEGORY = {
     id: 'changeCategory',
     title: {
@@ -29,7 +27,6 @@ exports.DEACTIVATE_AD = {
         ua: 'Деактивувати'
     }
 };
-
 exports.ACTIVATE_AD = {
     id: 'actv',
     title: {
@@ -45,20 +42,25 @@ exports.DELETE_REQUEST = {
         ua: 'Видалити'
     }
 };
-
-exports.CONFIRM_DELETE = {
-    id: 'dlok',
-    title: {
-        en: 'OK',
-        ua: 'OK'
-    }
-};
-
 exports.CANCEL_DELETE = {
     id: 'dlbc',
     title: {
         en: 'Cancel',
         ua: 'Відмінити'
+    }
+};
+exports.INSTANT_DELETE = {
+    id: 'dli',
+    title: {
+        en: 'Delete',
+        ua: 'Видалити'
+    }
+};
+exports.CONFIRM_DELETE = {
+    id: 'dlok',
+    title: {
+        en: 'OK',
+        ua: 'OK'
     }
 };
 
@@ -70,16 +72,22 @@ exports.EDIT_AD = {
     }
 };
 
-exports.REPORT = {
-    id: 'rprt',
+exports.REPORT_REQUEST = {
+    id: 'rprq',
     title: {
         en: 'Report spam',
         ua: 'Поскаржитись на вміст'
     }
 };
-
 exports.CANCEL_REPORT = {
-    id: 'nrprt',
+    id: 'rpbc',
+    title: {
+        en: 'Cancel',
+        ua: 'Відмінити'
+    }
+};
+exports.CONFIRM_REPORT = {
+    id: 'rpok',
     title: {
         en: 'Cancel complaint',
         ua: 'Відмінити скаргу'
@@ -93,7 +101,6 @@ exports.ADD_TO_FAV = {
         ua: 'Додати у відібрані'
     }
 };
-
 exports.REMOVE_FROM_FAV = {
     id: 'nfav',
     title: {

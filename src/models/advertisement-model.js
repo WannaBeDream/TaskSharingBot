@@ -1,12 +1,4 @@
 const mongoose = require('mongoose');
-const {
-    titleLength,
-    descriptionLength,
-    remunerationLength,
-    regExpForAd,
-    strArrForCategory
-} = require('../constants/ad-values');
-const { userInputData } = require('../validators/ad-validation');
 
 const AdvertisementSchema = new mongoose.Schema(
     {
@@ -17,26 +9,11 @@ const AdvertisementSchema = new mongoose.Schema(
         },
         title: {
             type: String,
-            default: '',
-            match: [
-                // eslint-disable-next-line security/detect-non-literal-regexp
-                new RegExp(regExpForAd),
-                // eslint-disable-next-line sonarjs/no-duplicate-string
-                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
-            ],
-            maxlength: titleLength.max,
-            minLength: titleLength.min
+            default: ''
         },
         description: {
             type: String,
-            default: '',
-            match: [
-                // eslint-disable-next-line security/detect-non-literal-regexp
-                new RegExp(regExpForAd),
-                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
-            ],
-            maxlength: descriptionLength.max,
-            minLength: descriptionLength.min
+            default: ''
         },
         location: {
             type: {
@@ -50,27 +27,15 @@ const AdvertisementSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            default: '',
-            validate: [
-                // eslint-disable-next-line security/detect-non-literal-regexp
-                (inputData) => !userInputData.ifStrContain(inputData, strArrForCategory),
-                "{PATH} '{VALUE}' is not valid"
-            ]
-        },
-        imgId: {
-            type: String,
             default: ''
         },
         renumeration: {
             type: String,
-            default: '',
-            match: [
-                // eslint-disable-next-line security/detect-non-literal-regexp
-                new RegExp(regExpForAd),
-                "{PATH} '{VALUE}' is not valid. Use only letters, numbers"
-            ],
-            maxlength: remunerationLength.max,
-            minLength: remunerationLength.min
+            default: ''
+        },
+        imgId: {
+            type: String,
+            default: ''
         },
         isActive: {
             type: Boolean,

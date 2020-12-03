@@ -2,14 +2,8 @@ const { LOST_FOUND_ADS, ASSISTANCE_SEARCH, BUY_STUFF, SALES, SERVICES_OFFER } = 
 
 module.exports = {
     checkMaxMinReg: {
-        en: (min, max) =>
-            `You entered less then ${min} or more then ${max} charts or symbols.\n` +
-            'You may also have invalid characters in your text.\n' +
-            'Or you sent a file or sticker.',
-        ua: (min, max) =>
-            `Ви ввели менше ніж ${min} або більше ніж ${max} символів.\n` +
-            'Також, можливо у Вашому тексті були недопустимі символи.\n' +
-            'Або ж Ви відправили файл чи стікер.'
+        en: (min, max) => `You entered less then ${min} or more then ${max} symbols.`,
+        ua: (min, max) => `Ви ввели менше ніж ${min} або більше ніж ${max} символів.`
     },
     categoryError: {
         en:

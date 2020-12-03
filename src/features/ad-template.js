@@ -1,10 +1,11 @@
 const labels = require('./display-ads/labels');
 const { SPAM_COUNTER } = require('../constants/db-values');
+const markfownUtils = require('../helpers/markdown-utils');
 
 function createTemplateText(title, description, renumeration, author) {
-    return `\u26A1 *${title}*
-${renumeration}
-${description}
+    return `\u26A1 ${markfownUtils.formatBoldText(title)}
+${markfownUtils.formatPlainText(renumeration)}
+${markfownUtils.formatPlainText(description)}
 ${author}`;
 }
 
