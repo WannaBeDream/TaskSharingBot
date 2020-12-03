@@ -72,15 +72,15 @@ exports.REPORT_REQUEST = {
         ua: 'Поскаржитись на вміст'
     }
 };
-exports.CANCEL_REPORT = {
-    id: 'rpbc',
-    title: {
-        en: 'Cancel',
-        ua: 'Відмінити'
-    }
-};
 exports.CONFIRM_REPORT = {
     id: 'rpok',
+    title: {
+        en: 'OK',
+        ua: 'OK'
+    }
+};
+exports.CANCEL_REPORT = {
+    id: 'rpbc',
     title: {
         en: 'Cancel complaint',
         ua: 'Відмінити скаргу'

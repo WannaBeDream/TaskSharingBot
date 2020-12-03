@@ -5,7 +5,7 @@ const { ALL } = require('../../features/ad-categories');
 
 const findMyAds = async (criteria) => {
     try {
-        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
+        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: -1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find your advertisements');
@@ -21,13 +21,13 @@ const findAdsAll = async ({ location, radius, user }) => {
                         type: 'Point',
                         coordinates: [location.longitude, location.latitude]
                     },
-                    $maxDistance: radius * 10000000000000000000000000
+                    $maxDistance: radius * 1000
                 }
             },
             isActive: true,
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
-        }).sort({ updatedAt: 1 });
+        }).sort({ updatedAt: -1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find advertisements');
@@ -43,14 +43,14 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
                         type: 'Point',
                         coordinates: [location.longitude, location.latitude]
                     },
-                    $maxDistance: radius * 100000000000000000000000
+                    $maxDistance: radius * 1000
                 }
             },
             isActive: true,
             category,
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
-        }).sort({ updatedAt: 1 });
+        }).sort({ updatedAt: -1 });
     } catch (e) {
         logger.error(e);
         throw new Error('Unable find advertisements');

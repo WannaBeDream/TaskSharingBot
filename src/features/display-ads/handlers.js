@@ -61,7 +61,7 @@ exports.initViewFoundAdsView = (context) => {
 
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
-                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons.push(buildInlineButton(ad._id, commands.INSTANT_DELETE, context.lang));
             } else {
                 const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
                 inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
@@ -71,7 +71,7 @@ exports.initViewFoundAdsView = (context) => {
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.user.id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
             inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
-            inlineButtons.push(buildInlineButton(ad._id, commands.REPORT, context.lang));
+            inlineButtons.push(buildInlineButton(ad._id, commands.REPORT_REQUEST, context.lang));
         } else {
             inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
@@ -267,7 +267,7 @@ function getMyAdActions(isAdActive) {
 }
 
 function getMySavedAdActions(isAdFav) {
-    return [isAdFav ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV, commands.REPORT];
+    return [isAdFav ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV, commands.REPORT_REQUEST];
 }
 
 function editAdContent(context, content, actions, ad) {
@@ -288,7 +288,7 @@ exports.addToSaved = async (context) => {
 
 exports.deleteFromSaved = async (context) => {
     const ad = await deleteFromSavedAds(context.user.id, context.inputData);
-    if ((!ad.author || ad.spam.length >= SPAM_COUNTER) && ad.usersSaved.length === 0) {
+    if (!ad.author && ad.usersSaved.length === 0) {
         await deleteAd(context.inputData);
     }
     return context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE
@@ -303,7 +303,7 @@ exports.requestReportAd = async (context) => {
 };
 exports.cancelReportAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
-    const actions = getMySavedAdActions(ad.usersSaved.includes(context.user.id));
+    const actions = getMySavedAdActions(!ad.usersSaved.includes(context.user.id));
     return editAdContent(context, AD_TEMPLATE(ad, context.lang), actions, ad);
 };
 exports.confirmReportAd = async (context) => {
