@@ -7,14 +7,16 @@ const { connectToDatabase } = require('../database/create-connection');
 const { logger } = require('../helpers');
 
 async function tryExecuteFunction(func, params, result) {
+    const res = result;
     if (func) {
         const reply = await func(params);
         if (reply && Array.isArray(reply)) {
-            result.push(...reply);
+            res.push(...reply);
         } else if (reply) {
-            result.push(reply);
+            res.push(reply);
         }
     }
+    return res;
 }
 
 module.exports = async (update) => {
@@ -39,9 +41,9 @@ module.exports = async (update) => {
         const chatData = messageParser.parseChatData(update);
         const context = { user, userState, lang: userState.lang, inputData, ...chatData };
 
-        const reply = [];
-        await tryExecuteFunction(transition.handler, context, reply);
-        await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
+        let reply = [];
+        reply = await tryExecuteFunction(transition.handler, context, reply);
+        reply = await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
 
         await appStateDao.setUserState(user.id, {
             ...userState,
