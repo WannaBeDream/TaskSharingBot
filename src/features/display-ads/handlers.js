@@ -8,6 +8,9 @@ const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { AD_TEMPLATE } = require('../ad-template');
 const { SPAM_COUNTER } = require('../../constants/db-values');
+const { userInputData } = require('../../validators/ad-validation');
+const { categoryError } = require('../validations-labels');
+const { strArrForCategory } = require('../../constants/ad-values');
 
 const adsDao = require('../../database/methods/find');
 const {
@@ -168,11 +171,14 @@ async function searchAdsByContextState(context) {
     const result = await adsDao.findAdsByCriteria(criteria);
     context.searchResult = {
         numberOfAdsPages: result.numberOfPages,
-        foundAds: result.adsSlice
+        foundAds: result.adsSlice.reverse()
     };
 }
 
 exports.searchLocalAds = async (context) => {
+    if (userInputData.ifStrContain(context.inputData, strArrForCategory)) {
+        throw new Error(categoryError[context.lang]);
+    }
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
     context.userState.adsCategory = context.inputData;
     context.userState.adsPage = 0;

@@ -4,7 +4,7 @@ const { ALL } = require('../../features/ad-categories');
 
 const findMyAds = async (criteria) => {
     try {
-        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
+        return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: -1 });
     } catch (error) {
         logger.error({
             level: 'error',
@@ -30,7 +30,7 @@ const findAdsAll = async ({ location, radius, user }) => {
             isActive: true,
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
-        }).sort({ updatedAt: 1 });
+        }).sort({ updatedAt: -1 });
     } catch (error) {
         logger.error({
             level: 'error',
@@ -57,7 +57,7 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
             category,
             spam: { $nin: [user] },
             author: { $ne: user } // not return own user`s advertisements
-        }).sort({ updatedAt: 1 });
+        }).sort({ updatedAt: -1 });
     } catch (error) {
         logger.error({
             level: 'error',
@@ -71,7 +71,7 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
 const findSavedAds = async (criteria) => {
     try {
         return await AdvertModel.find({ usersSaved: { $in: [criteria.user] }, spam: { $nin: [criteria.user] } }).sort({
-            updatedAt: 1
+            updatedAt: -1
         });
     } catch (error) {
         logger.error({
