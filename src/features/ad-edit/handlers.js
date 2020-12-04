@@ -156,3 +156,7 @@ exports.updateRemuneration = async (context) => {
 
     await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
 };
+
+exports.finishEditing = async (context) => {
+    context.userState.currentUpdateAd = null;
+};

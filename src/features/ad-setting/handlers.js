@@ -162,13 +162,15 @@ exports.publish = async (context) => {
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
     const stickerId = 'CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA';
+    context.userState.currentUpdateAd = null;
 
     return new Sticker(stickerId).get();
 };
 
 exports.cancel = async (context) => {
-    await deleteAd(context.userState.currentUpdateAd);
     const stickerId = 'CAACAgIAAxkBAAEBpRFfxxYEAwwAAUcOC8pQeftsyqCsPZUAAvN3AQABY4tGDLoxyUviSr8AAR4E';
+    const id = context.userState.currentUpdateAd;
 
+    await deleteAd(id);
     return new Sticker(stickerId).get();
 };

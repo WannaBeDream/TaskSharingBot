@@ -249,6 +249,7 @@ module.exports = {
     },
     [appStates.FINISH_EDITING.id]: {
         [generalCommands.DATA_INPUT.id]: {
+            handler: editSettingsAdHandlers.finishEditing,
             targetState: appStates.USER_HOME
         }
     }
