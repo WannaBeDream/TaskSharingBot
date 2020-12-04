@@ -10,7 +10,7 @@ const { AD_TEMPLATE } = require('../ad-template');
 const { SPAM_COUNTER } = require('../../constants/db-values');
 const { userInputData } = require('../../validators/ad-validation');
 const { categoryError } = require('../validations-labels');
-const { strArrForCategory } = require('../../constants/ad-values');
+const { strArrForCategoryAll } = require('../../constants/ad-values');
 
 const adsDao = require('../../database/methods/find');
 const {
@@ -176,7 +176,7 @@ async function searchAdsByContextState(context) {
 }
 
 exports.searchLocalAds = async (context) => {
-    if (userInputData.ifStrContain(context.inputData, strArrForCategory)) {
+    if (userInputData.ifStrContain(context.inputData, strArrForCategoryAll)) {
         throw new Error(categoryError[context.lang]);
     }
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
