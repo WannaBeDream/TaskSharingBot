@@ -75,7 +75,7 @@ function sendAds(context, foundAdsTemplates) {
         const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
         const end =
             context.searchResult.numberOfAdsPages === page
-                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length + 1
+                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
                 : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
         return [
             new Text(labels.pageNumber[context.lang](page))
