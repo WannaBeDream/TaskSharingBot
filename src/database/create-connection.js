@@ -20,10 +20,7 @@ const connectToDatabase = async (uri) => {
         return cachedDb;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/create-connection.js',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });

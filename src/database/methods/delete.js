@@ -6,10 +6,7 @@ const deleteAd = async (id) => {
         await AdvertModel.deleteOne({ _id: id });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/delete.js/deleteAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });

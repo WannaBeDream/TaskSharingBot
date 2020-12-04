@@ -7,10 +7,7 @@ const findMyAds = async (criteria) => {
         return await AdvertModel.find({ author: criteria.author }).sort({ updatedAt: 1 });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findMyAds',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -36,10 +33,7 @@ const findAdsAll = async ({ location, radius, user }) => {
         }).sort({ updatedAt: 1 });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findAdsAll',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -66,10 +60,7 @@ const findAdsByCategory = async ({ location, radius, category, user }) => {
         }).sort({ updatedAt: 1 });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findAdsByCategory',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -84,10 +75,7 @@ const findSavedAds = async (criteria) => {
         });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findSavedAds',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -101,10 +89,7 @@ const findUser = async (telegramId) => {
         return user && user._doc;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findUser',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -117,10 +102,7 @@ const findAdAndReturnOneField = async (id, data) => {
         return await AdvertModel.findById({ _id: id }, data);
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findAdAndReturnOneField',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -133,10 +115,7 @@ const findAdvertisement = async (id) => {
         return await AdvertModel.findById({ _id: id });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findAdvertisement',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -149,10 +128,7 @@ const findUserAndReturnOneField = async (id) => {
         return await AdvertModel.findById({ _id: id }, { activeAdToUpdate: true });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findUserAndReturnOneField',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -181,10 +157,7 @@ const findAdsByCriteria = async (criteria) => {
         return { adsSlice, numberOfPages: Math.ceil(foundAds.length / PAGE_SIZE) };
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/find.js/findAdsByCriteria',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });

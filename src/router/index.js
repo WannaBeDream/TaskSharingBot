@@ -52,10 +52,7 @@ module.exports = async (update) => {
         return reply;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'router/index.js',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });

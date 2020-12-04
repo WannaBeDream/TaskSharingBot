@@ -7,10 +7,7 @@ const createUser = async (user) => {
         await model.save();
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/create.js/createUser',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -24,10 +21,7 @@ const createAdvertisement = async (advertisement) => {
         return createdAd._id;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/create.js/createAdvertisement',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });

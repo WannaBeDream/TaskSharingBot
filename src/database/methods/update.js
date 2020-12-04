@@ -7,10 +7,7 @@ const updateUser = async (telegramId, data) => {
         return await UserModel.findByIdAndUpdate({ _id: telegramId }, data);
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateUser',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -23,10 +20,7 @@ const updateAd = async (_id, data) => {
         return await AdvertModel.findByIdAndUpdate({ _id }, data);
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -41,10 +35,7 @@ const addToSavedAds = async (userId, adId) => {
         await updateAd(adId, ad);
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/addToSavedAds',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -61,10 +52,7 @@ const deleteFromSavedAds = async (userId, adId) => {
         return ad;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/deleteFromSavedAds',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -84,10 +72,7 @@ const markAsSpam = async (userId, adId) => {
         return ad.imgId;
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/markAsSpam',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -100,10 +85,7 @@ const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
         return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/fetchUserAndUpdateAdvLoc',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -116,10 +98,7 @@ const updateAdActiveStatus = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { isActive: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateAdActiveStatus',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -132,10 +111,7 @@ const updateTitleAd = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateTitleAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -148,10 +124,7 @@ const updateDescriptionAd = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateDescriptionAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -164,10 +137,7 @@ const updateCategoryAd = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateCategoryAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -180,10 +150,7 @@ const updateImageAd = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { imgId: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateImageAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
@@ -196,10 +163,7 @@ const updateRemunerationAd = async (_id, data) => {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
     } catch (error) {
         logger.error({
-            timestamp: '',
             level: 'error',
-            errorIn: 'database/methods/update.js/updateRemunerationAd',
-            code: error.code,
             message: error.message,
             stack: error.stack
         });
