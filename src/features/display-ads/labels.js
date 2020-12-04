@@ -1,6 +1,6 @@
 module.exports = {
     ifEmptyArrayMessage: {
-        en: `No Ads are found`,
+        en: `No Ads were found`,
         ua: `Оголошень не знайдено`
     },
     pageNumber: {
