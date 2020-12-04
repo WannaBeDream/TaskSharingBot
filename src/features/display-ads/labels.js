@@ -16,12 +16,12 @@ module.exports = {
         ua: `\uD83D\uDC49посилання на автора`
     },
     deleted: {
-        en: `Advertisement was deleted !!!`,
-        ua: `Оголошення було видалене !!!`
+        en: `\uD83D\uDEAB The Ad was deleted by its author.`,
+        ua: `\uD83D\uDEAB Оголошення було видалене автором.`
     },
     deletedSpam: {
-        en: `Advertisement was deleted, SPAM !!!`,
-        ua: `Оголошення було видалене через підозру на спам !!!`
+        en: `\uD83D\uDEAB The Ad was reported as SPAM by many! It's hidden from others now.`,
+        ua: `\uD83D\uDEAB На це оголошення надійшло багато скарг! Воно зараз не відображається нікому.`
     },
     selectAdsCategory: {
         en: 'Please select Category',

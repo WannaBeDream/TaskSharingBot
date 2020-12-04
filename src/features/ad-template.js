@@ -1,11 +1,12 @@
 const labels = require('./display-ads/labels');
 const { SPAM_COUNTER } = require('../constants/db-values');
-const markfownUtils = require('../helpers/markdown-utils');
+const markdownUtils = require('../helpers/markdown-utils');
 
 function createTemplateText(title, description, renumeration, author) {
-    return `\u26A1 ${markfownUtils.formatBoldText(title)}
-${markfownUtils.formatPlainText(renumeration)}
-${markfownUtils.formatPlainText(description)}
+    return `\u26A1 ${markdownUtils.formatBoldText(title) + markdownUtils.formatPlainText(renumeration)}
+
+${markdownUtils.formatPlainText(description)}
+
 ${author}`;
 }
 
@@ -19,7 +20,7 @@ function checkAd(ad, lang) {
 }
 
 exports.AD_TEMPLATE = (ad, lang) => {
-    const remuneration = ad.renumeration ? `💰 ${ad.renumeration}` : '';
+    const remuneration = ad.renumeration ? `\n💰 ${ad.renumeration}` : '';
     const author = checkAd(ad, lang);
     return createTemplateText(ad.title, ad.description, remuneration, author);
 };
