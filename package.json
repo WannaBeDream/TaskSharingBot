@@ -51,7 +51,6 @@
     "dependencies": {
         "claudia-bot-builder": "^4.5.0",
         "dotenv": "^8.2.0",
-        "lodash": "^4.17.20",
         "mongoose": "^5.11.1",
         "validator": "^13.5.1",
         "winston": "^3.3.3"

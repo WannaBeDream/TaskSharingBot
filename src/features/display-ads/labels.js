@@ -3,6 +3,14 @@ module.exports = {
         en: `Nothing to display`,
         ua: `Оголошень не знайдено`
     },
+    pageNumber: {
+        en: (page) => `Page ${page}`,
+        ua: (page) => `Сторінка ${page}`
+    },
+    foundAdsRange: {
+        en: (start, end) => `Ads from the ${start} to the the ${end}`,
+        ua: (start, end) => `Оголошення з ${start} по ${end}`
+    },
     author: {
         en: `\uD83D\uDC49link to the author`,
         ua: `\uD83D\uDC49посилання на автора`

@@ -1,6 +1,7 @@
 const { logger } = require('../../helpers');
 const { UserModel, AdvertModel } = require('../../models');
 const { ALL } = require('../../features/ad-categories');
+const { ADS_PAGE_SIZE } = require('../../constants/db-values');
 
 const findMyAds = async (criteria) => {
     try {
@@ -136,8 +137,6 @@ const findUserAndReturnOneField = async (id) => {
     }
 };
 
-const PAGE_SIZE = 5;
-
 /* logic might be optimized
    criteria: category, location, radius, author, user, active, page
 */
@@ -152,9 +151,9 @@ const findAdsByCriteria = async (criteria) => {
                 : criteria.author
                 ? await findMyAds(criteria)
                 : await findSavedAds(criteria);
-        const offset = criteria.page * PAGE_SIZE;
-        const adsSlice = foundAds.slice(offset, offset + PAGE_SIZE).map((ad) => ad._doc);
-        return { adsSlice, numberOfPages: Math.ceil(foundAds.length / PAGE_SIZE) };
+        const offset = criteria.page * ADS_PAGE_SIZE;
+        const adsSlice = foundAds.slice(offset, offset + ADS_PAGE_SIZE).map((ad) => ad._doc);
+        return { adsSlice, numberOfPages: Math.ceil(foundAds.length / ADS_PAGE_SIZE) };
     } catch (error) {
         logger.error({
             level: 'error',

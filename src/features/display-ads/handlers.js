@@ -1,6 +1,5 @@
 const { Text } = require('claudia-bot-builder').telegramTemplate;
 
-const _ = require('lodash');
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
@@ -11,6 +10,7 @@ const { SPAM_COUNTER } = require('../../constants/db-values');
 const { userInputData } = require('../../validators/ad-validation');
 const { categoryError } = require('../validations-labels');
 const { strArrForCategoryAll } = require('../../constants/ad-values');
+const { ADS_PAGE_SIZE } = require('../../constants/db-values');
 
 const adsDao = require('../../database/methods/find');
 const {
@@ -56,7 +56,38 @@ function buildInlineButton(key, command, lang) {
     };
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+function sendAds(context, foundAdsTemplates) {
+    const navLine1 = [
+        ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
+        ...(context.userState.adsPage < context.searchResult.numberOfAdsPages - 1
+            ? [commands.OLDER_ADS.title[context.lang]]
+            : [])
+    ];
+    const navLine2 = [
+        ...(context.userState === adsViewModes.LOCAL_ADS_MODE
+            ? [commands.CHANGE_CATEGORY.title[context.lang]]
+            : [backCommand.title[context.lang]])
+    ];
+    const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
+
+    if (foundAdsTemplates.length > 0) {
+        const page = context.userState.adsPage + 1;
+        const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
+        const end =
+            context.searchResult.numberOfAdsPages === page
+                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length + 1
+                : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
+        return [
+            new Text(labels.pageNumber[context.lang](page))
+                .addReplyKeyboard([[backCommand.title[context.lang]]], true)
+                .get(),
+            ...foundAdsTemplates,
+            new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
+        ];
+    }
+    return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
+}
+
 exports.initViewFoundAdsView = (context) => {
     context.userState.currentUpdateAd = null;
     const { adsViewMode } = context.userState;
@@ -98,26 +129,7 @@ exports.initViewFoundAdsView = (context) => {
             }
         };
     });
-
-    const navLine1 = [
-        ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
-        ...(context.userState.adsPage < context.searchResult.numberOfAdsPages - 1
-            ? [commands.OLDER_ADS.title[context.lang]]
-            : [])
-    ];
-
-    const navLine2 = [
-        ...(adsViewMode === adsViewModes.LOCAL_ADS_MODE
-            ? [commands.CHANGE_CATEGORY.title[context.lang]]
-            : [backCommand.title[context.lang]])
-    ];
-    const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
-
-    return _.flattenDeep([
-        new Text('--').addReplyKeyboard([[backCommand.title[context.lang]]], true).get(),
-        ...adsList,
-        new Text('--').addReplyKeyboard(navFull, true).get()
-    ]);
+    return sendAds(context, adsList);
 };
 
 // ////////////////////////////////////////////////// //
