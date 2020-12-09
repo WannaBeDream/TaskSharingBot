@@ -41,13 +41,13 @@ module.exports = {
     },
     deleteAdConfirmation: {
         en:
-            `This action will delete ad permanently.` +
-            `If you want to keep the Ad for future and just to temporarily exclude it being visible to others, use Deactivate option.\n` +
-            `Please confirm that You are going to delete ad permanently.`,
+            `This action cannot be undone.\n\n` +
+            `If you want to temporarily hide your ad, press 📥\n\n` +
+            `Confirm your choice.`,
         ua:
-            `Ця дія видалить оголошення назавжди.\n` +
-            `Якщо ви хочете зберегти оголошення на майбутнє і просто тимчасово відключити його видимість для інших, використовуйте опцію Деактивувати.\n` +
-            `Підтвердіть, що Ви збираєтесь остаточно видалити оголошення.`
+            `Цю дію не можна буде скасувати.\n\n` +
+            `Якщо ви хочете тимчасово приховати оголошення, натисніть 📥\n\n` +
+            `Підтвердіть видалення.`
     },
     reportAdConfirmation: {
         en:
