@@ -32,8 +32,8 @@ module.exports = {
         ua: (radius) => radius.map((item) => `${item} км`)
     },
     userProfileData: {
-        en: (name, radius) => `${name}\nRadius of searches: ${radius}\nCurrent location:`,
-        ua: (name, radius) => `${name}\nРадіус пошуку оголошень: ${radius}\nПоточна локація:`
+        en: (name, radius) => `${name}\nRadius of searches: ${radius} km\nCurrent location:`,
+        ua: (name, radius) => `${name}\nРадіус пошуку оголошень: ${radius} км\nПоточна локація:`
     },
     language: {
         en: 'English 🇬🇧',
