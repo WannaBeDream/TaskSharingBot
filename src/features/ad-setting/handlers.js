@@ -32,7 +32,7 @@ exports.userSetAdDescriptionView = (context) => {
 
 exports.userSetAdRemunerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
         .get();
 };
 
@@ -55,7 +55,7 @@ exports.userSetAdCategoryView = (context) => {
 
 exports.userSetAdImgView = (context) => {
     return new Text(labels.newUserEnterImg[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
         .get();
 };
 
@@ -63,10 +63,7 @@ exports.userPublishAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
     if (!ad.imgId) {
         return new Text(AD_TEMPLATE(ad, context.lang))
-            .addReplyKeyboard(
-                [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
-                true
-            )
+            .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]], true)
             .get();
     }
     return {
@@ -76,7 +73,7 @@ exports.userPublishAdView = async (context) => {
             caption: AD_TEMPLATE(ad, context.lang),
             parse_mode: 'Markdown',
             reply_markup: {
-                keyboard: [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+                keyboard: [[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]],
                 resize_keyboard: true
             }
         }
@@ -165,10 +162,10 @@ exports.publish = async (context) => {
     };
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
-    const stickerId = 'CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA';
     context.userState.currentUpdateAd = null;
+    const message = labels.publish[context.lang];
 
-    return new Sticker(stickerId).get();
+    return new Text(message).get();
 };
 
 exports.cancel = async (context) => {

@@ -3,11 +3,12 @@ const { SPAM_COUNTER } = require('../constants/db-values');
 const markdownUtils = require('../helpers/markdown-utils');
 
 function createTemplateText(title, description, renumeration, author) {
-    return `\u26A1 ${markdownUtils.formatBoldText(title) + markdownUtils.formatPlainText(renumeration)}
+    const titlePreview = `🗣️  ${markdownUtils.formatBoldText(title)}`;
+    const remunerationPreview = markdownUtils.formatPlainText(renumeration);
+    const descriptionPreview = `📝  ${markdownUtils.formatPlainText(description)}`;
+    const authorPreview = `➡️  ${author}`;
 
-${markdownUtils.formatPlainText(description)}
-
-${author}`;
+    return `${titlePreview}\n\n${descriptionPreview}${remunerationPreview}\n\n${authorPreview}`;
 }
 
 function checkAd(ad, lang) {
@@ -20,7 +21,7 @@ function checkAd(ad, lang) {
 }
 
 exports.AD_TEMPLATE = (ad, lang) => {
-    const remuneration = ad.renumeration ? `\n💰 ${ad.renumeration}` : '';
+    const remuneration = ad.renumeration ? `\n\n💰 ${ad.renumeration}` : '';
     const author = checkAd(ad, lang);
     return createTemplateText(ad.title, ad.description, remuneration, author);
 };

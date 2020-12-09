@@ -66,5 +66,9 @@ module.exports = {
     updatedParamLang: {
         en: 'language',
         ua: 'Мову'
+    },
+    locationAutoSend: {
+        en: 'Specify a location',
+        ua: 'Вказати місце розташування'
     }
 };
