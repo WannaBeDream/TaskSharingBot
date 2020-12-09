@@ -89,8 +89,8 @@ exports.CONFIRM_REPORT = {
 exports.CANCEL_REPORT = {
     id: 'rpbc',
     title: {
-        en: 'Cancel complaint',
-        ua: 'Відмінити скаргу'
+        en: '↩️ Cancel complaint',
+        ua: '↩️ Відмінити скаргу'
     }
 };
 
