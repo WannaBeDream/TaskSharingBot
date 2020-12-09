@@ -4,12 +4,12 @@ module.exports = {
             'You are required to specify your location.\n' +
             `The Bot doesn't reveal your location to others. ` +
             'This location is only used to show the ads of users who are the nearest to you. It can be any place in your area.\n' +
-            `Press 'Attach' button to send location.`,
+            `Press 📎 to send location.`,
         ua:
             `Ви маєте задати вашу локацію.\n` +
             `Бот не показує це місцезнаходження нікому. Воно використовується тільки, щоб показати оголошення людей, які є найближчими до вас. ` +
             `Можна обрати будь-яке місце у вашій області.\n` +
-            `Щоб встановити локацію, натисніть 'Скріпку'.`
+            `Щоб встановити локацію, натисніть 📎.`
     },
     newUserEnterRadius: {
         en: 'Please specify also the radius of searches, km',
