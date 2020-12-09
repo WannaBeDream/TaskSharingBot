@@ -26,3 +26,10 @@ exports.CHANGE_LANG = {
         ua: 'Змінити мову'
     }
 };
+exports.SET_LANG = {
+    id: 'setLang',
+    title: {
+        en: 'Please, set language',
+        ua: 'Оберіть мову'
+    }
+};

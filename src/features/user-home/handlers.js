@@ -4,7 +4,7 @@ const commands = require('./commands');
 const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initUserHomeView = (context) => {
-    return new Text('🏠')
+    return new Text(labels.userHome[context.lang])
         .addReplyKeyboard(
             [
                 [commands.CREATE_AD.title[context.lang], commands.OWN_ADS.title[context.lang]],
@@ -17,7 +17,7 @@ exports.initUserHomeView = (context) => {
 };
 
 function formatName(context) {
-    return markdownUtils.formatPlainText(`${context.user.firstName || ''} ${context.user.lastName || ''}`);
+    return markdownUtils.formatPlainText(`${context.user.firstName}`);
 }
 
 exports.getUserGreeting = (context) => {

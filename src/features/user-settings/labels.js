@@ -17,25 +17,35 @@ module.exports = {
     },
     existingUserChangeLocation: {
         en:
-            `You are about to change the location of area for Ads searches. ` +
-            `Note that all your existing Ads will also be associated with new location and be shown for users of another target area.\n` +
+            `Warning! After the location change the distribution area of your ads and recommendations will be changed.\n` +
             `Your current location is:`,
         ua:
-            `Ви намагаєтесь змінити локацію області пошуку оголошеннь. Увага! ` +
-            `Усі ваші поточні оголошення також будуть переналаштовані на нову локацію, і їх будуть бачити люди із місцезнаходженням у відповідній області\n.` +
+            `Увага! Після зміни локації область поширення Ваших оголошень та рекомендацій зміниться.\n` +
             `Ваша поточна локація наступна:`
     },
     existingUserChangeRadius: {
-        en: (value) => `Your current radius of searches is ${value}\nPlease select new radius, km`,
-        ua: (value) => `Ваш поточний радіус пошуку -- ${value}\nБудь ласка, оберіть новий, км`
+        en: (value) => `Your current search radius is ${value} km\nPlease select or enter a new one:`,
+        ua: (value) => `Ваш поточний радіус пошуку -- ${value} км\nБудь ласка, оберіть або введіть новий:`
+    },
+    existingUserSetRadius: {
+        en: (radius) => radius.map((item) => `${item} km`),
+        ua: (radius) => radius.map((item) => `${item} км`)
     },
     userProfileData: {
         en: (name, radius) => `${name}\nRadius of searches: ${radius}\nCurrent location:`,
         ua: (name, radius) => `${name}\nРадіус пошуку оголошень: ${radius}\nПоточна локація:`
     },
     language: {
-        en: 'English',
-        ua: 'Українська'
+        en: 'English 🇬🇧',
+        ua: 'Українська 🇺🇦'
+    },
+    setLanguage: {
+        en: 'Choose a new language 🌍',
+        ua: 'Оберіть нову мову 🌍'
+    },
+    choose: {
+        en: 'Choose ⚙️',
+        ua: 'Обирайте ⚙️'
     },
     locationNotSet: {
         en: `Geolocation isn't set in your message`,
