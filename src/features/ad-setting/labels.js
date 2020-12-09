@@ -1,7 +1,7 @@
 module.exports = {
     newUserSetAdNameView: {
-        en: `Input title`,
-        ua: `Введіть назву`
+        en: `Enter the ad’s title`,
+        ua: `Введіть заголовок оголошення`
     },
     newUserSetAdDescriptionView: {
         en: `Input description`,
@@ -16,8 +16,8 @@ module.exports = {
         ua: 'Задайте винагороду'
     },
     newUserEnterImg: {
-        en: 'Please send image if you want 🌌',
-        ua: 'Завантажте зображення, якщо це необхідно 🌌'
+        en: 'Upload image',
+        ua: 'Завантажте зображення'
     },
     newUserPublishAd: {
         en: 'Publish',
