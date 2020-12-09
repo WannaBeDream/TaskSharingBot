@@ -1,4 +1,4 @@
-const { Text, Sticker } = require('claudia-bot-builder').telegramTemplate;
+const { Text } = require('claudia-bot-builder').telegramTemplate;
 
 const labels = require('./labels');
 const commands = require('./commands');
@@ -169,9 +169,9 @@ exports.publish = async (context) => {
 };
 
 exports.cancel = async (context) => {
-    const stickerId = 'CAACAgIAAxkBAAEBpRFfxxYEAwwAAUcOC8pQeftsyqCsPZUAAvN3AQABY4tGDLoxyUviSr8AAR4E';
+    const message = labels.cancel[context.lang];
     const id = context.userState.currentUpdateAd;
 
     await deleteAd(id);
-    return new Sticker(stickerId).get();
+    return new Text(message).get();
 };

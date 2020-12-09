@@ -50,5 +50,9 @@ module.exports = {
     publish: {
         en: 'The publication was successful.\nYour ad is available for viewing.',
         ua: 'Публікація пройшла успішно.\nВаше оголошення доступне для перегляду.'
+    },
+    cancel: {
+        en: 'You have canceled the post.\nThis ad is not available for viewing.',
+        ua: 'Ви скасували публікацію.\nДане оголошення недоступне для перегляду.'
     }
 };
