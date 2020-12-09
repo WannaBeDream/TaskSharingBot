@@ -32,7 +32,7 @@ exports.userSetAdDescriptionView = (context) => {
 
 exports.userSetAdRemunerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
         .get();
 };
 
@@ -51,7 +51,7 @@ exports.userSetAdCategoryView = (context) => {
 
 exports.userSetAdImgView = (context) => {
     return new Text(labels.newUserEnterImg[context.lang])
-        .addReplyKeyboard([[skipCommand.title[context.lang], commands.CANCEL_AD.title[context.lang]]], true)
+        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
         .get();
 };
 
