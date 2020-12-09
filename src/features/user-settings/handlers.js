@@ -97,6 +97,7 @@ exports.setLanguage = (context) => {
     } else {
         throw new Error(unknownCommandLabel[context.lang]);
     }
+    context.userState.updated = labels.updatedParamLang[context.lang];
 };
 
 exports.setRadius = (context) => {
@@ -110,6 +111,7 @@ exports.setRadius = (context) => {
     }
 
     context.userState.searchRadius = radius;
+    context.userState.updated = labels.updatedParamRadius[context.lang];
 };
 
 exports.setLocation = async (context) => {
@@ -121,6 +123,7 @@ exports.setLocation = async (context) => {
         type: 'Point',
         coordinates: [context.inputData.longitude, context.inputData.latitude]
     };
-    await fetchUserAndUpdateAdvLoc(context.user.id, newLocation); // NEED TO CHECK
+    await fetchUserAndUpdateAdvLoc(context.user.id, newLocation);
     context.userState.location = newLocation;
+    context.userState.updated = labels.updatedParamLocation[context.lang];
 };

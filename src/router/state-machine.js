@@ -89,14 +89,14 @@ module.exports = {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsHandlers.setLocation,
-            targetState: appStates.USER_SETTINGS
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.CHANGE_RADIUS.id]: {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsHandlers.setRadius,
-            targetState: appStates.USER_SETTINGS
+            targetState: appStates.USER_HOME
         }
     },
     [appStates.VIEW_PROFILE.id]: settingsTransitions,
@@ -104,7 +104,7 @@ module.exports = {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsHandlers.setLanguage,
-            targetState: appStates.USER_SETTINGS
+            targetState: appStates.USER_HOME
         }
     },
 
