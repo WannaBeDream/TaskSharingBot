@@ -11,7 +11,12 @@ const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
-const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
+const {
+    titleLength,
+    descriptionLength,
+    remunerationLength,
+    strArrForCategoryAll
+} = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 
 // ////////////////////////////////////////////////// //
@@ -40,9 +45,13 @@ exports.userSetAdCategoryView = (context) => {
     return new Text(labels.newUserSetAdCategotyView[context.lang])
         .addReplyKeyboard(
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
-                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [inputCms.LOST_FOUND_ADS.title[context.lang], commands.CANCEL_AD.title[context.lang]]
+                [inputCms.SERVICES_STUFF.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]],
+                [
+                    inputCms.BUY_STUFF.title[context.lang],
+                    inputCms.SALES_STUFF.title[context.lang],
+                    inputCms.GIVE_STUFF.title[context.lang]
+                ],
+                [commands.CANCEL_AD.title[context.lang], inputCms.OTHER_STUFF.title[context.lang]]
             ],
             true
         )
@@ -132,7 +141,7 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
-    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
+    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategoryAll);
 
     if (validationResult) {
         throw new Error(categoryError[context.lang]);

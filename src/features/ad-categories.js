@@ -1,42 +1,42 @@
-exports.LOST_FOUND_ADS = {
-    id: 'lostFoundAds',
+exports.LOST_FOUND_STUFF = {
+    id: 'lostFoundStuff',
     title: {
-        en: 'Lost and Found',
+        en: 'Lost & Found',
         ua: 'Бюро знахідок'
     }
 };
-exports.SALES = {
-    id: 'sales',
+exports.SALES_STUFF = {
+    id: 'sellStuff',
     title: {
-        en: 'Sale, exchange, give-away',
-        ua: 'Розпродаж, обмін, роздача речей'
+        en: 'Sell',
+        ua: 'Продати'
     }
 };
-exports.SERVICES_OFFER = {
-    id: 'servicesOffer',
+exports.SERVICES_STUFF = {
+    id: 'servicesStuff',
     title: {
-        en: 'Services Offer',
-        ua: 'Пропозиція послуг'
+        en: 'Services',
+        ua: 'Послуги'
     }
 };
-exports.ASSISTANCE_SEARCH = {
-    id: 'assistanceSearch',
+exports.GIVE_STUFF = {
+    id: 'giveStuff',
     title: {
-        en: 'Search for services/assistance',
-        ua: 'Пошук допомоги або послуг'
+        en: 'Give',
+        ua: 'Віддати'
     }
 };
 exports.BUY_STUFF = {
     id: 'buyStuff',
     title: {
-        en: 'Buy or borrow stuff',
-        ua: 'Запозичення/покупка речей'
+        en: 'Buy',
+        ua: 'Купити'
     }
 };
-exports.ALL = {
-    id: 'all',
+exports.OTHER_STUFF = {
+    id: 'otherStuff',
     title: {
-        en: 'All',
-        ua: 'Усі'
+        en: 'Other',
+        ua: 'Інше'
     }
 };

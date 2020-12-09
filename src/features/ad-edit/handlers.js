@@ -11,7 +11,12 @@ const {
 } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
-const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
+const {
+    titleLength,
+    descriptionLength,
+    remunerationLength,
+    strArrForCategoryAll
+} = require('../../constants/ad-values');
 const { SKIP: skipCommand } = require('../general-commands');
 const { FINISH_EDITING: finishCommand } = require('./commands');
 const labels = require('./labels');
@@ -36,11 +41,13 @@ exports.initChangeCategoryAdView = async (context) => {
     const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
+            [inputCms.SERVICES_STUFF.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]],
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
-                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
-                [inputCms.LOST_FOUND_ADS.title[context.lang], skipCommand.title[context.lang]]
+                inputCms.BUY_STUFF.title[context.lang],
+                inputCms.SALES_STUFF.title[context.lang],
+                inputCms.GIVE_STUFF.title[context.lang]
             ],
+            [skipCommand.title[context.lang], inputCms.OTHER_STUFF.title[context.lang]],
             true
         )
         .get();
@@ -121,7 +128,7 @@ exports.updateDescription = async (context) => {
 
 exports.updateCategory = async (context) => {
     const { inputData } = context;
-    const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
+    const validationResult = userInputData.ifStrContain(inputData, strArrForCategoryAll);
 
     if (validationResult) {
         throw new Error(categoryError[context.lang]);
