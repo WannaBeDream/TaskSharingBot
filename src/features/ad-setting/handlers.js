@@ -11,12 +11,7 @@ const { createAdvertisement } = require('../../database/methods/create');
 const { updateAdState } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
-const {
-    titleLength,
-    descriptionLength,
-    remunerationLength,
-    strArrForCategoryAll
-} = require('../../constants/ad-values');
+const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 
 // ////////////////////////////////////////////////// //
@@ -141,7 +136,7 @@ exports.setRenumeration = async (context) => {
 };
 
 exports.setCategory = async (context) => {
-    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategoryAll);
+    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
 
     if (validationResult) {
         throw new Error(categoryError[context.lang]);

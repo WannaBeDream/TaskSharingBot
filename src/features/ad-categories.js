@@ -40,3 +40,10 @@ exports.BUY_STUFF = {
         ua: 'Покупка'
     }
 };
+exports.ALL = {
+    id: 'all',
+    title: {
+        en: 'All',
+        ua: 'Усі'
+    }
+};

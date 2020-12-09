@@ -11,12 +11,7 @@ const {
 } = require('../../database/methods/update');
 const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
-const {
-    titleLength,
-    descriptionLength,
-    remunerationLength,
-    strArrForCategoryAll
-} = require('../../constants/ad-values');
+const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { SKIP: skipCommand } = require('../general-commands');
 const { FINISH_EDITING: finishCommand } = require('./commands');
 const labels = require('./labels');
@@ -130,7 +125,7 @@ exports.updateDescription = async (context) => {
 
 exports.updateCategory = async (context) => {
     const { inputData } = context;
-    const validationResult = userInputData.ifStrContain(inputData, strArrForCategoryAll);
+    const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
 
     if (validationResult) {
         throw new Error(categoryError[context.lang]);

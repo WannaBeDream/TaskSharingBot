@@ -4,7 +4,8 @@ const {
     ASSISTANCE_SEARCH,
     SALES_STUFF,
     GIVE_STUFF,
-    BUY_STUFF
+    BUY_STUFF,
+    ALL
 } = require('../features/ad-categories');
 
 const constants = {
@@ -25,7 +26,8 @@ const constants = {
         SERVICES_OFFER.id,
         SALES_STUFF.id,
         BUY_STUFF.id,
-        ASSISTANCE_SEARCH.id
+        ASSISTANCE_SEARCH.id,
+        ALL.id
     ]
 };
 
