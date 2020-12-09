@@ -17,12 +17,19 @@ exports.initNewUserSetLocationView = (context) => {
 
 exports.initNewUserSetRadiusView = (context) => {
     return new Text(labels.newUserEnterRadius[context.lang])
-        .addReplyKeyboard([['1', '3', '5'], ['10', '20', '50'], []], true)
+        .addReplyKeyboard(
+            [
+                labels.existingUserSetRadius[context.lang](['1', '3', '5']),
+                labels.existingUserSetRadius[context.lang](['10', '20', '50']),
+                []
+            ],
+            true
+        )
         .get();
 };
 
 exports.initUserSettingsView = (context) => {
-    return new Text('🙎')
+    return new Text(labels.choose[context.lang])
         .addReplyKeyboard(
             [
                 [commands.CHANGE_LOCATION.title[context.lang], commands.CHANGE_RADIUS.title[context.lang]],
@@ -45,12 +52,19 @@ exports.initChangeLocationView = (context) => {
 
 exports.initChangeRadiusView = (context) => {
     return new Text(labels.existingUserChangeRadius[context.lang](context.userState.searchRadius))
-        .addReplyKeyboard([['1', '3', '5'], ['10', '20', '50'], [backCommand.title[context.lang]]], true)
+        .addReplyKeyboard(
+            [
+                labels.existingUserSetRadius[context.lang](['1', '3', '5']),
+                labels.existingUserSetRadius[context.lang](['10', '20', '50']),
+                [backCommand.title[context.lang]]
+            ],
+            true
+        )
         .get();
 };
 
 exports.initViewProfileView = (context) => {
-    const name = markdownUtils.formatPlainText(`${context.user.firstName || ''}`);
+    const name = markdownUtils.formatPlainText(`${context.user.firstName}`);
     return [
         new Text(labels.userProfileData[context.lang](name, context.userState.searchRadius)).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
@@ -60,7 +74,7 @@ exports.initViewProfileView = (context) => {
 };
 
 exports.initChangeLangView = (context) => {
-    return new Text('\uD83D\uDE01')
+    return new Text(labels.setLanguage[context.lang])
         .addReplyKeyboard([[labels.language.en, labels.language.ua], [backCommand.title[context.lang]]], true)
         .get();
 };
@@ -86,7 +100,10 @@ exports.setLanguage = (context) => {
 };
 
 exports.setRadius = (context) => {
-    const radius = +context.inputData;
+    const radius =
+        context.inputData.endsWith('km') || context.inputData.endsWith('км')
+            ? +context.inputData.substr(0, context.inputData.length - 2).trim()
+            : +context.inputData;
 
     if (!Number.isInteger(radius) || radius < 1 || radius > 50) {
         throw new Error(labels.incorrectRadius[context.lang]);
