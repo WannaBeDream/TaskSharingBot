@@ -15,7 +15,7 @@
 2) cd src/config
 3) touch .env.isProd
 4) touch .env.isDev
-- After step 3 you need paste your env variables into .env and .env.test files (Bot tokens, webhook, mongoDB).
+- After step 3 you need paste your env variables into .env.isProd and .env.isDev files (Bot tokens, webhook, mongoDB).
 5) npm install
 - Command from 6 step will run your app localy with ngrok
 6) npm run development 
