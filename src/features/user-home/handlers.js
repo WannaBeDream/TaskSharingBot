@@ -4,16 +4,22 @@ const commands = require('./commands');
 const markdownUtils = require('../../helpers/markdown-utils');
 
 exports.initUserHomeView = (context) => {
-    return new Text(labels.userHome[context.lang])
-        .addReplyKeyboard(
-            [
-                [commands.CREATE_AD.title[context.lang], commands.OWN_ADS.title[context.lang]],
-                [commands.LOCAL_ADS.title[context.lang], commands.SELECTED_ADS.title[context.lang]],
-                [commands.USER_SETTINGS.title[context.lang]]
-            ],
-            true
-        )
-        .get();
+    const text = context.userState.updated
+        ? [new Text(labels.updatedMessage[context.lang](context.userState.updated)).get()]
+        : [];
+    text.push(
+        new Text(labels.userHome[context.lang])
+            .addReplyKeyboard(
+                [
+                    [commands.CREATE_AD.title[context.lang], commands.OWN_ADS.title[context.lang]],
+                    [commands.LOCAL_ADS.title[context.lang], commands.SELECTED_ADS.title[context.lang]],
+                    [commands.USER_SETTINGS.title[context.lang]]
+                ],
+                true
+            )
+            .get()
+    );
+    return text;
 };
 
 function formatName(context) {
