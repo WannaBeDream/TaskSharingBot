@@ -36,17 +36,17 @@ exports.initSetAdsCategoryView = (context) => {
     return new Text(labels.selectAdsCategory[context.lang])
         .addReplyKeyboard(
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.SERVICES_OFFER.title[context.lang]],
+                [
+                    inputCms.ASSISTANCE_SEARCH.title[context.lang],
+                    inputCms.SERVICES_OFFER.title[context.lang],
+                    inputCms.LOST_FOUND_STUFF.title[context.lang]
+                ],
                 [
                     inputCms.BUY_STUFF.title[context.lang],
                     inputCms.SALES_STUFF.title[context.lang],
                     inputCms.GIVE_STUFF.title[context.lang]
                 ],
-                [
-                    backCommand.title[context.lang],
-                    inputCms.LOST_FOUND_STUFF.title[context.lang],
-                    inputCms.ALL.title[context.lang]
-                ]
+                [backCommand.title[context.lang], inputCms.ALL.title[context.lang]]
             ],
             true
         )
