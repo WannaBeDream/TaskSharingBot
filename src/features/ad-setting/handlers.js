@@ -59,10 +59,7 @@ exports.userPublishAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
     if (!ad.imgId) {
         return new Text(AD_TEMPLATE(ad, context.lang))
-            .addReplyKeyboard(
-                [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
-                true
-            )
+            .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]], true)
             .get();
     }
     return {
@@ -72,7 +69,7 @@ exports.userPublishAdView = async (context) => {
             caption: AD_TEMPLATE(ad, context.lang),
             parse_mode: 'Markdown',
             reply_markup: {
-                keyboard: [[commands.CANCEL_AD.title[context.lang]], [commands.PUBLISH_AD.title[context.lang]]],
+                keyboard: [[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]],
                 resize_keyboard: true
             }
         }
