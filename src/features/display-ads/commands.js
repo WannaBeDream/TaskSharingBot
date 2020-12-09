@@ -16,23 +16,23 @@ exports.NEWER_ADS = {
 exports.DEACTIVATE_AD = {
     id: 'nactv',
     title: {
-        en: 'Deactivate',
-        ua: 'Деактивувати'
+        en: '📤',
+        ua: '📤'
     }
 };
 exports.ACTIVATE_AD = {
     id: 'actv',
     title: {
-        en: 'Activate',
-        ua: 'Aктивувати'
+        en: '📥',
+        ua: '📥'
     }
 };
 
 exports.DELETE_REQUEST = {
     id: 'dlr',
     title: {
-        en: 'Delete',
-        ua: 'Видалити'
+        en: '❌',
+        ua: '❌'
     }
 };
 exports.CANCEL_DELETE = {
@@ -60,8 +60,8 @@ exports.CONFIRM_DELETE = {
 exports.EDIT_AD = {
     id: 'edt',
     title: {
-        en: 'Edit',
-        ua: 'Редагувати'
+        en: '✏️',
+        ua: '✏️'
     }
 };
 
