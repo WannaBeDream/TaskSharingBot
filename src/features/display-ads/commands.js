@@ -5,6 +5,7 @@ exports.OLDER_ADS = {
         ua: 'Старіші оголошення'
     }
 };
+
 exports.NEWER_ADS = {
     id: 'newerAds',
     title: {
@@ -20,6 +21,7 @@ exports.DEACTIVATE_AD = {
         ua: '📤'
     }
 };
+
 exports.ACTIVATE_AD = {
     id: 'actv',
     title: {
@@ -35,13 +37,15 @@ exports.DELETE_REQUEST = {
         ua: '❌'
     }
 };
+
 exports.CANCEL_DELETE = {
     id: 'dlbc',
     title: {
-        en: 'Cancel',
-        ua: 'Відмінити'
+        en: '↩️ Cancel',
+        ua: '↩️ Скасувати'
     }
 };
+
 exports.INSTANT_DELETE = {
     id: 'dli',
     title: {
@@ -49,11 +53,12 @@ exports.INSTANT_DELETE = {
         ua: 'Видалити'
     }
 };
+
 exports.CONFIRM_DELETE = {
     id: 'dlok',
     title: {
-        en: 'OK',
-        ua: 'OK'
+        en: '✅ Confirm',
+        ua: '✅ Підтвердити'
     }
 };
 
@@ -68,17 +73,19 @@ exports.EDIT_AD = {
 exports.REPORT_REQUEST = {
     id: 'rprq',
     title: {
-        en: 'Report spam',
-        ua: 'Поскаржитись на вміст'
+        en: '🚫 Report',
+        ua: '🚫 Поскаржитись'
     }
 };
+
 exports.CONFIRM_REPORT = {
     id: 'rpok',
     title: {
-        en: 'OK',
-        ua: 'OK'
+        en: '✅ Confirm',
+        ua: '✅ Підтвердити'
     }
 };
+
 exports.CANCEL_REPORT = {
     id: 'rpbc',
     title: {
@@ -90,15 +97,16 @@ exports.CANCEL_REPORT = {
 exports.ADD_TO_FAV = {
     id: 'fav',
     title: {
-        en: 'Add to Selected',
-        ua: 'Додати у відібрані'
+        en: '❤️ Save',
+        ua: '❤️ Зберегти'
     }
 };
+
 exports.REMOVE_FROM_FAV = {
     id: 'nfav',
     title: {
-        en: 'Remove from Selected',
-        ua: 'Видалити з відібраних'
+        en: '💔 Remove',
+        ua: '💔 Видалити'
     }
 };
 

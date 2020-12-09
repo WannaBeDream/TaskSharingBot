@@ -1,7 +1,7 @@
 module.exports = {
     newUserSetAdNameView: {
-        en: `Input title`,
-        ua: `Введіть назву`
+        en: `Enter the ad’s title`,
+        ua: `Введіть заголовок оголошення`
     },
     newUserSetAdDescriptionView: {
         en: `Input description`,
@@ -16,8 +16,8 @@ module.exports = {
         ua: 'Задайте винагороду'
     },
     newUserEnterImg: {
-        en: 'Please send image if you want 🌌',
-        ua: 'Завантажте зображення, якщо це необхідно 🌌'
+        en: 'Upload image',
+        ua: 'Завантажте зображення'
     },
     newUserPublishAd: {
         en: 'Publish',
@@ -46,5 +46,9 @@ module.exports = {
     imgInRenumerationError: {
         en: 'Only one image was expected.\nThe first one will be used for the ad.\n\nSet remuneration',
         ua: 'Очікувалась лише одне зображення.\nДля оголошення буде використано перше.\n\nЗадайте винагороду'
+    },
+    publish: {
+        en: 'The publication was successful.\nYour ad is available for viewing.',
+        ua: 'Публікація пройшла успішно.\nВаше оголошення доступне для перегляду.'
     }
 };

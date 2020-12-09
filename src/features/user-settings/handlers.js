@@ -12,7 +12,14 @@ const markdownUtils = require('../../helpers/markdown-utils');
 // ////////////////////////////////////////////////// //
 
 exports.initNewUserSetLocationView = (context) => {
-    return new Text(labels.newUserEnterLocation[context.lang]).replyKeyboardHide().get();
+    const message = labels.newUserEnterLocation[context.lang];
+    const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
+    const initCoordinates = [24.028013, 49.839781];
+
+    return [
+        new Text(message).replyKeyboardHide().get(),
+        new Location(initCoordinates[1], initCoordinates[0]).addReplyKeyboard([setLocationButton], true).get()
+    ];
 };
 
 exports.initNewUserSetRadiusView = (context) => {
@@ -42,10 +49,13 @@ exports.initUserSettingsView = (context) => {
 };
 
 exports.initChangeLocationView = (context) => {
+    const getBackButton = [backCommand.title[context.lang]];
+    const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
+
     return [
         new Text(labels.existingUserChangeLocation[context.lang]).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
-            .addReplyKeyboard([[backCommand.title[context.lang]]], true)
+            .addReplyKeyboard([setLocationButton, getBackButton], true)
             .get()
     ];
 };
