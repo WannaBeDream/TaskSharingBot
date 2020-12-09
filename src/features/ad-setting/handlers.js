@@ -158,10 +158,10 @@ exports.publish = async (context) => {
     };
     ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
     await updateAdState(ad._id, ad);
-    const stickerId = 'CAACAgIAAxkBAAEBpQlfxxPlTI2Gx6UKeQ5b0FXJW0yQ7wAC63cBAAFji0YMzAFrUki69PseBA';
     context.userState.currentUpdateAd = null;
+    const message = labels.publish[context.lang];
 
-    return new Sticker(stickerId).get();
+    return new Text(message).get();
 };
 
 exports.cancel = async (context) => {
