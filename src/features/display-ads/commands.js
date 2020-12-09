@@ -68,8 +68,8 @@ exports.EDIT_AD = {
 exports.REPORT_REQUEST = {
     id: 'rprq',
     title: {
-        en: 'Report spam',
-        ua: 'Поскаржитись на вміст'
+        en: '🚫 Report',
+        ua: '🚫 Поскаржитись'
     }
 };
 exports.CONFIRM_REPORT = {
@@ -90,15 +90,15 @@ exports.CANCEL_REPORT = {
 exports.ADD_TO_FAV = {
     id: 'fav',
     title: {
-        en: 'Add to Selected',
-        ua: 'Додати у відібрані'
+        en: '❤️ Save',
+        ua: '❤️ Зберегти'
     }
 };
 exports.REMOVE_FROM_FAV = {
     id: 'nfav',
     title: {
-        en: 'Remove from Selected',
-        ua: 'Видалити з відібраних'
+        en: '💔 Remove',
+        ua: '💔 Видалити'
     }
 };
 
