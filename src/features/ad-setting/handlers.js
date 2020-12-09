@@ -45,13 +45,13 @@ exports.userSetAdCategoryView = (context) => {
     return new Text(labels.newUserSetAdCategotyView[context.lang])
         .addReplyKeyboard(
             [
-                [inputCms.SERVICES_STUFF.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]],
+                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.SERVICES_OFFER.title[context.lang]],
                 [
                     inputCms.BUY_STUFF.title[context.lang],
                     inputCms.SALES_STUFF.title[context.lang],
                     inputCms.GIVE_STUFF.title[context.lang]
                 ],
-                [commands.CANCEL_AD.title[context.lang], inputCms.OTHER_STUFF.title[context.lang]]
+                [commands.CANCEL_AD.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]]
             ],
             true
         )
