@@ -54,5 +54,9 @@ module.exports = {
     incorrectRadius: {
         en: 'You sent incorrect Radius\nIt must be integer number from [1..50] range',
         ua: 'Ви надіслали некоректний радіус\nЦе має бути натуральне число у інтервалі [1..50]'
+    },
+    locationAutoSend: {
+        en: 'Specify a location',
+        ua: 'Вказати місце розташування'
     }
 };

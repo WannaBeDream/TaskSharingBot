@@ -42,10 +42,13 @@ exports.initUserSettingsView = (context) => {
 };
 
 exports.initChangeLocationView = (context) => {
+    const getBackButton = [backCommand.title[context.lang]];
+    const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
+
     return [
         new Text(labels.existingUserChangeLocation[context.lang]).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
-            .addReplyKeyboard([[backCommand.title[context.lang]]], true)
+            .addReplyKeyboard([setLocationButton, getBackButton], true)
             .get()
     ];
 };
