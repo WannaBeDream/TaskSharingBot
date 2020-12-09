@@ -8,7 +8,7 @@ function createTemplateText(title, description, renumeration, author) {
     const descriptionPreview = `📝  ${markdownUtils.formatPlainText(description)}`;
     const authorPreview = `➡️  ${author}`;
 
-    return `${titlePreview}${remunerationPreview}\n\n${descriptionPreview}\n\n${authorPreview}`;
+    return `${titlePreview}\n\n${descriptionPreview}${remunerationPreview}\n\n${authorPreview}`;
 }
 
 function checkAd(ad, lang) {
