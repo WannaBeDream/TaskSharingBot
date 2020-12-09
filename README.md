@@ -18,7 +18,7 @@
 - After step 3 you need paste your env variables into .env.isProd and .env.isDev files (Bot tokens, webhook, mongoDB).
 5) npm install
 - Command from 6 step will run your app localy with ngrok
-6) npm run development 
+6) npm run dev 
 - Before using command from 7 step check --profile flag, maybe you can use without this flag. This command will create new Api on AWS. 
 7) npm run claudia:create
 
