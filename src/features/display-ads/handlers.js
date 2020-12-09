@@ -343,10 +343,12 @@ exports.requestDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     return editAdContent(context, labels.deleteAdConfirmation[context.lang], actions, ad);
 };
+
 exports.cancelDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     return editAdContent(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad);
 };
+
 exports.confirmDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     if (ad.usersSaved.length > 0) {
@@ -366,6 +368,7 @@ exports.deactivateAd = async (context) => {
         editChatMessageActions(context, getMyAdActions(false), context.inputData)
     ];
 };
+
 exports.activateAd = async (context) => {
     await updateAdActiveStatus(context.inputData, true);
     return [
