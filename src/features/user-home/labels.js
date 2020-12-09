@@ -1,7 +1,7 @@
 module.exports = {
     newUserGreeting: {
-        en: (name) => `Hello ${name}`,
-        ua: (name) => `Привіт, ${name}`
+        en: (name) => `Hello ${name}!`,
+        ua: (name) => `Привіт, ${name}!`
     },
     existingUserGreeting: {
         en: (name) => `Welcome back ${name}`,

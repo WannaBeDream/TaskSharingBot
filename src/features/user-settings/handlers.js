@@ -50,7 +50,7 @@ exports.initChangeRadiusView = (context) => {
 };
 
 exports.initViewProfileView = (context) => {
-    const name = markdownUtils.formatPlainText(`${context.user.firstName || ''} ${context.user.lastName || ''}`);
+    const name = markdownUtils.formatPlainText(`${context.user.firstName || ''}`);
     return [
         new Text(labels.userProfileData[context.lang](name, context.userState.searchRadius)).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
@@ -66,7 +66,9 @@ exports.initChangeLangView = (context) => {
 };
 
 exports.initNewUserChangeLangView = () => {
-    return new Text('\uD83D\uDE01').addReplyKeyboard([[labels.language.en, labels.language.ua]], true).get();
+    return new Text(commands.SET_LANG.title.ua)
+        .addReplyKeyboard([[labels.language.en, labels.language.ua]], true)
+        .get();
 };
 
 // ////////////////////////////////////////////////// //

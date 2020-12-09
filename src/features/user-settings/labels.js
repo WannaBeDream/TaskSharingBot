@@ -34,8 +34,8 @@ module.exports = {
         ua: (name, radius) => `${name}\nРадіус пошуку оголошень: ${radius}\nПоточна локація:`
     },
     language: {
-        en: 'English',
-        ua: 'Українська'
+        en: 'English 🇬🇧',
+        ua: 'Українська 🇺🇦'
     },
     locationNotSet: {
         en: `Geolocation isn't set in your message`,
