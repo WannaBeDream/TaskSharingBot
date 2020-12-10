@@ -12,8 +12,8 @@ module.exports = {
         ua: (start, end) => `Оголошення з ${start} по ${end}`
     },
     author: {
-        en: `Author`,
-        ua: `Автор`
+        en: `Link to the author`,
+        ua: `Посилання на автора`
     },
     deleted: {
         en: `\uD83D\uDEAB The Ad was deleted by its author.`,
