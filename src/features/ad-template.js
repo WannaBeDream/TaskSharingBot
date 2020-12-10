@@ -16,7 +16,7 @@ function checkAd(ad, lang) {
     return ad.spam.length >= SPAM_COUNTER
         ? `*${labels.deletedSpam[`${lang}`]}*`
         : ad.author
-        ? `\uD83D\uDC49 [${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
+        ? `👤️ [${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
         : `*${labels.deleted[`${lang}`]}*`;
 }
 
