@@ -74,27 +74,30 @@ function sendAds(context, foundAdsTemplates) {
     ];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
 
-    if (foundAdsTemplates.length > 0) {
-        const page = context.userState.adsPage + 1;
-        const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
-        const end =
-            context.searchResult.numberOfAdsPages === page
-                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
-                : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
-        return [
-            new Text(labels.pageNumber[context.lang](page))
-                .addReplyKeyboard([[backCommand.title[context.lang]]], true)
-                .get(),
-            ...foundAdsTemplates,
-            new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
-        ];
+    if (foundAdsTemplates.length === 0) {
+        return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
     }
-    return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
+
+    const page = context.userState.adsPage + 1;
+    const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
+    const end =
+        context.searchResult.numberOfAdsPages === page
+            ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
+            : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
+
+    return [
+        new Text(labels.pageNumber[context.lang](page))
+            .addReplyKeyboard([[backCommand.title[context.lang]]], true)
+            .get(),
+        ...foundAdsTemplates,
+        new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
+    ];
 }
 
 exports.initViewFoundAdsView = (context) => {
     context.userState.currentUpdateAd = null;
     const { adsViewMode } = context.userState;
+
     const adsList = context.searchResult.foundAds.map((ad) => {
         const inlineButtons = [];
 
@@ -133,6 +136,7 @@ exports.initViewFoundAdsView = (context) => {
             }
         };
     });
+
     return sendAds(context, adsList);
 };
 
