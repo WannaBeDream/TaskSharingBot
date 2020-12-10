@@ -25,7 +25,7 @@ module.exports = {
     },
     existingUserChangeRadius: {
         en: (value) => `Your current search radius is ${value} km\nPlease select or enter a new one:`,
-        ua: (value) => `Ваш поточний радіус пошуку -- ${value} км\nБудь ласка, оберіть або введіть новий:`
+        ua: (value) => `Ваш поточний радіус пошуку ${value} км\nБудь ласка, оберіть або введіть новий:`
     },
     existingUserSetRadius: {
         en: (radius) => radius.map((item) => `${item} km`),
