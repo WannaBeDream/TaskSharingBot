@@ -37,6 +37,7 @@ const globalTransitions = {
     },
     [generalCommands.GO_BACK.id]: { targetState: appStates.USER_HOME }
 };
+
 const settingsTransitions = {
     ...globalTransitions,
     [generalCommands.GO_BACK.id]: { targetState: appStates.USER_SETTINGS }
@@ -59,6 +60,11 @@ const adsInlineCommands = {
 };
 
 module.exports = {
+    // Main pages
+    [appStates.USER_HOME.id]: globalTransitions,
+    [appStates.VIEW_PROFILE.id]: settingsTransitions,
+    [appStates.USER_SETTINGS.id]: globalTransitions,
+    // New user registration
     [appStates.NEW_USER_START.id]: {
         [generalCommands.START_BOT.id]: {
             handler: userHomeHandlers.getNewUserGreeting,
@@ -83,8 +89,7 @@ module.exports = {
             targetState: appStates.USER_HOME
         }
     },
-    [appStates.USER_HOME.id]: globalTransitions,
-    [appStates.USER_SETTINGS.id]: globalTransitions,
+    // User change own data
     [appStates.CHANGE_LOCATION.id]: {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
@@ -99,7 +104,6 @@ module.exports = {
             targetState: appStates.USER_HOME
         }
     },
-    [appStates.VIEW_PROFILE.id]: settingsTransitions,
     [appStates.CHANGE_LANGUAGE.id]: {
         ...settingsTransitions,
         [generalCommands.DATA_INPUT.id]: {
@@ -107,7 +111,7 @@ module.exports = {
             targetState: appStates.USER_HOME
         }
     },
-
+    // User create new ad
     [appStates.CREATE_AD.id]: {
         [generalCommands.DATA_INPUT.id]: {
             handler: settingsAdHandlers.setCategory,
@@ -116,6 +120,13 @@ module.exports = {
         [settingsAdCommands.CANCEL_AD.id]: {
             handler: settingsAdHandlers.cancel,
             targetState: appStates.USER_HOME
+        }
+    },
+    [appStates.SET_ADS_CATEGORY.id]: {
+        ...globalTransitions,
+        [generalCommands.DATA_INPUT.id]: {
+            handler: viewAdsHandlers.searchLocalAds,
+            targetState: appStates.VIEW_FOUND_ADS
         }
     },
     [appStates.SET_TITLE.id]: {
@@ -174,14 +185,7 @@ module.exports = {
             targetState: appStates.USER_HOME
         }
     },
-
-    [appStates.SET_ADS_CATEGORY.id]: {
-        ...globalTransitions,
-        [generalCommands.DATA_INPUT.id]: {
-            handler: viewAdsHandlers.searchLocalAds,
-            targetState: appStates.VIEW_FOUND_ADS
-        }
-    },
+    // Inline navigation
     [appStates.VIEW_FOUND_ADS.id]: {
         ...globalTransitions,
         [viewAdsCommands.OLDER_ADS.id]: {
@@ -202,6 +206,7 @@ module.exports = {
         },
         ...adsInlineCommands
     },
+    // Edit already exist ad
     [appStates.EDIT_CATEGORY.id]: {
         [generalCommands.SKIP.id]: {
             targetState: appStates.EDIT_TITLE
