@@ -195,25 +195,30 @@ exports.searchLocalAds = async (context) => {
     if (userInputData.ifStrContain(context.inputData, strArrForCategoryAll)) {
         throw new Error(categoryError[context.lang]);
     }
+
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
     context.userState.adsCategory = context.inputData;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
+
 exports.searchOwnAds = async (context) => {
     context.userState.adsViewMode = adsViewModes.OWN_ADS_MODE;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
+
 exports.searchSelectedAds = async (context) => {
     context.userState.adsViewMode = adsViewModes.SELECTED_ADS_MODE;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
+
 exports.searchOlderAds = async (context) => {
     context.userState.adsPage += 1;
     await searchAdsByContextState(context);
 };
+
 exports.searchNewerAds = async (context) => {
     context.userState.adsPage -= 1;
     await searchAdsByContextState(context);
@@ -231,6 +236,7 @@ function answerCallbackQuery(queryId, alert) {
 
 function editChatMessage(context, newText, actions, adId) {
     const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+
     return {
         method: 'editMessageText',
         body: {
@@ -245,6 +251,7 @@ function editChatMessage(context, newText, actions, adId) {
 
 function editChatCaption(context, newText, actions, adId) {
     const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+
     return {
         method: 'editMessageCaption',
         body: {
@@ -259,6 +266,7 @@ function editChatCaption(context, newText, actions, adId) {
 
 function editChatMessageActions(context, actions, adId) {
     const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
+
     return {
         method: 'editMessageReplyMarkup',
         body: {
@@ -296,6 +304,7 @@ function editAdContent(context, content, actions, ad) {
     if (ad.imgId) {
         return [answerCallbackQuery(context.callback_query_id), editChatCaption(context, content, actions, ad._id)];
     }
+
     return [answerCallbackQuery(context.callback_query_id), editChatMessage(context, content, actions, ad._id)];
 }
 
@@ -310,9 +319,11 @@ exports.addToSaved = async (context) => {
 
 exports.deleteFromSaved = async (context) => {
     const ad = await deleteFromSavedAds(context.user.id, context.inputData);
+
     if (!ad.author && ad.usersSaved.length === 0) {
         await deleteAd(context.inputData);
     }
+
     return context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE
         ? deleteMessageFromChat(context)
         : editChatMessageActions(context, getMySavedAdActions(true), context.inputData);
@@ -321,11 +332,13 @@ exports.deleteFromSaved = async (context) => {
 exports.requestReportAd = async (context) => {
     const actions = [commands.CANCEL_REPORT, commands.CONFIRM_REPORT];
     const ad = await adsDao.findAdvertisement(context.inputData);
+
     return editAdContent(context, labels.reportAdConfirmation[context.lang], actions, ad);
 };
 exports.cancelReportAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
     const actions = getMySavedAdActions(!ad.usersSaved.includes(context.user.id));
+
     return editAdContent(context, AD_TEMPLATE(ad, context.lang), actions, ad);
 };
 exports.confirmReportAd = async (context) => {
@@ -345,6 +358,7 @@ exports.startEditAd = (context) => {
 exports.requestDeleteAd = async (context) => {
     const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
     const ad = await adsDao.findAdvertisement(context.inputData);
+
     return editAdContent(context, labels.deleteAdConfirmation[context.lang], actions, ad);
 };
 
@@ -355,18 +369,21 @@ exports.cancelDeleteAd = async (context) => {
 
 exports.confirmDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
+
     if (ad.usersSaved.length > 0) {
         ad.author = null;
         ad.isActive = false;
         await updateAdState(context.inputData, ad);
         return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
     }
+
     await deleteAd(context.inputData);
     return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
 };
 
 exports.deactivateAd = async (context) => {
     await updateAdActiveStatus(context.inputData, false);
+
     return [
         answerCallbackQuery(context.callback_query_id, labels.deactivateIsSet[context.lang]),
         editChatMessageActions(context, getMyAdActions(false), context.inputData)
@@ -375,6 +392,7 @@ exports.deactivateAd = async (context) => {
 
 exports.activateAd = async (context) => {
     await updateAdActiveStatus(context.inputData, true);
+
     return [
         answerCallbackQuery(context.callback_query_id, labels.activateIsSet[context.lang]),
         editChatMessageActions(context, getMyAdActions(true), context.inputData)
