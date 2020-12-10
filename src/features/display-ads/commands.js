@@ -17,16 +17,16 @@ exports.NEWER_ADS = {
 exports.DEACTIVATE_AD = {
     id: 'nactv',
     title: {
-        en: '📤',
-        ua: '📤'
+        en: '🔇',
+        ua: '🔇'
     }
 };
 
 exports.ACTIVATE_AD = {
     id: 'actv',
     title: {
-        en: '📥',
-        ua: '📥'
+        en: '🔈',
+        ua: '🔈'
     }
 };
 
