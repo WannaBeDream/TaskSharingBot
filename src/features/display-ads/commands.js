@@ -1,16 +1,16 @@
 exports.OLDER_ADS = {
     id: 'olderAds',
     title: {
-        en: 'Older Ads',
-        ua: 'Старіші оголошення'
+        en: 'Next >>',
+        ua: 'Наступні >>'
     }
 };
 
 exports.NEWER_ADS = {
     id: 'newerAds',
     title: {
-        en: 'Newer Ads',
-        ua: 'Новіші оголошення'
+        en: '<< Previous',
+        ua: '<< Попередні'
     }
 };
 
@@ -110,10 +110,10 @@ exports.REMOVE_FROM_FAV = {
     }
 };
 
-exports.CHANGE_CATEGORY = {
-    id: 'changeCategory',
+exports.GO_HOME = {
+    id: 'goBack',
     title: {
-        en: '<< Go back',
-        ua: '<< Повернутися'
+        en: 'Main menu 🏠',
+        ua: 'Головне меню 🏠'
     }
 };

@@ -67,11 +67,7 @@ function sendAds(context, foundAdsTemplates) {
             ? [commands.OLDER_ADS.title[context.lang]]
             : [])
     ];
-    const navLine2 = [
-        ...(context.userState === adsViewModes.LOCAL_ADS_MODE
-            ? [commands.CHANGE_CATEGORY.title[context.lang]]
-            : [backCommand.title[context.lang]])
-    ];
+    const navLine2 = [commands.GO_HOME.title[context.lang]];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
 
     if (foundAdsTemplates.length === 0) {
@@ -87,7 +83,7 @@ function sendAds(context, foundAdsTemplates) {
 
     return [
         new Text(labels.pageNumber[context.lang](page))
-            .addReplyKeyboard([[backCommand.title[context.lang]]], true)
+            .addReplyKeyboard([[commands.GO_HOME.title[context.lang]]], true)
             .get(),
         ...foundAdsTemplates,
         new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
