@@ -6,7 +6,7 @@ function createTemplateText(title, description, renumeration, author) {
     const titlePreview = `🗣️  ${markdownUtils.formatBoldText(title)}`;
     const remunerationPreview = markdownUtils.formatPlainText(renumeration);
     const descriptionPreview = `📝  ${markdownUtils.formatPlainText(description)}`;
-    const authorPreview = `➡️  ${author}`;
+    const authorPreview = `${author}`;
 
     return `${titlePreview}\n\n${descriptionPreview}${remunerationPreview}\n\n${authorPreview}`;
 }
@@ -16,7 +16,7 @@ function checkAd(ad, lang) {
     return ad.spam.length >= SPAM_COUNTER
         ? `*${labels.deletedSpam[`${lang}`]}*`
         : ad.author
-        ? `[${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
+        ? `➡️  [${labels.author[`${lang}`]}](tg://user?id=${ad.author})`
         : `*${labels.deleted[`${lang}`]}*`;
 }
 
