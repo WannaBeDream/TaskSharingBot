@@ -111,6 +111,9 @@ exports.setLanguage = (context) => {
 };
 
 exports.setRadius = (context) => {
+    if (typeof context.inputData !== 'string' || context.inputData === '') {
+        throw new Error(labels.incorrectRadius[context.lang]);
+    }
     const radius =
         context.inputData.endsWith('km') || context.inputData.endsWith('км')
             ? +context.inputData.substr(0, context.inputData.length - 2).trim()
