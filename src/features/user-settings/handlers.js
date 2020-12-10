@@ -5,7 +5,6 @@ const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { fetchUserAndUpdateAdvLoc } = require('../../database/methods/update');
-const markdownUtils = require('../../helpers/markdown-utils');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //
@@ -70,9 +69,8 @@ exports.initChangeRadiusView = (context) => {
 };
 
 exports.initViewProfileView = (context) => {
-    const name = markdownUtils.formatPlainText(`${context.user.firstName}`);
     return [
-        new Text(labels.userProfileData[context.lang](name, context.userState.searchRadius)).get(),
+        new Text(labels.userProfileData[context.lang](context.userState.searchRadius)).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
             .addReplyKeyboard([[backCommand.title[context.lang]]], true)
             .get()

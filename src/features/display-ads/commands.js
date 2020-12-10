@@ -113,7 +113,7 @@ exports.REMOVE_FROM_FAV = {
 exports.GO_HOME = {
     id: 'goBack',
     title: {
-        en: 'Main menu 🏠',
-        ua: 'Головне меню 🏠'
+        en: '🏠 Main menu',
+        ua: '🏠 Головне меню'
     }
 };

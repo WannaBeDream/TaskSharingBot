@@ -32,20 +32,20 @@ module.exports = {
         ua: (radius) => radius.map((item) => `${item} км`)
     },
     userProfileData: {
-        en: (name, radius) => `${name}\nRadius of searches: ${radius} km\nCurrent location:`,
-        ua: (name, radius) => `${name}\nРадіус пошуку оголошень: ${radius} км\nПоточна локація:`
+        en: (radius) => `Radius of searches: ${radius} km\nCurrent location:`,
+        ua: (radius) => `Радіус пошуку оголошень: ${radius} км\nПоточна локація:`
     },
     language: {
         en: 'English 🇬🇧',
         ua: 'Українська 🇺🇦'
     },
     setLanguage: {
-        en: 'Choose a new language 🌍',
-        ua: 'Оберіть нову мову 🌍'
+        en: '🌍 Choose a new language',
+        ua: '🌍 Оберіть нову мову'
     },
     choose: {
-        en: 'Choose ⚙️',
-        ua: 'Обирайте ⚙️'
+        en: '⚙️ Choose',
+        ua: '⚙️ Обирайте'
     },
     locationNotSet: {
         en: `Geolocation isn't set in your message`,
