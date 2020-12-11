@@ -10,27 +10,26 @@ const { fetchUserAndUpdateAdvLoc } = require('../../database/methods/update');
 //                  Display data                      //
 // ////////////////////////////////////////////////// //
 
-exports.initNewUserSetLocationView = (context) => {
+exports.renderNewUserSetLocationView = (context) => {
     const message = labels.newUserEnterLocation[context.lang];
     const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
 
     return new Text(message).addReplyKeyboard([setLocationButton], true).get();
 };
 
-exports.initNewUserSetRadiusView = (context) => {
+exports.renderNewUserSetRadiusView = (context) => {
     return new Text(labels.newUserEnterRadius[context.lang])
         .addReplyKeyboard(
             [
                 labels.existingUserSetRadius[context.lang](['1', '3', '5']),
-                labels.existingUserSetRadius[context.lang](['10', '20', '50']),
-                []
+                labels.existingUserSetRadius[context.lang](['10', '20', '50'])
             ],
             true
         )
         .get();
 };
 
-exports.initUserSettingsView = (context) => {
+exports.renderUserSettingsView = (context) => {
     return new Text(labels.choose[context.lang])
         .addReplyKeyboard(
             [
@@ -43,7 +42,7 @@ exports.initUserSettingsView = (context) => {
         .get();
 };
 
-exports.initChangeLocationView = (context) => {
+exports.renderChangeLocationView = (context) => {
     const getBackButton = [backCommand.title[context.lang]];
     const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
 
@@ -55,7 +54,7 @@ exports.initChangeLocationView = (context) => {
     ];
 };
 
-exports.initChangeRadiusView = (context) => {
+exports.renderChangeRadiusView = (context) => {
     return new Text(labels.existingUserChangeRadius[context.lang](context.userState.searchRadius))
         .addReplyKeyboard(
             [
@@ -68,7 +67,7 @@ exports.initChangeRadiusView = (context) => {
         .get();
 };
 
-exports.initViewProfileView = (context) => {
+exports.renderUserProfileView = (context) => {
     return [
         new Text(labels.userProfileData[context.lang](context.userState.searchRadius)).get(),
         new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
@@ -77,13 +76,13 @@ exports.initViewProfileView = (context) => {
     ];
 };
 
-exports.initChangeLangView = (context) => {
+exports.renderChangeLangView = (context) => {
     return new Text(labels.setLanguage[context.lang])
         .addReplyKeyboard([[labels.language.en, labels.language.ua], [backCommand.title[context.lang]]], true)
         .get();
 };
 
-exports.initNewUserChangeLangView = () => {
+exports.renderNewUserChangeLangView = () => {
     return new Text(commands.SET_LANG.title.ua)
         .addReplyKeyboard([[labels.language.en, labels.language.ua]], true)
         .get();

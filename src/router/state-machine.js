@@ -1,16 +1,17 @@
 const appStates = require('./app-states');
+const generalCommands = require('../features/general-commands');
+
 const userHomeCommands = require('../features/user-home/commands');
 const userHomeHandlers = require('../features/user-home/handlers');
 const settingsCommands = require('../features/user-settings/commands');
 const settingsHandlers = require('../features/user-settings/handlers');
-const generalCommands = require('../features/general-commands');
 
-const settingsAdCommands = require('../features/ad-setting/commands');
-const settingsAdHandlers = require('../features/ad-setting/handlers');
+const settingAdCommands = require('../features/ad-setting/commands');
+const settingAdHandlers = require('../features/ad-setting/handlers');
 const viewAdsCommands = require('../features/display-ads/commands');
 const viewAdsHandlers = require('../features/display-ads/handlers');
-
-const editSettingsAdHandlers = require('../features/ad-edit/handlers');
+const editAdCommands = require('../features/ad-edit/commands');
+const editAdHandlers = require('../features/ad-edit/handlers');
 
 const globalTransitions = {
     [userHomeCommands.USER_SETTINGS.id]: { targetState: appStates.USER_SETTINGS },
@@ -18,11 +19,7 @@ const globalTransitions = {
     [settingsCommands.VIEW_PROFILE.id]: { targetState: appStates.VIEW_PROFILE },
     [settingsCommands.CHANGE_LOCATION.id]: { targetState: appStates.CHANGE_LOCATION },
     [settingsCommands.CHANGE_RADIUS.id]: { targetState: appStates.CHANGE_RADIUS },
-    [generalCommands.START_BOT.id]: {
-        handler: userHomeHandlers.getUserGreeting,
-        targetState: appStates.USER_HOME
-    },
-    [userHomeCommands.CREATE_AD.id]: { targetState: appStates.CREATE_AD },
+    [userHomeCommands.CREATE_AD.id]: { targetState: appStates.START_CREATE_AD },
     [userHomeCommands.LOCAL_ADS.id]: {
         handler: viewAdsHandlers.startLocalAdsSearch,
         targetState: appStates.SET_ADS_CATEGORY
@@ -35,12 +32,24 @@ const globalTransitions = {
         handler: viewAdsHandlers.searchSelectedAds,
         targetState: appStates.VIEW_FOUND_ADS
     },
-    [generalCommands.GO_BACK.id]: { targetState: appStates.USER_HOME }
+    [generalCommands.GO_BACK.id]: { targetState: appStates.USER_HOME },
+    [generalCommands.START_BOT.id]: { targetState: appStates.BOT_RESTART }
 };
-
 const settingsTransitions = {
     ...globalTransitions,
     [generalCommands.GO_BACK.id]: { targetState: appStates.USER_SETTINGS }
+};
+const settingAdBotRestart = {
+    [generalCommands.START_BOT.id]: {
+        handler: settingAdHandlers.cancelSettingAd,
+        targetState: appStates.BOT_RESTART
+    }
+};
+const editAdBotRestart = {
+    [generalCommands.START_BOT.id]: {
+        handler: editAdHandlers.finishEditing,
+        targetState: appStates.BOT_RESTART
+    }
 };
 
 const adsInlineCommands = {
@@ -60,14 +69,10 @@ const adsInlineCommands = {
 };
 
 module.exports = {
-    // Main pages
-    [appStates.USER_HOME.id]: globalTransitions,
-    [appStates.VIEW_PROFILE.id]: settingsTransitions,
-    [appStates.USER_SETTINGS.id]: globalTransitions,
     // New user registration
     [appStates.NEW_USER_START.id]: {
         [generalCommands.START_BOT.id]: {
-            handler: userHomeHandlers.getNewUserGreeting,
+            handler: userHomeHandlers.renderUserGreetingView,
             targetState: appStates.NEW_USER_SET_LANG
         }
     },
@@ -89,6 +94,10 @@ module.exports = {
             targetState: appStates.USER_HOME
         }
     },
+    // misc
+    [appStates.USER_HOME.id]: globalTransitions,
+    [appStates.USER_SETTINGS.id]: globalTransitions,
+    [appStates.VIEW_PROFILE.id]: settingsTransitions,
     // User change own data
     [appStates.CHANGE_LOCATION.id]: {
         ...settingsTransitions,
@@ -112,16 +121,63 @@ module.exports = {
         }
     },
     // User create new ad
-    [appStates.CREATE_AD.id]: {
+    [appStates.START_CREATE_AD.id]: {
+        ...settingAdBotRestart,
         [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setCategory,
+            handler: settingAdHandlers.setCategory,
             targetState: appStates.SET_TITLE
         },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
+        [generalCommands.GO_BACK.id]: {
+            handler: settingAdHandlers.cancelSettingAd,
             targetState: appStates.USER_HOME
         }
     },
+    [appStates.SET_TITLE.id]: {
+        ...settingAdBotRestart,
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingAdHandlers.setTitle,
+            targetState: appStates.SET_DESCRIPTION
+        }
+    },
+    [appStates.SET_DESCRIPTION.id]: {
+        ...settingAdBotRestart,
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingAdHandlers.setDescription,
+            targetState: appStates.SET_IMAGE
+        }
+    },
+    [appStates.SET_IMAGE.id]: {
+        ...settingAdBotRestart,
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.SET_RENUMERATION
+        },
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingAdHandlers.setImg,
+            targetState: appStates.SET_RENUMERATION
+        }
+    },
+    [appStates.SET_RENUMERATION.id]: {
+        ...settingAdBotRestart,
+        [generalCommands.SKIP.id]: {
+            targetState: appStates.PREVIEW_AD
+        },
+        [generalCommands.DATA_INPUT.id]: {
+            handler: settingAdHandlers.setRenumeration,
+            targetState: appStates.PREVIEW_AD
+        }
+    },
+    [appStates.PREVIEW_AD.id]: {
+        ...settingAdBotRestart,
+        [settingAdCommands.PUBLISH_AD.id]: {
+            handler: settingAdHandlers.publish,
+            targetState: appStates.USER_HOME
+        },
+        [settingAdCommands.CANCEL_AD.id]: {
+            handler: settingAdHandlers.cancelSettingAd,
+            targetState: appStates.USER_HOME
+        }
+    },
+    // Search & View Ads
     [appStates.SET_ADS_CATEGORY.id]: {
         ...globalTransitions,
         [generalCommands.DATA_INPUT.id]: {
@@ -129,63 +185,6 @@ module.exports = {
             targetState: appStates.VIEW_FOUND_ADS
         }
     },
-    [appStates.SET_TITLE.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setTitle,
-            targetState: appStates.SET_DESCRIPTION
-        },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
-            targetState: appStates.USER_HOME
-        }
-    },
-    [appStates.SET_DESCRIPTION.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setDescription,
-            targetState: appStates.SET_IMAGE
-        },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
-            targetState: appStates.USER_HOME
-        }
-    },
-    [appStates.SET_IMAGE.id]: {
-        [generalCommands.SKIP.id]: {
-            targetState: appStates.SET_RENUMERATION
-        },
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setImg,
-            targetState: appStates.SET_RENUMERATION
-        },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
-            targetState: appStates.USER_HOME
-        }
-    },
-    [appStates.SET_RENUMERATION.id]: {
-        [generalCommands.SKIP.id]: {
-            targetState: appStates.PREVIEW_AD
-        },
-        [generalCommands.DATA_INPUT.id]: {
-            handler: settingsAdHandlers.setRenumeration,
-            targetState: appStates.PREVIEW_AD
-        },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
-            targetState: appStates.USER_HOME
-        }
-    },
-    [appStates.PREVIEW_AD.id]: {
-        [settingsAdCommands.PUBLISH_AD.id]: {
-            handler: settingsAdHandlers.publish,
-            targetState: appStates.USER_HOME
-        },
-        [settingsAdCommands.CANCEL_AD.id]: {
-            handler: settingsAdHandlers.cancel,
-            targetState: appStates.USER_HOME
-        }
-    },
-    // Inline navigation
     [appStates.VIEW_FOUND_ADS.id]: {
         ...globalTransitions,
         [viewAdsCommands.OLDER_ADS.id]: {
@@ -197,60 +196,65 @@ module.exports = {
             targetState: appStates.VIEW_FOUND_ADS
         },
         [viewAdsCommands.EDIT_AD.id]: {
-            handler: viewAdsHandlers.startEditAd,
-            targetState: appStates.EDIT_CATEGORY
+            handler: editAdHandlers.startEditAd,
+            targetState: appStates.START_EDIT_AD
         },
         ...adsInlineCommands
     },
-    // Edit already exist ad
-    [appStates.EDIT_CATEGORY.id]: {
+    [appStates.START_EDIT_AD.id]: {
+        ...editAdBotRestart,
         [generalCommands.SKIP.id]: {
             targetState: appStates.EDIT_TITLE
         },
         [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateCategory,
+            handler: editAdHandlers.updateCategory,
             targetState: appStates.EDIT_TITLE
         }
     },
     [appStates.EDIT_TITLE.id]: {
+        ...editAdBotRestart,
         [generalCommands.SKIP.id]: {
             targetState: appStates.EDIT_DESCRIPTION
         },
         [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateTitle,
+            handler: editAdHandlers.updateTitle,
             targetState: appStates.EDIT_DESCRIPTION
         }
     },
     [appStates.EDIT_DESCRIPTION.id]: {
+        ...editAdBotRestart,
         [generalCommands.SKIP.id]: {
             targetState: appStates.EDIT_IMAGE
         },
         [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateDescription,
+            handler: editAdHandlers.updateDescription,
             targetState: appStates.EDIT_IMAGE
         }
     },
     [appStates.EDIT_IMAGE.id]: {
+        ...editAdBotRestart,
         [generalCommands.SKIP.id]: {
             targetState: appStates.EDIT_REMUNERATION
         },
         [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateImage,
+            handler: editAdHandlers.updateImage,
             targetState: appStates.EDIT_REMUNERATION
         }
     },
     [appStates.EDIT_REMUNERATION.id]: {
+        ...editAdBotRestart,
         [generalCommands.SKIP.id]: {
             targetState: appStates.FINISH_EDITING
         },
         [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.updateRemuneration,
+            handler: editAdHandlers.updateRemuneration,
             targetState: appStates.FINISH_EDITING
         }
     },
     [appStates.FINISH_EDITING.id]: {
-        [generalCommands.DATA_INPUT.id]: {
-            handler: editSettingsAdHandlers.finishEditing,
+        ...editAdBotRestart,
+        [editAdCommands.FINISH_EDITING.id]: {
+            handler: editAdHandlers.finishEditing,
             targetState: appStates.USER_HOME
         }
     }

@@ -3,7 +3,7 @@ const { Text } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const inputCms = require('../ad-categories');
-const { SKIP: skipCommand } = require('../general-commands');
+const generalCms = require('../general-commands');
 const { AD_TEMPLATE } = require('../ad-template');
 
 const { findAdvertisement, findUser } = require('../../database/methods/find');
@@ -13,71 +13,52 @@ const { userInputData } = require('../../validators/ad-validation');
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
+const telmsg = require('../../helpers/tel-message-utils');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
 // ////////////////////////////////////////////////// //
 
-exports.userSetAdNameView = (context) => {
-    return new Text(labels.newUserSetAdNameView[context.lang])
-        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]]], true)
-        .get();
+exports.renderSetAdTitleView = (context) => {
+    return new Text(labels.newUserSetAdTitleView[context.lang]).replyKeyboardHide().get();
 };
 
-exports.userSetAdDescriptionView = (context) => {
-    return new Text(labels.newUserSetAdDescriptionView[context.lang])
-        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang]]], true)
-        .get();
+exports.renderSetAdDescriptionView = (context) => {
+    return new Text(labels.newUserSetAdDescriptionView[context.lang]).get();
 };
 
-exports.userSetAdRemunerationView = (context) => {
+exports.renderSetAdRemunerationView = (context) => {
     return new Text(labels.newUserEnterRenumeration[context.lang])
-        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
+        .addReplyKeyboard([[generalCms.SKIP.title[context.lang]]], true)
         .get();
 };
 
-exports.userSetAdCategoryView = (context) => {
+exports.renderSetAdCategoryView = (context) => {
     return new Text(labels.newUserSetAdCategotyView[context.lang])
         .addReplyKeyboard(
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.SERVICES_OFFER.title[context.lang]],
-                [
-                    inputCms.BUY_STUFF.title[context.lang],
-                    inputCms.SALES_STUFF.title[context.lang],
-                    inputCms.GIVE_STUFF.title[context.lang]
-                ],
-                [commands.CANCEL_AD.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]]
+                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
+                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
+                [generalCms.GO_BACK.title[context.lang], inputCms.LOST_FOUND_ADS.title[context.lang]]
             ],
             true
         )
         .get();
 };
 
-exports.userSetAdImgView = (context) => {
+exports.renderSetAdImgView = (context) => {
     return new Text(labels.newUserEnterImg[context.lang])
-        .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], skipCommand.title[context.lang]]], true)
+        .addReplyKeyboard([[generalCms.SKIP.title[context.lang]]], true)
         .get();
 };
 
-exports.userPublishAdView = async (context) => {
+exports.renderPreviewAdView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
+    const previewActions = [[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]];
     if (!ad.imgId) {
-        return new Text(AD_TEMPLATE(ad, context.lang))
-            .addReplyKeyboard([[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]], true)
-            .get();
+        return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard(previewActions, true).get();
     }
-    return {
-        method: 'sendPhoto',
-        body: {
-            photo: `${ad.imgId}`,
-            caption: AD_TEMPLATE(ad, context.lang),
-            parse_mode: 'Markdown',
-            reply_markup: {
-                keyboard: [[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]],
-                resize_keyboard: true
-            }
-        }
-    };
+    return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), previewActions);
 };
 
 // ////////////////////////////////////////////////// //
@@ -157,21 +138,15 @@ exports.setImg = async (context) => {
 exports.publish = async (context) => {
     const user = await findUser(context.user.id);
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.location = {
-        ...user.location
-    };
-    ad.isActive = context.inputData === commands.PUBLISH_AD.title[context.lang];
+    ad.location = { ...user.location };
+    ad.isActive = true;
     await updateAdState(ad._id, ad);
     context.userState.currentUpdateAd = null;
-    const message = labels.publish[context.lang];
-
-    return new Text(message).get();
+    return new Text(labels.publish[context.lang]).get();
 };
 
-exports.cancel = async (context) => {
-    const message = labels.cancel[context.lang];
-    const id = context.userState.currentUpdateAd;
-
-    await deleteAd(id);
-    return new Text(message).get();
+exports.cancelSettingAd = async (context) => {
+    await deleteAd(context.userState.currentUpdateAd);
+    context.userState.currentUpdateAd = null;
+    return new Text(labels.cancel[context.lang]).get();
 };

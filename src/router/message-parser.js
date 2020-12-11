@@ -2,6 +2,7 @@ const userHomeCommands = require('../features/user-home/commands');
 const settingsCommands = require('../features/user-settings/commands');
 const viewAdsCommands = require('../features/display-ads/commands');
 const settingsAdCommands = require('../features/ad-setting/commands');
+const editAdCommands = require('../features/ad-edit/commands');
 const adsDatainputCommands = require('../features/ad-categories');
 const generalCommands = require('../features/general-commands');
 
@@ -9,7 +10,8 @@ const allCommands = Object.values(settingsCommands)
     .concat(Object.values(userHomeCommands))
     .concat(Object.values(generalCommands))
     .concat(Object.values(viewAdsCommands))
-    .concat(Object.values(settingsAdCommands));
+    .concat(Object.values(settingsAdCommands))
+    .concat(Object.values(editAdCommands));
 
 function parseRegularCommand(update, availableCmds, lang) {
     return allCommands.find((c) => {

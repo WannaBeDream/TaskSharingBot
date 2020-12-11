@@ -22,6 +22,8 @@ const {
 } = require('../../database/methods/update');
 const { deleteAd } = require('../../database/methods/delete');
 
+const telmsg = require('../../helpers/tel-message-utils');
+
 const adsViewModes = {
     LOCAL_ADS_MODE: 'localAdsMode',
     SELECTED_ADS_MODE: 'selectedAdsMode',
@@ -32,33 +34,22 @@ const adsViewModes = {
 //                  Display data                      //
 // ////////////////////////////////////////////////// //
 
-exports.initSetAdsCategoryView = (context) => {
+exports.renderSelectAdsCategoryView = (context) => {
     return new Text(labels.selectAdsCategory[context.lang])
         .addReplyKeyboard(
             [
+                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
+                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
                 [
-                    inputCms.ASSISTANCE_SEARCH.title[context.lang],
-                    inputCms.SERVICES_OFFER.title[context.lang],
-                    inputCms.LOST_FOUND_STUFF.title[context.lang]
-                ],
-                [
-                    inputCms.BUY_STUFF.title[context.lang],
-                    inputCms.SALES_STUFF.title[context.lang],
-                    inputCms.GIVE_STUFF.title[context.lang]
-                ],
-                [backCommand.title[context.lang], inputCms.ALL.title[context.lang]]
+                    backCommand.title[context.lang],
+                    inputCms.LOST_FOUND_ADS.title[context.lang],
+                    inputCms.ALL.title[context.lang]
+                ]
             ],
             true
         )
         .get();
 };
-
-function buildInlineButton(key, command, lang) {
-    return {
-        text: command.title[`${lang}`],
-        callback_data: JSON.stringify({ key, cmd: command.id })
-    };
-}
 
 function sendAds(context, foundAdsTemplates) {
     const navLine1 = [
@@ -70,69 +61,50 @@ function sendAds(context, foundAdsTemplates) {
     const navLine2 = [commands.GO_HOME.title[context.lang]];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
 
-    if (foundAdsTemplates.length === 0) {
-        return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
+    if (foundAdsTemplates.length > 0) {
+        const page = context.userState.adsPage + 1;
+        const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
+        const end =
+            context.searchResult.numberOfAdsPages === page
+                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
+                : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
+        return [
+            new Text(labels.pageNumber[context.lang](page))
+                .addReplyKeyboard([[commands.GO_HOME.title[context.lang]]], true)
+                .get(),
+            ...foundAdsTemplates,
+            new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
+        ];
     }
-
-    const page = context.userState.adsPage + 1;
-    const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
-    const end =
-        context.searchResult.numberOfAdsPages === page
-            ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
-            : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
-
-    return [
-        new Text(labels.pageNumber[context.lang](page))
-            .addReplyKeyboard([[commands.GO_HOME.title[context.lang]]], true)
-            .get(),
-        ...foundAdsTemplates,
-        new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
-    ];
+    return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
 }
 
-exports.initViewFoundAdsView = (context) => {
-    context.userState.currentUpdateAd = null;
+exports.renderFoundAdsView = (context) => {
     const { adsViewMode } = context.userState;
-
     const adsList = context.searchResult.foundAds.map((ad) => {
         const inlineButtons = [];
-
         if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
-                inlineButtons.push(buildInlineButton(ad._id, commands.INSTANT_DELETE, context.lang));
+                inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.INSTANT_DELETE, context.lang));
             } else {
                 const activateCmd = ad.isActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD;
-                inlineButtons.push(buildInlineButton(ad._id, activateCmd, context.lang));
-                inlineButtons.push(buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
-                inlineButtons.push(buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
+                inlineButtons.push(telmsg.buildInlineButton(ad._id, activateCmd, context.lang));
+                inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
+                inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             }
         } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.user.id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
-            inlineButtons.push(buildInlineButton(ad._id, favCmd, context.lang));
-            inlineButtons.push(buildInlineButton(ad._id, commands.REPORT_REQUEST, context.lang));
+            inlineButtons.push(telmsg.buildInlineButton(ad._id, favCmd, context.lang));
+            inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.REPORT_REQUEST, context.lang));
         } else {
-            inlineButtons.push(buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
+            inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.REMOVE_FROM_FAV, context.lang));
         }
 
         if (!ad.imgId) {
-            const adView = new Text(AD_TEMPLATE(ad, context.lang));
-            return adView.addInlineKeyboard([inlineButtons]).get();
+            return new Text(AD_TEMPLATE(ad, context.lang)).addInlineKeyboard([inlineButtons]).get();
         }
-
-        return {
-            method: 'sendPhoto',
-            body: {
-                photo: `${ad.imgId}`,
-                caption: AD_TEMPLATE(ad, context.lang),
-                parse_mode: 'Markdown',
-                reply_markup: {
-                    inline_keyboard: [inlineButtons],
-                    resize_keyboard: true
-                }
-            }
-        };
+        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [inlineButtons]);
     });
-
     return sendAds(context, adsList);
 };
 
@@ -195,206 +167,107 @@ exports.searchLocalAds = async (context) => {
     if (userInputData.ifStrContain(context.inputData, strArrForCategoryAll)) {
         throw new Error(categoryError[context.lang]);
     }
-
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
     context.userState.adsCategory = context.inputData;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
-
 exports.searchOwnAds = async (context) => {
     context.userState.adsViewMode = adsViewModes.OWN_ADS_MODE;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
-
 exports.searchSelectedAds = async (context) => {
     context.userState.adsViewMode = adsViewModes.SELECTED_ADS_MODE;
     context.userState.adsPage = 0;
     await searchAdsByContextState(context);
 };
-
 exports.searchOlderAds = async (context) => {
     context.userState.adsPage += 1;
     await searchAdsByContextState(context);
 };
-
 exports.searchNewerAds = async (context) => {
     context.userState.adsPage -= 1;
     await searchAdsByContextState(context);
 };
 
-function answerCallbackQuery(queryId, alert) {
-    return {
-        method: 'answerCallbackQuery',
-        body: {
-            callback_query_id: queryId,
-            ...(alert ? { text: alert, show_alert: true } : {})
-        }
-    };
-}
-
-function editChatMessage(context, newText, actions, adId) {
-    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
-
-    return {
-        method: 'editMessageText',
-        body: {
-            chat_id: context.chat_id,
-            message_id: context.message_id,
-            text: newText,
-            parse_mode: 'Markdown',
-            reply_markup: { inline_keyboard: [inlineButtons] }
-        }
-    };
-}
-
-function editChatCaption(context, newText, actions, adId) {
-    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
-
-    return {
-        method: 'editMessageCaption',
-        body: {
-            chat_id: context.chat_id,
-            message_id: context.message_id,
-            caption: newText,
-            parse_mode: 'Markdown',
-            reply_markup: { inline_keyboard: [inlineButtons] }
-        }
-    };
-}
-
-function editChatMessageActions(context, actions, adId) {
-    const inlineButtons = actions.map((cmd) => buildInlineButton(adId, cmd, context.lang));
-
-    return {
-        method: 'editMessageReplyMarkup',
-        body: {
-            chat_id: context.chat_id,
-            message_id: context.message_id,
-            reply_markup: { inline_keyboard: [inlineButtons] }
-        }
-    };
-}
-
-// ////////////////////////////////////////////////// //
-//                  Delete logic                      //
-// ////////////////////////////////////////////////// //
-
-function deleteMessageFromChat(context) {
-    return {
-        method: 'deleteMessage',
-        body: { chat_id: context.chat_id, message_id: context.message_id }
-    };
-}
-
 // ////////////////////////////////////////////////// //
 //           Inline buttons generators                //
 // ////////////////////////////////////////////////// //
 
-function getMyAdActions(isAdActive) {
+function getOwnAdActions(isAdActive) {
     return [isAdActive ? commands.DEACTIVATE_AD : commands.ACTIVATE_AD, commands.EDIT_AD, commands.DELETE_REQUEST];
 }
 
-function getMySavedAdActions(isAdFav) {
+function getFavAdActions(isAdFav) {
     return [isAdFav ? commands.ADD_TO_FAV : commands.REMOVE_FROM_FAV, commands.REPORT_REQUEST];
 }
 
-function editAdContent(context, content, actions, ad) {
-    if (ad.imgId) {
-        return [answerCallbackQuery(context.callback_query_id), editChatCaption(context, content, actions, ad._id)];
-    }
-
-    return [answerCallbackQuery(context.callback_query_id), editChatMessage(context, content, actions, ad._id)];
-}
-
 // ////////////////////////////////////////////////// //
-//            Inline actions  ALL ads                 //
+//            Inline actions ALL ads                  //
 // ////////////////////////////////////////////////// //
 
 exports.addToSaved = async (context) => {
     await addToSavedAds(context.user.id, context.inputData);
-    return editChatMessageActions(context, getMySavedAdActions(false), context.inputData);
+    return telmsg.editChatMessageActions(context, context.lang, getFavAdActions(false), context.inputData);
 };
-
 exports.deleteFromSaved = async (context) => {
     const ad = await deleteFromSavedAds(context.user.id, context.inputData);
-
     if (!ad.author && ad.usersSaved.length === 0) {
         await deleteAd(context.inputData);
     }
-
     return context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE
-        ? deleteMessageFromChat(context)
-        : editChatMessageActions(context, getMySavedAdActions(true), context.inputData);
+        ? telmsg.deleteChatMessage(context)
+        : telmsg.editChatMessageActions(context, context.lang, getFavAdActions(true), context.inputData);
 };
 
 exports.requestReportAd = async (context) => {
     const actions = [commands.CANCEL_REPORT, commands.CONFIRM_REPORT];
     const ad = await adsDao.findAdvertisement(context.inputData);
-
-    return editAdContent(context, labels.reportAdConfirmation[context.lang], actions, ad);
+    return telmsg.editAdContent(context, context.lang, labels.reportAdConfirmation, actions, ad);
 };
 exports.cancelReportAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
-    const actions = getMySavedAdActions(!ad.usersSaved.includes(context.user.id));
-
-    return editAdContent(context, AD_TEMPLATE(ad, context.lang), actions, ad);
+    const actions = getFavAdActions(!ad.usersSaved.includes(context.user.id));
+    return telmsg.editAdContent(context, context.lang, AD_TEMPLATE(ad, context.lang), actions, ad);
 };
 exports.confirmReportAd = async (context) => {
     await markAsSpam(context.user.id, context.inputData);
-    return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
+    return telmsg.deleteChatMessage(context);
 };
 
 // ////////////////////////////////////////////////// //
 //            Inline actions  MY ads                  //
 // ////////////////////////////////////////////////// //
 
-exports.startEditAd = (context) => {
-    context.userState.currentUpdateAd = context.inputData;
-    return answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
-};
-
 exports.requestDeleteAd = async (context) => {
     const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
     const ad = await adsDao.findAdvertisement(context.inputData);
-
-    return editAdContent(context, labels.deleteAdConfirmation[context.lang], actions, ad);
+    return telmsg.editAdContent(context, context.lang, labels.deleteAdConfirmation, actions, ad);
 };
-
 exports.cancelDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
-    return editAdContent(context, AD_TEMPLATE(ad, context.lang), getMyAdActions(ad.isActive), ad);
+    return telmsg.editAdContent(context, context.lang, AD_TEMPLATE(ad, context.lang), getOwnAdActions(ad.isActive), ad);
 };
-
 exports.confirmDeleteAd = async (context) => {
     const ad = await adsDao.findAdvertisement(context.inputData);
-
     if (ad.usersSaved.length > 0) {
         ad.author = null;
         ad.isActive = false;
         await updateAdState(context.inputData, ad);
-        return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
+    } else {
+        await deleteAd(context.inputData);
     }
-
-    await deleteAd(context.inputData);
-    return [answerCallbackQuery(context.callback_query_id), deleteMessageFromChat(context)];
+    return telmsg.deleteChatMessage(context);
 };
 
 exports.deactivateAd = async (context) => {
-    await updateAdActiveStatus(context.inputData, false);
-
-    return [
-        answerCallbackQuery(context.callback_query_id, labels.deactivateIsSet[context.lang]),
-        editChatMessageActions(context, getMyAdActions(false), context.inputData)
-    ];
+    const adId = context.inputData;
+    await updateAdActiveStatus(adId, false);
+    return telmsg.editChatMessageActions(context, context.lang, getOwnAdActions(false), adId, labels.deactivateIsSet);
 };
-
 exports.activateAd = async (context) => {
-    await updateAdActiveStatus(context.inputData, true);
-
-    return [
-        answerCallbackQuery(context.callback_query_id, labels.activateIsSet[context.lang]),
-        editChatMessageActions(context, getMyAdActions(true), context.inputData)
-    ];
+    const adId = context.inputData;
+    await updateAdActiveStatus(adId, true);
+    return telmsg.editChatMessageActions(context, context.lang, getOwnAdActions(true), adId, labels.activateIsSet);
 };

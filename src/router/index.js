@@ -6,17 +6,12 @@ const langResources = require('../features/unknown-labels');
 const { connectToDatabase } = require('../database/create-connection');
 const { logger } = require('../helpers');
 
-async function tryExecuteFunction(func, params, result) {
-    const res = result;
-    if (func) {
-        const reply = await func(params);
-        if (reply && Array.isArray(reply)) {
-            res.push(...reply);
-        } else if (reply) {
-            res.push(reply);
-        }
+async function tryExecuteFunction(func, params) {
+    if (!func) {
+        return [];
     }
-    return res;
+    const reply = await func(params);
+    return !reply ? [] : Array.isArray(reply) ? reply : [reply];
 }
 
 module.exports = async (update) => {
@@ -40,16 +35,18 @@ module.exports = async (update) => {
         const chatData = messageParser.parseChatData(update);
         const context = { user, userState, lang: userState.lang, inputData, ...chatData };
 
-        let reply = [];
-        reply = await tryExecuteFunction(transition.handler, context, reply);
-        reply = await tryExecuteFunction(transition.targetState && transition.targetState.constructor, context, reply);
+        const handlerReply = await tryExecuteFunction(transition.handler, context);
+        const targetStateReply = await tryExecuteFunction(
+            transition.targetState && transition.targetState.renderer,
+            context
+        );
 
         await appStateDao.setUserState(user.id, {
             ...userState,
             ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
             lang: context.lang
         });
-        return reply;
+        return handlerReply.concat(targetStateReply);
     } catch (error) {
         logger.error({
             level: 'error',

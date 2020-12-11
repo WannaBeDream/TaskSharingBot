@@ -17,83 +17,68 @@ const { FINISH_EDITING: finishCommand } = require('./commands');
 const labels = require('./labels');
 const inputCms = require('../ad-categories');
 const markdownUtils = require('../../helpers/markdown-utils');
+const telmsg = require('../../helpers/tel-message-utils');
 
-exports.initChangeTitleAdView = async (context) => {
+exports.startEditAd = (context) => {
+    context.userState.currentUpdateAd = context.inputData;
+    return telmsg.answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
+};
+
+exports.renderChangeAdTitleView = async (context) => {
     const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
     const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(title)}`;
     return new Text(message).addReplyKeyboard([[skipCommand.title[context.lang]]], true).get();
 };
 
-exports.initChangeDescriptionAdView = async (context) => {
+exports.renderChangeAdDescriptionView = async (context) => {
     const { description } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'description');
     const message = `${labels.editDescription[context.lang]}\n${markdownUtils.formatItalicText(description)}`;
     return new Text(message).get();
 };
 
-exports.initChangeCategoryAdView = async (context) => {
+exports.renderChangeAdCategoryView = async (context) => {
     const { category } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'category');
     const categoryText = Object.values(inputCms).find((cmd) => cmd.id === category).title[context.lang];
     const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.SERVICES_OFFER.title[context.lang]],
-                [
-                    inputCms.BUY_STUFF.title[context.lang],
-                    inputCms.SALES_STUFF.title[context.lang],
-                    inputCms.GIVE_STUFF.title[context.lang]
-                ],
-                [skipCommand.title[context.lang], inputCms.LOST_FOUND_STUFF.title[context.lang]]
+                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
+                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
+                [inputCms.LOST_FOUND_ADS.title[context.lang], skipCommand.title[context.lang]]
             ],
             true
         )
         .get();
 };
 
-exports.initChangeImageAdView = async (context) => {
+exports.renderChangeAdImageView = async (context) => {
     const { imgId } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'imgId');
-    let message;
 
     if (imgId) {
-        message = labels.editWithImage[context.lang];
-        return [new Photo(imgId).get(), new Text(message).get()];
+        return [new Photo(imgId).get(), new Text(labels.editWithImage[context.lang]).get()];
     }
 
-    message = labels.editWithoutImage[context.lang];
-    return new Text(message).get();
+    return new Text(labels.editWithoutImage[context.lang]).get();
 };
 
-exports.initChangeRemunerationAdView = async (context) => {
+exports.renderChangeAdRemunerationView = async (context) => {
     const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
-    let message;
 
     if (renumeration.length === 0) {
-        message = labels.editRemunerationWithoutData[context.lang];
-        return new Text(message).get();
+        return new Text(labels.editRemunerationWithoutData[context.lang]).get();
     }
 
-    message = `${labels.editRemunerationWithData[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
+    const message = `${labels.editRemunerationWithData[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
     return new Text(message).get();
 };
 
-exports.initFinishEditingAdView = async (context) => {
+exports.renderFinishAdEditingView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
 
     if (ad.imgId) {
-        return {
-            method: 'sendPhoto',
-            body: {
-                photo: `${ad.imgId}`,
-                caption: AD_TEMPLATE(ad, context.lang),
-                parse_mode: 'Markdown',
-                reply_markup: {
-                    keyboard: [[finishCommand.title[context.lang]]],
-                    resize_keyboard: true
-                }
-            }
-        };
+        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [[finishCommand.title[context.lang]]]);
     }
-
     return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
 };
 
@@ -161,6 +146,6 @@ exports.updateRemuneration = async (context) => {
     await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
 };
 
-exports.finishEditing = async (context) => {
+exports.finishEditing = (context) => {
     context.userState.currentUpdateAd = null;
 };

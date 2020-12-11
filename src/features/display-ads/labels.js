@@ -27,10 +27,6 @@ module.exports = {
         en: 'Please select Category',
         ua: 'Будь ласка, оберіть категорію'
     },
-    editAdIsStarted: {
-        en: `Ad editing process is started.\nPlease scroll down to enter data.`,
-        ua: `Процес редагування оголошення розпочато. Прокрутіть вниз, щоб вводити дані.`
-    },
     deactivateIsSet: {
         en: `The Ad is got deactivated and hidden from others`,
         ua: `Оголошення тепер деактивовано\nта буде приховано від інших`

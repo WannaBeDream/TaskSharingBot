@@ -1,11 +1,3 @@
-exports.GO_BACK = {
-    id: 'goBack',
-    title: {
-        en: '<< Back',
-        ua: '<< Назад'
-    }
-};
-
 exports.START_BOT = {
     id: 'START_BOT',
     title: {
@@ -19,6 +11,14 @@ exports.DATA_INPUT = {
     title: {
         en: '*',
         ua: '*'
+    }
+};
+
+exports.GO_BACK = {
+    id: 'goBack',
+    title: {
+        en: '<< Back',
+        ua: '<< Назад'
     }
 };
 

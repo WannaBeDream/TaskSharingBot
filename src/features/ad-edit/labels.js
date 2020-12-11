@@ -1,4 +1,8 @@
 module.exports = {
+    editAdIsStarted: {
+        en: `Ad editing process is started.\nPlease scroll down to enter data.`,
+        ua: `Процес редагування оголошення розпочато. Прокрутіть вниз, щоб вводити дані.`
+    },
     editTitle: {
         en: 'Edit title\n\nYour title at the moment: ',
         ua: 'Змінити заголовок\n\nВаш заголовок на даний момент: '

@@ -1,40 +1,43 @@
 const userHomeHandlers = require('../features/user-home/handlers');
-const settingsHandlers = require('../features/user-settings/handlers');
+const userSettingsHandlers = require('../features/user-settings/handlers');
 const settingsAdHandlers = require('../features/ad-setting/handlers');
-const displayHandlers = require('../features/display-ads/handlers');
-const displayEditAdHandlers = require('../features/ad-edit/handlers');
+const displayAdHandlers = require('../features/display-ads/handlers');
+const editAdHandlers = require('../features/ad-edit/handlers');
 
 module.exports = {
     NEW_USER_START: { id: 'newUserStart' },
-    USER_HOME: { id: 'userHome', constructor: userHomeHandlers.initUserHomeView },
+    USER_HOME: { id: 'userHome', renderer: userHomeHandlers.renderUserHomeView },
+    // BOT_RESTART has the same id as USER_HOME. It means that two states are equal and assume the same actions.
+    // They are only differed by rendered views.
+    BOT_RESTART: { id: 'userHome', renderer: userHomeHandlers.renderBotRestartView },
 
-    NEW_USER_SET_LANG: { id: 'newUserSetLang', constructor: settingsHandlers.initNewUserChangeLangView },
+    NEW_USER_SET_LANG: { id: 'newUserSetLang', renderer: userSettingsHandlers.renderNewUserSetLangView },
     NEW_USER_SET_LOCATION: {
         id: 'newUserSetLocation',
-        constructor: settingsHandlers.initNewUserSetLocationView
+        renderer: userSettingsHandlers.renderNewUserSetLocationView
     },
-    NEW_USER_SET_RADIUS: { id: 'newUserSetRadius', constructor: settingsHandlers.initNewUserSetRadiusView },
+    NEW_USER_SET_RADIUS: { id: 'newUserSetRadius', renderer: userSettingsHandlers.renderNewUserSetRadiusView },
 
-    USER_SETTINGS: { id: 'userSettings', constructor: settingsHandlers.initUserSettingsView },
-    CHANGE_LOCATION: { id: 'changeLocation', constructor: settingsHandlers.initChangeLocationView },
-    CHANGE_RADIUS: { id: 'changeRadius', constructor: settingsHandlers.initChangeRadiusView },
-    VIEW_PROFILE: { id: 'viewProfile', constructor: settingsHandlers.initViewProfileView },
-    CHANGE_LANGUAGE: { id: 'changeLang', constructor: settingsHandlers.initChangeLangView },
+    USER_SETTINGS: { id: 'userSettings', renderer: userSettingsHandlers.renderUserSettingsView },
+    CHANGE_LOCATION: { id: 'changeLocation', renderer: userSettingsHandlers.renderChangeLocationView },
+    CHANGE_RADIUS: { id: 'changeRadius', renderer: userSettingsHandlers.renderChangeRadiusView },
+    VIEW_PROFILE: { id: 'viewProfile', renderer: userSettingsHandlers.renderUserProfileView },
+    CHANGE_LANGUAGE: { id: 'changeLang', renderer: userSettingsHandlers.renderChangeLangView },
 
-    CREATE_AD: { id: 'createAd', constructor: settingsAdHandlers.userSetAdCategoryView },
-    SET_DESCRIPTION: { id: 'setDescription', constructor: settingsAdHandlers.userSetAdDescriptionView },
-    SET_TITLE: { id: 'setTitle', constructor: settingsAdHandlers.userSetAdNameView },
-    SET_IMAGE: { id: 'setImg', constructor: settingsAdHandlers.userSetAdImgView },
-    SET_RENUMERATION: { id: 'setRenumeration', constructor: settingsAdHandlers.userSetAdRemunerationView },
-    PREVIEW_AD: { id: 'previewAd', constructor: settingsAdHandlers.userPublishAdView },
+    START_CREATE_AD: { id: 'createAd', renderer: settingsAdHandlers.renderSetAdCategoryView },
+    SET_TITLE: { id: 'setTitle', renderer: settingsAdHandlers.renderSetAdTitleView },
+    SET_DESCRIPTION: { id: 'setDescription', renderer: settingsAdHandlers.renderSetAdDescriptionView },
+    SET_IMAGE: { id: 'setImg', renderer: settingsAdHandlers.renderSetAdImgView },
+    SET_RENUMERATION: { id: 'setRenumeration', renderer: settingsAdHandlers.renderSetAdRemunerationView },
+    PREVIEW_AD: { id: 'previewAd', renderer: settingsAdHandlers.renderPreviewAdView },
 
-    SET_ADS_CATEGORY: { id: 'setAdsCategory', constructor: displayHandlers.initSetAdsCategoryView },
-    VIEW_FOUND_ADS: { id: 'viewFoundAds', constructor: displayHandlers.initViewFoundAdsView },
+    SET_ADS_CATEGORY: { id: 'setAdsCategory', renderer: displayAdHandlers.renderSelectAdsCategoryView },
+    VIEW_FOUND_ADS: { id: 'viewFoundAds', renderer: displayAdHandlers.renderFoundAdsView },
 
-    EDIT_TITLE: { id: 'editTitle', constructor: displayEditAdHandlers.initChangeTitleAdView },
-    EDIT_DESCRIPTION: { id: 'editDescription', constructor: displayEditAdHandlers.initChangeDescriptionAdView },
-    EDIT_CATEGORY: { id: 'editCategory', constructor: displayEditAdHandlers.initChangeCategoryAdView },
-    EDIT_IMAGE: { id: 'editImage', constructor: displayEditAdHandlers.initChangeImageAdView },
-    EDIT_REMUNERATION: { id: 'editRemuneration', constructor: displayEditAdHandlers.initChangeRemunerationAdView },
-    FINISH_EDITING: { id: 'finishEditing', constructor: displayEditAdHandlers.initFinishEditingAdView }
+    START_EDIT_AD: { id: 'editCategory', renderer: editAdHandlers.renderChangeAdCategoryView },
+    EDIT_TITLE: { id: 'editTitle', renderer: editAdHandlers.renderChangeAdTitleView },
+    EDIT_DESCRIPTION: { id: 'editDescription', renderer: editAdHandlers.renderChangeAdDescriptionView },
+    EDIT_IMAGE: { id: 'editImage', renderer: editAdHandlers.renderChangeAdImageView },
+    EDIT_REMUNERATION: { id: 'editRemuneration', renderer: editAdHandlers.renderChangeAdRemunerationView },
+    FINISH_EDITING: { id: 'finishEditing', renderer: editAdHandlers.renderFinishAdEditingView }
 };

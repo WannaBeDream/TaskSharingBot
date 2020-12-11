@@ -1,5 +1,5 @@
 module.exports = {
-    newUserSetAdNameView: {
+    newUserSetAdTitleView: {
         en: `Enter the ad’s title`,
         ua: `Введіть заголовок оголошення`
     },
