@@ -82,7 +82,7 @@ exports.renderChangeLangView = (context) => {
         .get();
 };
 
-exports.renderNewUserChangeLangView = () => {
+exports.renderNewUserSetLangView = () => {
     return new Text(commands.SET_LANG.title.ua)
         .addReplyKeyboard([[labels.language.en, labels.language.ua]], true)
         .get();
