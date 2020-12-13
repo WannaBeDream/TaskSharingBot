@@ -42,11 +42,11 @@ module.exports = {
     deleteAdConfirmation: {
         en:
             `This action cannot be undone.\n\n` +
-            `If you want to temporarily hide your ad, press 📥\n\n` +
+            `If you want to temporarily hide your ad, press 🔇\n\n` +
             `Confirm your choice.`,
         ua:
             `Цю дію не можна буде скасувати.\n\n` +
-            `Якщо ви хочете тимчасово приховати оголошення, натисніть 📥\n\n` +
+            `Якщо ви хочете тимчасово приховати оголошення, натисніть 🔇\n\n` +
             `Підтвердіть видалення.`
     },
     reportAdConfirmation: {
