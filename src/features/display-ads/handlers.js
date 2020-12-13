@@ -103,7 +103,7 @@ exports.renderFoundAdsView = (context) => {
         if (!ad.imgId) {
             return new Text(AD_TEMPLATE(ad, context.lang)).addInlineKeyboard([inlineButtons]).get();
         }
-        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [inlineButtons]);
+        return telmsg.sendPhotoWithInlineKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), [inlineButtons]);
     });
     return sendAds(context, adsList);
 };

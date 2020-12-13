@@ -77,8 +77,11 @@ exports.renderFinishAdEditingView = async (context) => {
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
 
     if (ad.imgId) {
-        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [[finishCommand.title[context.lang]]]);
+        return telmsg.sendPhotoWithKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), [
+            [finishCommand.title[context.lang]]
+        ]);
     }
+
     return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
 };
 

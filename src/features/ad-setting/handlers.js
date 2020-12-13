@@ -58,7 +58,7 @@ exports.renderPreviewAdView = async (context) => {
     if (!ad.imgId) {
         return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard(previewActions, true).get();
     }
-    return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), previewActions);
+    return telmsg.sendPhotoWithKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), previewActions);
 };
 
 // ////////////////////////////////////////////////// //
