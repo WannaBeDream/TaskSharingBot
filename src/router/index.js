@@ -20,19 +20,22 @@ module.exports = async (update) => {
         await connectToDatabase(MONGO_URI);
 
         const user = messageParser.parseUser(update);
-        const userState = await appStateDao.getUserState(user.id);
+        const { _id, lang, location, searchRadius, state } = await appStateDao.getUserState(user.id);
+        const userState = { _id, lang, location, searchRadius, ...state };
 
         const command = messageParser.parseCommand(
             update,
             Object.keys(STATE_MACHINE[userState.appStateId]),
             userState.lang
         );
+
         const transition = STATE_MACHINE[userState.appStateId][command.id];
         if (!transition) {
             return langResources.unknownCommand[userState.lang];
         }
         const inputData = messageParser.parseDataInput(update, userState.lang);
         const chatData = messageParser.parseChatData(update);
+
         const context = { user, userState, lang: userState.lang, inputData, ...chatData };
 
         const handlerReply = await tryExecuteFunction(transition.handler, context);
@@ -41,11 +44,12 @@ module.exports = async (update) => {
             context
         );
 
-        await appStateDao.setUserState(user.id, {
+        await appStateDao.setUserState({
             ...userState,
             ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
             lang: context.lang
         });
+
         return handlerReply.concat(targetStateReply);
     } catch (error) {
         logger.error({

@@ -15,7 +15,11 @@ function formatName(context) {
 }
 
 exports.renderUserHomeView = (context) => {
-    return new Text(labels.userHome[context.lang]).addReplyKeyboard(homeKeyboard(context), true).get();
+    const text = context.userState.updated
+        ? [new Text(labels.updatedMessage[context.lang](context.userState.updated)).get()]
+        : [];
+    text.push(new Text(labels.userHome[context.lang]).addReplyKeyboard(homeKeyboard(context), true).get());
+    return text;
 };
 
 exports.renderUserGreetingView = (context) => {

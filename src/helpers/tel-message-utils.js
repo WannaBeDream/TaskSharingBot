@@ -50,12 +50,22 @@ exports.editAdContent = ({ callback_query_id, chat_id, message_id }, lang, conte
     return editChatMessageOrCaption(callback_query_id, chat_id, message_id, lang, content, actions, ad._id, !!ad.imgId);
 };
 
-exports.sendPhoto = (fileId, caption, keyboard) => ({
+exports.sendPhotoWithInlineKeyboard = (fileId, caption, inline_keyboard) => ({
     method: 'sendPhoto',
     body: {
         photo: fileId,
         caption,
         parse_mode: 'Markdown',
-        reply_markup: { inline_keyboard: keyboard, resize_keyboard: true }
+        reply_markup: { inline_keyboard, resize_keyboard: true }
+    }
+});
+
+exports.sendPhotoWithKeyboard = (fileId, caption, keyboard) => ({
+    method: 'sendPhoto',
+    body: {
+        photo: fileId,
+        caption,
+        parse_mode: 'Markdown',
+        reply_markup: { keyboard, resize_keyboard: true }
     }
 });

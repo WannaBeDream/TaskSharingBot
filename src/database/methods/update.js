@@ -2,9 +2,18 @@ const { UserModel, AdvertModel } = require('../../models');
 const { logger } = require('../../helpers');
 const { SPAM_COUNTER } = require('../../constants/db-values');
 
-const updateUser = async (telegramId, data) => {
+const updateUser = async ({ _id, location, searchRadius, lang, ...state }) => {
     try {
-        return await UserModel.findByIdAndUpdate({ _id: telegramId }, data);
+        return await UserModel.findByIdAndUpdate(
+            { _id },
+            {
+                _id,
+                location,
+                searchRadius,
+                lang,
+                state
+            }
+        );
     } catch (error) {
         logger.error({
             level: 'error',
