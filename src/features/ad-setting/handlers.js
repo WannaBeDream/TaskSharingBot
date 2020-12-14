@@ -14,6 +14,7 @@ const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
 const telmsg = require('../../helpers/tel-message-utils');
+const CustomException = require('../../helpers/exeptions');
 
 // ////////////////////////////////////////////////// //
 //                  Display messages                  //
@@ -69,10 +70,10 @@ exports.setTitle = async (context) => {
     const { inputData } = context;
 
     if (typeof inputData !== 'string' || inputData === '') {
-        throw new Error(labels.titleError[context.lang]);
+        throw new CustomException(labels.titleError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, titleLength)) {
-        throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
@@ -84,10 +85,10 @@ exports.setDescription = async (context) => {
     const { inputData } = context;
 
     if (typeof inputData !== 'string' || inputData === '') {
-        throw new Error(labels.descriptionError[context.lang]);
+        throw new CustomException(labels.descriptionError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, descriptionLength)) {
-        throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
 
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
@@ -99,13 +100,13 @@ exports.setRenumeration = async (context) => {
     const { inputData } = context;
 
     if (Array.isArray(inputData)) {
-        throw new Error(labels.imgInRenumerationError[context.lang]);
+        throw new CustomException(labels.imgInRenumerationError[context.lang]);
     }
     if (typeof inputData !== 'string' || inputData === '') {
-        throw new Error(labels.renumerationError[context.lang]);
+        throw new CustomException(labels.renumerationError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, remunerationLength)) {
-        throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
 
     const ad = await findAdvertisement(context.userState.currentUpdateAd);
@@ -117,7 +118,7 @@ exports.setCategory = async (context) => {
     const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
 
     if (validationResult) {
-        throw new Error(categoryError[context.lang]);
+        throw new CustomException(categoryError[context.lang]);
     }
 
     const ad = { author: context.user.id, category: context.inputData };
@@ -127,7 +128,7 @@ exports.setCategory = async (context) => {
 
 exports.setImg = async (context) => {
     if (!Array.isArray(context.inputData)) {
-        throw new Error(labels.imgError[context.lang]);
+        throw new CustomException(labels.imgError[context.lang]);
     }
 
     const ad = await findAdvertisement(context.userState.currentUpdateAd);

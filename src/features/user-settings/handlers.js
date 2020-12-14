@@ -5,6 +5,7 @@ const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../general-commands');
 const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { fetchUserAndUpdateAdvLoc } = require('../../database/methods/update');
+const CustomException = require('../../helpers/exeptions');
 
 // ////////////////////////////////////////////////// //
 //                  Display data                      //
@@ -98,14 +99,14 @@ exports.setLanguage = (context) => {
     } else if (context.inputData === labels.language.ua || context.inputData === 'ua') {
         context.lang = 'ua';
     } else {
-        throw new Error(unknownCommandLabel[context.lang]);
+        throw new CustomException(unknownCommandLabel[context.lang]);
     }
     context.userState.updated = labels.updatedParamLang[context.lang];
 };
 
 exports.setRadius = (context) => {
     if (typeof context.inputData !== 'string' || context.inputData === '') {
-        throw new Error(labels.incorrectRadius[context.lang]);
+        throw new CustomException(labels.incorrectRadius[context.lang]);
     }
     const radius =
         context.inputData.endsWith('km') || context.inputData.endsWith('км')
@@ -113,7 +114,7 @@ exports.setRadius = (context) => {
             : +context.inputData;
 
     if (!Number.isInteger(radius) || radius < 1 || radius > 50) {
-        throw new Error(labels.incorrectRadius[context.lang]);
+        throw new CustomException(labels.incorrectRadius[context.lang]);
     }
 
     context.userState.searchRadius = radius;
@@ -122,7 +123,7 @@ exports.setRadius = (context) => {
 
 exports.setLocation = async (context) => {
     if (!context.inputData || !context.inputData.latitude || !context.inputData.longitude) {
-        throw new Error(labels.locationNotSet[context.lang]);
+        throw new CustomException(labels.locationNotSet[context.lang]);
     }
 
     const newLocation = {

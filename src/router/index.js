@@ -5,6 +5,7 @@ const STATE_MACHINE = require('./state-machine');
 const langResources = require('../features/unknown-labels');
 const { connectToDatabase } = require('../database/create-connection');
 const { logger } = require('../helpers');
+const CustomException = require('../helpers/exeptions');
 
 async function tryExecuteFunction(func, params) {
     if (!func) {
@@ -57,6 +58,10 @@ module.exports = async (update) => {
             message: error.message,
             stack: error.stack
         });
-        return error.message;
+        if (error instanceof CustomException) {
+            return error.message;
+        }
+        const { language_code: lang } = update.originalRequest.callback_query.from;
+        return lang === 'ua' || lang === 'ru' ? langResources.unknownAction.ua : langResources.unknownAction.en;
     }
 };

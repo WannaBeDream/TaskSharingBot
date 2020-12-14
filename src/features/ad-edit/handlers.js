@@ -18,6 +18,7 @@ const labels = require('./labels');
 const inputCms = require('../ad-categories');
 const markdownUtils = require('../../helpers/markdown-utils');
 const telmsg = require('../../helpers/tel-message-utils');
+const CustomException = require('../../helpers/exeptions');
 
 exports.startEditAd = (context) => {
     context.userState.currentUpdateAd = context.inputData;
@@ -89,10 +90,10 @@ exports.updateTitle = async (context) => {
     const { inputData } = context;
 
     if (typeof inputData !== 'string') {
-        throw new Error(labels.titleError[context.lang]);
+        throw new CustomException(labels.titleError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, titleLength)) {
-        throw new Error(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
     await updateTitleAd(context.userState.currentUpdateAd, inputData);
@@ -102,10 +103,10 @@ exports.updateDescription = async (context) => {
     const { inputData } = context;
 
     if (typeof inputData !== 'string') {
-        throw new Error(labels.descriptionError[context.lang]);
+        throw new CustomException(labels.descriptionError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, descriptionLength)) {
-        throw new Error(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
 
     await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
@@ -116,7 +117,7 @@ exports.updateCategory = async (context) => {
     const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
 
     if (validationResult) {
-        throw new Error(categoryError[context.lang]);
+        throw new CustomException(categoryError[context.lang]);
     }
 
     await updateCategoryAd(context.userState.currentUpdateAd, inputData);
@@ -126,7 +127,7 @@ exports.updateImage = async (context) => {
     const { inputData } = context;
 
     if (!Array.isArray(context.inputData)) {
-        throw new Error(labels.imgError[context.lang]);
+        throw new CustomException(labels.imgError[context.lang]);
     }
 
     const imgId = inputData[0].file_id;
@@ -137,13 +138,13 @@ exports.updateRemuneration = async (context) => {
     const { inputData } = context;
 
     if (Array.isArray(inputData)) {
-        throw new Error(labels.imgErrorInRemuneration[context.lang]);
+        throw new CustomException(labels.imgErrorInRemuneration[context.lang]);
     }
     if (typeof inputData !== 'string') {
-        throw new Error(labels.renumerationError[context.lang]);
+        throw new CustomException(labels.renumerationError[context.lang]);
     }
     if (userInputData.ifStrCondition(inputData, remunerationLength)) {
-        throw new Error(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
+        throw new CustomException(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
 
     await updateRemunerationAd(context.userState.currentUpdateAd, inputData);

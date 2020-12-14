@@ -11,6 +11,7 @@ const { userInputData } = require('../../validators/ad-validation');
 const { categoryError } = require('../validations-labels');
 const { strArrForCategoryAll } = require('../../constants/ad-values');
 const { ADS_PAGE_SIZE } = require('../../constants/db-values');
+const CustomException = require('../../helpers/exeptions');
 
 const adsDao = require('../../database/methods/find');
 const {
@@ -118,7 +119,7 @@ exports.startLocalAdsSearch = (context) => {
 
 exports.checkChangeCategoryAuthorization = (context) => {
     if (context.userState.adsViewMode !== adsViewModes.LOCAL_ADS_MODE) {
-        throw new Error(unknownCommandLabel[context.lang]);
+        throw new CustomException(unknownCommandLabel[context.lang]);
     }
 };
 
@@ -165,7 +166,7 @@ async function searchAdsByContextState(context) {
 
 exports.searchLocalAds = async (context) => {
     if (userInputData.ifStrContain(context.inputData, strArrForCategoryAll)) {
-        throw new Error(categoryError[context.lang]);
+        throw new CustomException(categoryError[context.lang]);
     }
     context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
     context.userState.adsCategory = context.inputData;
