@@ -11,15 +11,11 @@ function homeKeyboard(context) {
     ];
 }
 function formatName(context) {
-    return markdownUtils.formatPlainText(`${context.user.firstName}`);
+    return markdownUtils.formatPlainText(`${context.user.name}`);
 }
 
 exports.renderUserHomeView = (context) => {
-    const text = context.userState.updated
-        ? [new Text(labels.updatedMessage[context.lang](context.userState.updated)).get()]
-        : [];
-    text.push(new Text(labels.userHome[context.lang]).addReplyKeyboard(homeKeyboard(context), true).get());
-    return text;
+    return new Text(labels.userHome[context.lang]).addReplyKeyboard(homeKeyboard(context), true).get();
 };
 
 exports.renderUserGreetingView = (context) => {
@@ -27,10 +23,9 @@ exports.renderUserGreetingView = (context) => {
 };
 
 exports.renderBotRestartView = (context) => {
-    const userSettings = context.userState;
     return [
-        new Text(labels.botRestartUserGreeting[context.lang](formatName(context), userSettings.searchRadius)).get(),
-        new Location(userSettings.location.coordinates[1], userSettings.location.coordinates[0])
+        new Text(labels.botRestartUserGreeting[context.lang](formatName(context), context.user.searchRadius)).get(),
+        new Location(context.user.location.coordinates[1], context.user.location.coordinates[0])
             .addReplyKeyboard(homeKeyboard(context), true)
             .get()
     ];

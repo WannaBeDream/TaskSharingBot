@@ -1,11 +1,25 @@
 const { MONGO_URI } = require('../config');
-const appStateDao = require('./app-state-mongo');
-const messageParser = require('./message-parser');
-const STATE_MACHINE = require('./state-machine');
-const langResources = require('../features/unknown-labels');
 const { connectToDatabase } = require('../database/create-connection');
+const messageParser = require('./message-parser');
+const appStates = require('./app-states');
+const STATE_MACHINE = require('./state-machine');
+const BotContext = require('../BotContext');
+const labels = require('./labels');
 const { logger } = require('../helpers');
 const CustomException = require('../helpers/exeptions');
+
+const { findUser } = require('../database/methods/find');
+const { createUser } = require('../database/methods/create');
+const { updateUserAppState } = require('../database/methods/update');
+
+async function getUserState(userId) {
+    let user = await findUser(userId);
+    if (!user) {
+        user = { _id: userId, appStateId: appStates.NEW_USER_START.id, lang: 'ua' };
+        await createUser(user);
+    }
+    return user;
+}
 
 async function tryExecuteFunction(func, params) {
     if (!func) {
@@ -16,28 +30,27 @@ async function tryExecuteFunction(func, params) {
 }
 
 module.exports = async (update) => {
+    // console.log(update.originalRequest.message || update.originalRequest.callback_query);
+    await connectToDatabase(MONGO_URI);
+
+    const user = messageParser.parseUser(update);
+    const userState = await getUserState(user.id);
     try {
-        // console.log(update.originalRequest.message || update.originalRequest.callback_query);
-        await connectToDatabase(MONGO_URI);
-
-        const user = messageParser.parseUser(update);
-        const { _id, lang, location, searchRadius, state } = await appStateDao.getUserState(user.id);
-        const userState = { _id, lang, location, searchRadius, ...state };
-
         const command = messageParser.parseCommand(
             update,
             Object.keys(STATE_MACHINE[userState.appStateId]),
             userState.lang
         );
-
         const transition = STATE_MACHINE[userState.appStateId][command.id];
         if (!transition) {
-            return langResources.unknownCommand[userState.lang];
+            return labels.unknownCommand[userState.lang];
         }
-        const inputData = messageParser.parseDataInput(update, userState.lang);
-        const chatData = messageParser.parseChatData(update);
 
-        const context = { user, userState, lang: userState.lang, inputData, ...chatData };
+        const context = BotContext.createImmutableBotContext(
+            { ...user, ...userState },
+            messageParser.parseDataInput(update, userState.lang),
+            messageParser.parseChatData(update)
+        );
 
         const handlerReply = await tryExecuteFunction(transition.handler, context);
         const targetStateReply = await tryExecuteFunction(
@@ -45,23 +58,18 @@ module.exports = async (update) => {
             context
         );
 
-        await appStateDao.setUserState({
-            ...userState,
-            ...(transition.targetState ? { appStateId: transition.targetState.id } : {}),
-            lang: context.lang
-        });
+        await updateUserAppState(
+            user.id,
+            transition.targetState ? transition.targetState.id : userState.appStateId,
+            context.userStateDataHolder.data
+        );
 
         return handlerReply.concat(targetStateReply);
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         if (error instanceof CustomException) {
             return error.message;
         }
-        const { language_code: lang } = update.originalRequest.callback_query.from;
-        return lang === 'ua' || lang === 'ru' ? langResources.unknownAction.ua : langResources.unknownAction.en;
+        return labels.unknownError[userState.lang];
     }
 };

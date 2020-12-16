@@ -31,19 +31,6 @@ exports.parseCommand = (update, availableCmds, lang) => {
     return command || generalCommands.DATA_INPUT;
 };
 
-exports.parseChatData = (update) => {
-    return !update.originalRequest.callback_query
-        ? {
-              chat_id: update.originalRequest.message.from.id,
-              message_id: update.originalRequest.message.message_id
-          }
-        : {
-              chat_id: update.originalRequest.callback_query.from.id,
-              message_id: update.originalRequest.callback_query.message.message_id,
-              callback_query_id: update.originalRequest.callback_query.id
-          };
-};
-
 exports.parseDataInput = (update, lang) => {
     const datainputCommand = Object.values(adsDatainputCommands).find((c) => {
         return c.title[`${lang}`] === update.text;
@@ -58,11 +45,14 @@ exports.parseDataInput = (update, lang) => {
     );
 };
 
+exports.parseChatData = (update) => {
+    const callback = update.originalRequest.callback_query;
+    return !callback
+        ? { chatId: update.originalRequest.message.from.id, messageId: update.originalRequest.message.message_id }
+        : { chatId: callback.from.id, messageId: callback.message.message_id, callbackQueryId: callback.id };
+};
+
 exports.parseUser = (update) => {
     const message = update.originalRequest.message || update.originalRequest.callback_query;
-    return {
-        id: message.from.id,
-        firstName: message.from.first_name,
-        lastName: message.from.last_name
-    };
+    return { id: message.from.id, name: message.from.first_name };
 };

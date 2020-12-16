@@ -43,6 +43,10 @@ module.exports = {
         en: '🌍 Choose a new language',
         ua: '🌍 Оберіть нову мову'
     },
+    newUserSetLanguage: {
+        en: 'Please, set language',
+        ua: 'Оберіть мову'
+    },
     choose: {
         en: '⚙️ Choose',
         ua: '⚙️ Обирайте'

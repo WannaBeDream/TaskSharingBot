@@ -12,32 +12,36 @@ exports.buildInlineButton = (key, command, lang) => ({
     callback_data: JSON.stringify({ key, cmd: command.id })
 });
 
-exports.deleteChatMessage = ({ callback_query_id, chat_id, message_id }) => [
-    exports.answerCallbackQuery(callback_query_id),
-    { method: 'deleteMessage', body: { chat_id, message_id } }
+exports.deleteChatMessage = (chatData) => [
+    exports.answerCallbackQuery(chatData.callbackQueryId),
+    { method: 'deleteMessage', body: { chat_id: chatData.chatId, message_id: chatData.messageId } }
 ];
 
-exports.editChatMessageActions = ({ callback_query_id, chat_id, message_id }, lang, actions, adId, alert) => {
+exports.editChatMessageActions = (chatData, lang, actions, adId, alert) => {
     const inlineButtons = actions.map((cmd) => exports.buildInlineButton(adId, cmd, lang));
     return [
-        exports.answerCallbackQuery(callback_query_id, alert && alert[`${lang}`]),
+        exports.answerCallbackQuery(chatData.callbackQueryId, alert && alert[`${lang}`]),
         {
             method: 'editMessageReplyMarkup',
-            body: { chat_id, message_id, reply_markup: { inline_keyboard: [inlineButtons] } }
+            body: {
+                chat_id: chatData.chatId,
+                message_id: chatData.messageId,
+                reply_markup: { inline_keyboard: [inlineButtons] }
+            }
         }
     ];
 };
 
-function editChatMessageOrCaption(queryId, chat_id, message_id, lang, content, actions, adId, isCaption) {
+function editChatMessageOrCaption(chatData, lang, content, actions, adId, isCaption) {
     const inlineButtons = actions.map((cmd) => exports.buildInlineButton(adId, cmd, lang));
     const localeContent = content != null && typeof content === 'object' ? content[`${lang}`] : content;
     return [
-        exports.answerCallbackQuery(queryId),
+        exports.answerCallbackQuery(chatData.callbackQueryId),
         {
             ...(isCaption ? { method: 'editMessageCaption' } : { method: 'editMessageText' }),
             body: {
-                chat_id,
-                message_id,
+                chat_id: chatData.chatId,
+                message_id: chatData.messageId,
                 ...(isCaption ? { caption: localeContent } : { text: localeContent }),
                 parse_mode: 'Markdown',
                 reply_markup: { inline_keyboard: [inlineButtons] }
@@ -46,26 +50,19 @@ function editChatMessageOrCaption(queryId, chat_id, message_id, lang, content, a
     ];
 }
 
-exports.editAdContent = ({ callback_query_id, chat_id, message_id }, lang, content, actions, ad) => {
-    return editChatMessageOrCaption(callback_query_id, chat_id, message_id, lang, content, actions, ad._id, !!ad.imgId);
+exports.editAdContent = (chatData, lang, content, actions, ad) => {
+    return editChatMessageOrCaption(chatData, lang, content, actions, ad._id, !!ad.imgId);
 };
 
-exports.sendPhotoWithInlineKeyboard = (fileId, caption, inline_keyboard) => ({
+exports.sendPhoto = (fileId, caption, keyboard, isKeyboardInline) => ({
     method: 'sendPhoto',
     body: {
         photo: fileId,
         caption,
         parse_mode: 'Markdown',
-        reply_markup: { inline_keyboard, resize_keyboard: true }
-    }
-});
-
-exports.sendPhotoWithKeyboard = (fileId, caption, keyboard) => ({
-    method: 'sendPhoto',
-    body: {
-        photo: fileId,
-        caption,
-        parse_mode: 'Markdown',
-        reply_markup: { keyboard, resize_keyboard: true }
+        reply_markup: {
+            ...(isKeyboardInline ? { inline_keyboard: keyboard } : { keyboard }),
+            resize_keyboard: true
+        }
     }
 });

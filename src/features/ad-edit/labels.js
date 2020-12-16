@@ -23,11 +23,11 @@ module.exports = {
         en: 'Do you want to attach an image?',
         ua: 'Бажаєте прикріпити зображення?'
     },
-    editRemunerationWithData: {
+    editRemuneration: {
         en: 'Edit remuneration\n\nYour reward at the moment: ',
         ua: 'Змінити винагороду\n\nВаша винагорода на даний момент: '
     },
-    editRemunerationWithoutData: {
+    enterRemuneration: {
         en: 'Edit remuneration\n\nRight now there is no reward in your advertisement.',
         ua: 'Змінити винагороду\n\nНаразі у Вашому оголошені вісутня винагорода.'
     },

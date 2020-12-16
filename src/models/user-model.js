@@ -15,30 +15,20 @@ const UserSchema = new mongoose.Schema({
             default: [0, 0]
         }
     },
-    lang: {
-        type: String
-    },
     searchRadius: {
         type: Number,
         default: 0
     },
-    state: {
-        appStateId: {
-            type: String,
-            require: true
-        },
-        adsViewMode: {
-            type: String
-        },
-        adsCategory: {
-            type: String
-        },
-        adsPage: {
-            type: Number
-        },
-        currentUpdateAd: {
-            type: String
-        }
+    lang: {
+        type: String,
+        required: true
+    },
+    appStateId: {
+        type: String,
+        require: true
+    },
+    appStateData: {
+        type: Object
     }
 });
 

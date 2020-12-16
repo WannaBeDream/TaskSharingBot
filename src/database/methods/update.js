@@ -2,195 +2,135 @@ const { UserModel, AdvertModel } = require('../../models');
 const { logger } = require('../../helpers');
 const { SPAM_COUNTER } = require('../../constants/db-values');
 
-const updateUser = async ({ _id, location, searchRadius, lang, ...state }) => {
+exports.updateUserLang = async (_id, lang) => {
     try {
-        return await UserModel.findByIdAndUpdate(
-            { _id },
-            {
-                _id,
-                location,
-                searchRadius,
-                lang,
-                state
-            }
-        );
+        await UserModel.findByIdAndUpdate({ _id }, { $set: { lang } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
-        throw new Error('Unable update user');
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
+        throw new Error(error.message);
+    }
+};
+exports.updateUserLocation = async (userId, location) => {
+    try {
+        await UserModel.findByIdAndUpdate({ _id: userId }, { $set: { location } });
+        await AdvertModel.updateMany({ author: userId }, { $set: { location } });
+    } catch (error) {
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
+        throw new Error(error.message);
+    }
+};
+exports.updateUserSearchRadius = async (_id, searchRadius) => {
+    try {
+        await UserModel.findByIdAndUpdate({ _id }, { $set: { searchRadius } });
+    } catch (error) {
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
+        throw new Error(error.message);
+    }
+};
+exports.updateUserAppState = async (_id, appStateId, appStateData) => {
+    try {
+        await UserModel.findByIdAndUpdate({ _id }, { $set: { appStateId, appStateData } });
+    } catch (error) {
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
+        throw new Error(error.message);
     }
 };
 
-const updateAd = async (_id, data) => {
+exports.updateAdState = async (_id, data) => {
     try {
         return await AdvertModel.findByIdAndUpdate({ _id }, data);
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error('Unable update advertisement');
     }
 };
 
-const addToSavedAds = async (userId, adId) => {
+exports.addToSavedAds = async (userId, adId) => {
     try {
         const ad = await AdvertModel.findByIdAndUpdate(adId);
         ad.usersSaved.push(userId);
-        await updateAd(adId, ad);
+        await exports.updateAdState(adId, ad);
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error('Unable add to saved');
     }
 };
 
-const deleteFromSavedAds = async (userId, adId) => {
+exports.deleteFromSavedAds = async (userId, adId) => {
     try {
         const ad = await AdvertModel.findByIdAndUpdate(adId);
         const updatedAds = ad.usersSaved.filter((item) => item !== userId);
         ad.usersSaved = updatedAds;
-        await updateAd(adId, ad);
+        await exports.updateAdState(adId, ad);
         return ad;
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error('Unable delete from saved');
     }
 };
 
-const markAsSpam = async (userId, adId) => {
+exports.markAsSpam = async (userId, adId) => {
     try {
         const ad = await AdvertModel.findByIdAndUpdate(adId);
         ad.spam.push(userId);
-        await updateAd(adId, ad);
-        if (ad.spam.length >= SPAM_COUNTER) {
-            ad.isActive = false;
-            await updateAd(adId, ad);
-        }
-        return ad.imgId;
+        ad.isActive = !ad.spam.length >= SPAM_COUNTER;
+        await exports.updateAdState(adId, ad);
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error('Unable mark as spam');
     }
 };
 
-const fetchUserAndUpdateAdvLoc = async (userId, newLocation) => {
-    try {
-        return await AdvertModel.updateMany({ author: userId }, { $set: { location: newLocation } });
-    } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
-        throw new Error(`Unable update many advertisements\n${error.messages}`);
-    }
-};
-
-const updateAdActiveStatus = async (_id, data) => {
+exports.updateAdActiveStatus = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { isActive: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
 };
 
-const updateTitleAd = async (_id, data) => {
+exports.updateAdTitle = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { title: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
 };
 
-const updateDescriptionAd = async (_id, data) => {
+exports.updateAdDescription = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { description: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
 };
 
-const updateCategoryAd = async (_id, data) => {
+exports.updateAdCategory = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { category: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
 };
 
-const updateImageAd = async (_id, data) => {
+exports.updateAdImage = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { imgId: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
 };
 
-const updateRemunerationAd = async (_id, data) => {
+exports.updateAdRemuneration = async (_id, data) => {
     try {
         await AdvertModel.findByIdAndUpdate({ _id }, { $set: { renumeration: data } });
     } catch (error) {
-        logger.error({
-            level: 'error',
-            message: error.message,
-            stack: error.stack
-        });
+        logger.error({ level: 'error', message: error.message, stack: error.stack });
         throw new Error(error.message);
     }
-};
-
-module.exports = {
-    updateUserState: updateUser,
-    updateAdState: updateAd,
-    addToSavedAds,
-    deleteFromSavedAds,
-    markAsSpam,
-    fetchUserAndUpdateAdvLoc,
-    updateAdActiveStatus,
-    updateTitleAd,
-    updateDescriptionAd,
-    updateCategoryAd,
-    updateImageAd,
-    updateRemunerationAd
 };

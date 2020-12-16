@@ -1,15 +1,9 @@
 const { Text, Photo } = require('claudia-bot-builder').telegramTemplate;
 
 const { AD_TEMPLATE } = require('../ad-template');
-const { findAdAndReturnOneField, findAdvertisement } = require('../../database/methods/find');
-const {
-    updateTitleAd,
-    updateDescriptionAd,
-    updateCategoryAd,
-    updateRemunerationAd,
-    updateImageAd
-} = require('../../database/methods/update');
-const { userInputData } = require('../../validators/ad-validation');
+const { findAdvertisement } = require('../../database/methods/find');
+const updateMethods = require('../../database/methods/update');
+const validator = require('../../validators/ad-validation').userInputData;
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { SKIP: skipCommand } = require('../general-commands');
@@ -21,25 +15,25 @@ const telmsg = require('../../helpers/tel-message-utils');
 const CustomException = require('../../helpers/exeptions');
 
 exports.startEditAd = (context) => {
-    context.userState.currentUpdateAd = context.inputData;
-    return telmsg.answerCallbackQuery(context.callback_query_id, labels.editAdIsStarted[context.lang]);
+    context.userStateDataHolder.data = { currentUpdateAd: context.inputData };
+    return telmsg.answerCallbackQuery(context.chatData.callbackQueryId, labels.editAdIsStarted[context.lang]);
 };
 
 exports.renderChangeAdTitleView = async (context) => {
-    const { title } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'title');
-    const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(title)}`;
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
+    const message = `${labels.editTitle[context.lang]}\n${markdownUtils.formatItalicText(ad.title)}`;
     return new Text(message).addReplyKeyboard([[skipCommand.title[context.lang]]], true).get();
 };
 
 exports.renderChangeAdDescriptionView = async (context) => {
-    const { description } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'description');
-    const message = `${labels.editDescription[context.lang]}\n${markdownUtils.formatItalicText(description)}`;
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
+    const message = `${labels.editDescription[context.lang]}\n${markdownUtils.formatItalicText(ad.description)}`;
     return new Text(message).get();
 };
 
 exports.renderChangeAdCategoryView = async (context) => {
-    const { category } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'category');
-    const categoryText = Object.values(inputCms).find((cmd) => cmd.id === category).title[context.lang];
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
+    const categoryText = Object.values(inputCms).find((cmd) => cmd.id === ad.category).title[context.lang];
     const message = `${labels.editCategory[context.lang]}\n${markdownUtils.formatItalicText(categoryText)}`;
     return new Text(message)
         .addReplyKeyboard(
@@ -54,102 +48,95 @@ exports.renderChangeAdCategoryView = async (context) => {
 };
 
 exports.renderChangeAdImageView = async (context) => {
-    const { imgId } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'imgId');
-
-    if (imgId) {
-        return [new Photo(imgId).get(), new Text(labels.editWithImage[context.lang]).get()];
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
+    if (ad.imgId) {
+        return [new Photo(ad.imgId).get(), new Text(labels.editWithImage[context.lang]).get()];
     }
-
     return new Text(labels.editWithoutImage[context.lang]).get();
 };
 
 exports.renderChangeAdRemunerationView = async (context) => {
-    const { renumeration } = await findAdAndReturnOneField(context.userState.currentUpdateAd, 'renumeration');
-
-    if (renumeration.length === 0) {
-        return new Text(labels.editRemunerationWithoutData[context.lang]).get();
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
+    if (ad.renumeration.length === 0) {
+        return new Text(labels.enterRemuneration[context.lang]).get();
     }
 
-    const message = `${labels.editRemunerationWithData[context.lang]}\n${markdownUtils.formatItalicText(renumeration)}`;
+    const message = `${labels.editRemuneration[context.lang]}\n${markdownUtils.formatItalicText(ad.renumeration)}`;
     return new Text(message).get();
 };
 
 exports.renderFinishAdEditingView = async (context) => {
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
 
     if (ad.imgId) {
-        return telmsg.sendPhotoWithKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), [
-            [finishCommand.title[context.lang]]
-        ]);
+        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [[finishCommand.title[context.lang]]]);
     }
 
     return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard([[finishCommand.title[context.lang]]], true).get();
 };
 
 exports.updateTitle = async (context) => {
-    const { inputData } = context;
+    const title = context.inputData;
 
-    if (typeof inputData !== 'string') {
+    if (typeof title !== 'string' || title === '') {
         throw new CustomException(labels.titleError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, titleLength)) {
+    if (validator.ifStrCondition(title, titleLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
-    await updateTitleAd(context.userState.currentUpdateAd, inputData);
+    await updateMethods.updateAdTitle(context.userStateDataHolder.data.currentUpdateAd, title);
 };
 
 exports.updateDescription = async (context) => {
-    const { inputData } = context;
+    const description = context.inputData;
 
-    if (typeof inputData !== 'string') {
+    if (typeof description !== 'string' || description === '') {
         throw new CustomException(labels.descriptionError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, descriptionLength)) {
+    if (validator.ifStrCondition(description, descriptionLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
 
-    await updateDescriptionAd(context.userState.currentUpdateAd, inputData);
+    await updateMethods.updateAdDescription(context.userStateDataHolder.data.currentUpdateAd, description);
 };
 
 exports.updateCategory = async (context) => {
-    const { inputData } = context;
-    const validationResult = userInputData.ifStrContain(inputData, strArrForCategory);
+    const category = context.inputData;
+    const validationResult = validator.ifStrContain(category, strArrForCategory);
 
     if (validationResult) {
         throw new CustomException(categoryError[context.lang]);
     }
 
-    await updateCategoryAd(context.userState.currentUpdateAd, inputData);
+    await updateMethods.updateAdCategory(context.userStateDataHolder.data.currentUpdateAd, category);
 };
 
 exports.updateImage = async (context) => {
-    const { inputData } = context;
-
-    if (!Array.isArray(context.inputData)) {
+    const image = context.inputData;
+    if (!Array.isArray(image)) {
         throw new CustomException(labels.imgError[context.lang]);
     }
-
-    const imgId = inputData[0].file_id;
-    await updateImageAd(context.userState.currentUpdateAd, imgId);
+    const imgId = image[0].file_id;
+    await updateMethods.updateAdImage(context.userStateDataHolder.data.currentUpdateAd, imgId);
 };
 
 exports.updateRemuneration = async (context) => {
-    const { inputData } = context;
+    const renumeration = context.inputData;
 
-    if (Array.isArray(inputData)) {
+    if (Array.isArray(renumeration)) {
         throw new CustomException(labels.imgErrorInRemuneration[context.lang]);
     }
-    if (typeof inputData !== 'string') {
+    if (typeof renumeration !== 'string' || renumeration === '') {
         throw new CustomException(labels.renumerationError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, remunerationLength)) {
+    if (validator.ifStrCondition(renumeration, remunerationLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
 
-    await updateRemunerationAd(context.userState.currentUpdateAd, inputData);
+    await updateMethods.updateAdRemuneration(context.userStateDataHolder.data.currentUpdateAd, renumeration);
 };
 
 exports.finishEditing = (context) => {
-    context.userState.currentUpdateAd = null;
+    context.userStateDataHolder.data = null;
 };

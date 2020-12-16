@@ -3,8 +3,7 @@ const { Text, Location } = require('claudia-bot-builder').telegramTemplate;
 const labels = require('./labels');
 const commands = require('./commands');
 const { GO_BACK: backCommand } = require('../general-commands');
-const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
-const { fetchUserAndUpdateAdvLoc } = require('../../database/methods/update');
+const { updateUserLang, updateUserLocation, updateUserSearchRadius } = require('../../database/methods/update');
 const CustomException = require('../../helpers/exeptions');
 
 // ////////////////////////////////////////////////// //
@@ -12,10 +11,8 @@ const CustomException = require('../../helpers/exeptions');
 // ////////////////////////////////////////////////// //
 
 exports.renderNewUserSetLocationView = (context) => {
-    const message = labels.newUserEnterLocation[context.lang];
     const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
-
-    return new Text(message).addReplyKeyboard([setLocationButton], true).get();
+    return new Text(labels.newUserEnterLocation[context.lang]).addReplyKeyboard([setLocationButton], true).get();
 };
 
 exports.renderNewUserSetRadiusView = (context) => {
@@ -46,17 +43,16 @@ exports.renderUserSettingsView = (context) => {
 exports.renderChangeLocationView = (context) => {
     const getBackButton = [backCommand.title[context.lang]];
     const setLocationButton = [{ text: labels.locationAutoSend[context.lang], request_location: true }];
-
     return [
         new Text(labels.existingUserChangeLocation[context.lang]).get(),
-        new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
+        new Location(context.user.location.coordinates[1], context.user.location.coordinates[0])
             .addReplyKeyboard([setLocationButton, getBackButton], true)
             .get()
     ];
 };
 
 exports.renderChangeRadiusView = (context) => {
-    return new Text(labels.existingUserChangeRadius[context.lang](context.userState.searchRadius))
+    return new Text(labels.existingUserChangeRadius[context.lang](context.user.searchRadius))
         .addReplyKeyboard(
             [
                 labels.existingUserSetRadius[context.lang](['1', '3', '5']),
@@ -70,8 +66,8 @@ exports.renderChangeRadiusView = (context) => {
 
 exports.renderUserProfileView = (context) => {
     return [
-        new Text(labels.userProfileData[context.lang](context.userState.searchRadius)).get(),
-        new Location(context.userState.location.coordinates[1], context.userState.location.coordinates[0])
+        new Text(labels.userProfileData[context.lang](context.user.searchRadius)).get(),
+        new Location(context.user.location.coordinates[1], context.user.location.coordinates[0])
             .addReplyKeyboard([[backCommand.title[context.lang]]], true)
             .get()
     ];
@@ -84,7 +80,7 @@ exports.renderChangeLangView = (context) => {
 };
 
 exports.renderNewUserSetLangView = () => {
-    return new Text(commands.SET_LANG.title.ua)
+    return new Text(labels.newUserSetLanguage.ua)
         .addReplyKeyboard([[labels.language.en, labels.language.ua]], true)
         .get();
 };
@@ -99,9 +95,9 @@ exports.setLanguage = (context) => {
     } else if (context.inputData === labels.language.ua || context.inputData === 'ua') {
         context.lang = 'ua';
     } else {
-        throw new CustomException(unknownCommandLabel[context.lang]);
+        throw new CustomException('not supported language');
     }
-    context.userState.updated = labels.updatedParamLang[context.lang];
+    return updateUserLang(context.user.id, context.lang);
 };
 
 exports.setRadius = (context) => {
@@ -116,9 +112,7 @@ exports.setRadius = (context) => {
     if (!Number.isInteger(radius) || radius < 1 || radius > 50) {
         throw new CustomException(labels.incorrectRadius[context.lang]);
     }
-
-    context.userState.searchRadius = radius;
-    context.userState.updated = labels.updatedParamRadius[context.lang];
+    return updateUserSearchRadius(context.user.id, radius);
 };
 
 exports.setLocation = async (context) => {
@@ -130,7 +124,5 @@ exports.setLocation = async (context) => {
         type: 'Point',
         coordinates: [context.inputData.longitude, context.inputData.latitude]
     };
-    await fetchUserAndUpdateAdvLoc(context.user.id, newLocation);
-    context.userState.location = newLocation;
-    context.userState.updated = labels.updatedParamLocation[context.lang];
+    return updateUserLocation(context.user.id, newLocation);
 };

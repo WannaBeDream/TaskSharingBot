@@ -2,25 +2,18 @@ const { Text } = require('claudia-bot-builder').telegramTemplate;
 
 const labels = require('./labels');
 const commands = require('./commands');
-const inputCms = require('../ad-categories');
+const adCategories = require('../ad-categories');
 const { GO_BACK: backCommand } = require('../general-commands');
-const { unknownCommand: unknownCommandLabel } = require('../unknown-labels');
 const { AD_TEMPLATE } = require('../ad-template');
 const { SPAM_COUNTER } = require('../../constants/db-values');
-const { userInputData } = require('../../validators/ad-validation');
+const validator = require('../../validators/ad-validation').userInputData;
 const { categoryError } = require('../validations-labels');
 const { strArrForCategoryAll } = require('../../constants/ad-values');
 const { ADS_PAGE_SIZE } = require('../../constants/db-values');
 const CustomException = require('../../helpers/exeptions');
 
-const adsDao = require('../../database/methods/find');
-const {
-    addToSavedAds,
-    deleteFromSavedAds,
-    markAsSpam,
-    updateAdActiveStatus,
-    updateAdState
-} = require('../../database/methods/update');
+const adsFindFunctions = require('../../database/methods/find');
+const adsUpdateFuntions = require('../../database/methods/update');
 const { deleteAd } = require('../../database/methods/delete');
 
 const telmsg = require('../../helpers/tel-message-utils');
@@ -39,12 +32,12 @@ exports.renderSelectAdsCategoryView = (context) => {
     return new Text(labels.selectAdsCategory[context.lang])
         .addReplyKeyboard(
             [
-                [inputCms.ASSISTANCE_SEARCH.title[context.lang], inputCms.BUY_STUFF.title[context.lang]],
-                [inputCms.SERVICES_OFFER.title[context.lang], inputCms.SALES.title[context.lang]],
+                [adCategories.ASSISTANCE_SEARCH.title[context.lang], adCategories.BUY_STUFF.title[context.lang]],
+                [adCategories.SERVICES_OFFER.title[context.lang], adCategories.SALES.title[context.lang]],
                 [
                     backCommand.title[context.lang],
-                    inputCms.LOST_FOUND_ADS.title[context.lang],
-                    inputCms.ALL.title[context.lang]
+                    adCategories.LOST_FOUND_ADS.title[context.lang],
+                    adCategories.ALL.title[context.lang]
                 ]
             ],
             true
@@ -53,38 +46,34 @@ exports.renderSelectAdsCategoryView = (context) => {
 };
 
 function sendAds(context, foundAdsTemplates) {
+    const page = context.userStateDataHolder.data.adsPage;
+    const offset = page * ADS_PAGE_SIZE;
+    const { numberOfPages } = context.tmpStateDataHolder.data;
     const navLine1 = [
-        ...(context.userState.adsPage > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
-        ...(context.userState.adsPage < context.searchResult.numberOfAdsPages - 1
-            ? [commands.OLDER_ADS.title[context.lang]]
-            : [])
+        ...(page > 0 ? [commands.NEWER_ADS.title[context.lang]] : []),
+        ...(page < numberOfPages - 1 ? [commands.OLDER_ADS.title[context.lang]] : [])
     ];
     const navLine2 = [commands.GO_HOME.title[context.lang]];
     const navFull = navLine1 ? [navLine1, navLine2] : [navLine2];
 
     if (foundAdsTemplates.length > 0) {
-        const page = context.userState.adsPage + 1;
-        const start = context.userState.adsPage * ADS_PAGE_SIZE + 1;
-        const end =
-            context.searchResult.numberOfAdsPages === page
-                ? context.userState.adsPage * ADS_PAGE_SIZE + foundAdsTemplates.length
-                : context.userState.adsPage * ADS_PAGE_SIZE + ADS_PAGE_SIZE;
+        const end = numberOfPages === page + 1 ? offset + foundAdsTemplates.length : offset + ADS_PAGE_SIZE;
         return [
-            new Text(labels.pageNumber[context.lang](page))
+            new Text(labels.pageNumber[context.lang](page + 1))
                 .addReplyKeyboard([[commands.GO_HOME.title[context.lang]]], true)
                 .get(),
             ...foundAdsTemplates,
-            new Text(labels.foundAdsRange[context.lang](start, end)).addReplyKeyboard(navFull, true).get()
+            new Text(labels.foundAdsRange[context.lang](offset + 1, end)).addReplyKeyboard(navFull, true).get()
         ];
     }
     return new Text(labels.ifEmptyArrayMessage[context.lang]).addReplyKeyboard(navFull, true).get();
 }
 
 exports.renderFoundAdsView = (context) => {
-    const { adsViewMode } = context.userState;
-    const adsList = context.searchResult.foundAds.map((ad) => {
+    const viewMode = context.userStateDataHolder.data.adsViewMode;
+    const adsList = context.tmpStateDataHolder.data.foundAds.map((ad) => {
         const inlineButtons = [];
-        if (adsViewMode === adsViewModes.OWN_ADS_MODE) {
+        if (viewMode === adsViewModes.OWN_ADS_MODE) {
             if (ad.spam.length >= SPAM_COUNTER) {
                 inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.INSTANT_DELETE, context.lang));
             } else {
@@ -93,7 +82,7 @@ exports.renderFoundAdsView = (context) => {
                 inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.EDIT_AD, context.lang));
                 inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.DELETE_REQUEST, context.lang));
             }
-        } else if (adsViewMode === adsViewModes.LOCAL_ADS_MODE) {
+        } else if (viewMode === adsViewModes.LOCAL_ADS_MODE) {
             const favCmd = ad.usersSaved.includes(context.user.id) ? commands.REMOVE_FROM_FAV : commands.ADD_TO_FAV;
             inlineButtons.push(telmsg.buildInlineButton(ad._id, favCmd, context.lang));
             inlineButtons.push(telmsg.buildInlineButton(ad._id, commands.REPORT_REQUEST, context.lang));
@@ -104,7 +93,7 @@ exports.renderFoundAdsView = (context) => {
         if (!ad.imgId) {
             return new Text(AD_TEMPLATE(ad, context.lang)).addInlineKeyboard([inlineButtons]).get();
         }
-        return telmsg.sendPhotoWithInlineKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), [inlineButtons]);
+        return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), [inlineButtons], true);
     });
     return sendAds(context, adsList);
 };
@@ -114,81 +103,76 @@ exports.renderFoundAdsView = (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.startLocalAdsSearch = (context) => {
-    context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
-};
-
-exports.checkChangeCategoryAuthorization = (context) => {
-    if (context.userState.adsViewMode !== adsViewModes.LOCAL_ADS_MODE) {
-        throw new CustomException(unknownCommandLabel[context.lang]);
-    }
+    context.userStateDataHolder.data = { adsViewMode: adsViewModes.LOCAL_ADS_MODE, adsPage: 0 };
 };
 
 function buildLocalAdsCriteria(context) {
     return {
-        category: context.userState.adsCategory,
+        category: context.userStateDataHolder.data.adsCategory,
         location: {
-            latitude: context.userState.location.coordinates[1],
-            longitude: context.userState.location.coordinates[0]
+            latitude: context.user.location.coordinates[1],
+            longitude: context.user.location.coordinates[0]
         },
-        radius: context.userState.searchRadius,
+        radius: context.user.searchRadius,
         active: true,
         user: context.user.id,
-        page: context.userState.adsPage
+        page: context.userStateDataHolder.data.adsPage
     };
 }
 
 function buildOwnAdsCriteria(context) {
     return {
         author: context.user.id,
-        page: context.userState.adsPage
+        page: context.userStateDataHolder.data.adsPage
     };
 }
 
 function buildSelectedAdsCriteria(context) {
     return {
         user: context.user.id,
-        page: context.userState.adsPage
+        page: context.userStateDataHolder.data.adsPage
     };
 }
 
 async function searchAdsByContextState(context) {
+    const viewMode = context.userStateDataHolder.data.adsViewMode;
     const criteria = {
-        ...(context.userState.adsViewMode === adsViewModes.LOCAL_ADS_MODE ? buildLocalAdsCriteria(context) : {}),
-        ...(context.userState.adsViewMode === adsViewModes.OWN_ADS_MODE ? buildOwnAdsCriteria(context) : {}),
-        ...(context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE ? buildSelectedAdsCriteria(context) : {})
+        ...(viewMode === adsViewModes.LOCAL_ADS_MODE ? buildLocalAdsCriteria(context) : {}),
+        ...(viewMode === adsViewModes.OWN_ADS_MODE ? buildOwnAdsCriteria(context) : {}),
+        ...(viewMode === adsViewModes.SELECTED_ADS_MODE ? buildSelectedAdsCriteria(context) : {})
     };
-    const result = await adsDao.findAdsByCriteria(criteria);
-    context.searchResult = {
-        numberOfAdsPages: result.numberOfPages,
+    const result = await adsFindFunctions.findAdsByCriteria(criteria);
+    context.tmpStateDataHolder.data = {
+        numberOfPages: result.numberOfPages,
         foundAds: result.adsSlice.reverse()
     };
 }
 
 exports.searchLocalAds = async (context) => {
-    if (userInputData.ifStrContain(context.inputData, strArrForCategoryAll)) {
+    if (validator.ifStrContain(context.inputData, strArrForCategoryAll)) {
         throw new CustomException(categoryError[context.lang]);
     }
-    context.userState.adsViewMode = adsViewModes.LOCAL_ADS_MODE;
-    context.userState.adsCategory = context.inputData;
-    context.userState.adsPage = 0;
+    context.userStateDataHolder.data = {
+        adsViewMode: adsViewModes.LOCAL_ADS_MODE,
+        adsCategory: context.inputData === adCategories.ALL.id ? null : context.inputData,
+        adsPage: 0
+    };
     await searchAdsByContextState(context);
 };
 exports.searchOwnAds = async (context) => {
-    context.userState.adsViewMode = adsViewModes.OWN_ADS_MODE;
-    context.userState.adsPage = 0;
+    context.userStateDataHolder.data = { adsViewMode: adsViewModes.OWN_ADS_MODE, adsPage: 0 };
     await searchAdsByContextState(context);
 };
 exports.searchSelectedAds = async (context) => {
-    context.userState.adsViewMode = adsViewModes.SELECTED_ADS_MODE;
-    context.userState.adsPage = 0;
+    context.userStateDataHolder.data = { adsViewMode: adsViewModes.SELECTED_ADS_MODE, adsPage: 0 };
     await searchAdsByContextState(context);
 };
 exports.searchOlderAds = async (context) => {
-    context.userState.adsPage += 1;
+    context.userStateDataHolder.data.adsPage += 1;
     await searchAdsByContextState(context);
 };
 exports.searchNewerAds = async (context) => {
-    context.userState.adsPage -= 1;
+    context.userStateDataHolder.data.adsPage -= 1;
     await searchAdsByContextState(context);
 };
 
@@ -209,32 +193,37 @@ function getFavAdActions(isAdFav) {
 // ////////////////////////////////////////////////// //
 
 exports.addToSaved = async (context) => {
-    await addToSavedAds(context.user.id, context.inputData);
-    return telmsg.editChatMessageActions(context, context.lang, getFavAdActions(false), context.inputData);
+    const { chatData, lang, inputData: adId } = context;
+    await adsUpdateFuntions.addToSavedAds(context.user.id, adId);
+    return telmsg.editChatMessageActions(chatData, lang, getFavAdActions(false), adId);
 };
 exports.deleteFromSaved = async (context) => {
-    const ad = await deleteFromSavedAds(context.user.id, context.inputData);
+    const { chatData, lang, inputData: adId } = context;
+    const ad = await adsUpdateFuntions.deleteFromSavedAds(context.user.id, adId);
     if (!ad.author && ad.usersSaved.length === 0) {
-        await deleteAd(context.inputData);
+        await deleteAd(adId);
     }
-    return context.userState.adsViewMode === adsViewModes.SELECTED_ADS_MODE
-        ? telmsg.deleteChatMessage(context)
-        : telmsg.editChatMessageActions(context, context.lang, getFavAdActions(true), context.inputData);
+    return context.userStateDataHolder.data.adsViewMode === adsViewModes.SELECTED_ADS_MODE
+        ? telmsg.deleteChatMessage(chatData)
+        : telmsg.editChatMessageActions(chatData, lang, getFavAdActions(true), adId);
 };
 
 exports.requestReportAd = async (context) => {
+    const { chatData, lang, inputData: adId } = context;
     const actions = [commands.CANCEL_REPORT, commands.CONFIRM_REPORT];
-    const ad = await adsDao.findAdvertisement(context.inputData);
-    return telmsg.editAdContent(context, context.lang, labels.reportAdConfirmation, actions, ad);
+    const ad = await adsFindFunctions.findAdvertisement(adId);
+    return telmsg.editAdContent(chatData, lang, labels.reportAdConfirmation, actions, ad);
 };
 exports.cancelReportAd = async (context) => {
-    const ad = await adsDao.findAdvertisement(context.inputData);
+    const { chatData, lang, inputData: adId } = context;
+    const ad = await adsFindFunctions.findAdvertisement(adId);
     const actions = getFavAdActions(!ad.usersSaved.includes(context.user.id));
-    return telmsg.editAdContent(context, context.lang, AD_TEMPLATE(ad, context.lang), actions, ad);
+    return telmsg.editAdContent(chatData, lang, AD_TEMPLATE(ad, lang), actions, ad);
 };
 exports.confirmReportAd = async (context) => {
-    await markAsSpam(context.user.id, context.inputData);
-    return telmsg.deleteChatMessage(context);
+    const { chatData, inputData: adId } = context;
+    await adsUpdateFuntions.markAsSpam(context.user.id, adId);
+    return telmsg.deleteChatMessage(chatData);
 };
 
 // ////////////////////////////////////////////////// //
@@ -242,33 +231,36 @@ exports.confirmReportAd = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.requestDeleteAd = async (context) => {
+    const { chatData, lang, inputData: adId } = context;
     const actions = [commands.CANCEL_DELETE, commands.CONFIRM_DELETE];
-    const ad = await adsDao.findAdvertisement(context.inputData);
-    return telmsg.editAdContent(context, context.lang, labels.deleteAdConfirmation, actions, ad);
+    const ad = await adsFindFunctions.findAdvertisement(adId);
+    return telmsg.editAdContent(chatData, lang, labels.deleteAdConfirmation, actions, ad);
 };
 exports.cancelDeleteAd = async (context) => {
-    const ad = await adsDao.findAdvertisement(context.inputData);
-    return telmsg.editAdContent(context, context.lang, AD_TEMPLATE(ad, context.lang), getOwnAdActions(ad.isActive), ad);
+    const { chatData, lang, inputData: adId } = context;
+    const ad = await adsFindFunctions.findAdvertisement(adId);
+    return telmsg.editAdContent(chatData, lang, AD_TEMPLATE(ad, lang), getOwnAdActions(ad.isActive), ad);
 };
 exports.confirmDeleteAd = async (context) => {
-    const ad = await adsDao.findAdvertisement(context.inputData);
+    const { chatData, inputData: adId } = context;
+    const ad = await adsFindFunctions.findAdvertisement(adId);
     if (ad.usersSaved.length > 0) {
         ad.author = null;
         ad.isActive = false;
-        await updateAdState(context.inputData, ad);
+        await adsUpdateFuntions.updateAdState(adId, ad);
     } else {
-        await deleteAd(context.inputData);
+        await deleteAd(adId);
     }
-    return telmsg.deleteChatMessage(context);
+    return telmsg.deleteChatMessage(chatData);
 };
 
 exports.deactivateAd = async (context) => {
-    const adId = context.inputData;
-    await updateAdActiveStatus(adId, false);
-    return telmsg.editChatMessageActions(context, context.lang, getOwnAdActions(false), adId, labels.deactivateIsSet);
+    const { chatData, lang, inputData: adId } = context;
+    await adsUpdateFuntions.updateAdActiveStatus(adId, false);
+    return telmsg.editChatMessageActions(chatData, lang, getOwnAdActions(false), adId, labels.deactivateIsSet);
 };
 exports.activateAd = async (context) => {
-    const adId = context.inputData;
-    await updateAdActiveStatus(adId, true);
-    return telmsg.editChatMessageActions(context, context.lang, getOwnAdActions(true), adId, labels.activateIsSet);
+    const { chatData, lang, inputData: adId } = context;
+    await adsUpdateFuntions.updateAdActiveStatus(adId, true);
+    return telmsg.editChatMessageActions(chatData, lang, getOwnAdActions(true), adId, labels.activateIsSet);
 };

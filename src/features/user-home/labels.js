@@ -12,9 +12,5 @@ module.exports = {
     userHome: {
         en: `🏠 Main menu`,
         ua: `🏠 Головне меню`
-    },
-    updatedMessage: {
-        en: (param) => `Your ${param} was successfully updated.`,
-        ua: (param) => `${param} успішно змінено.`
     }
 };

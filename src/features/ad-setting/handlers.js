@@ -8,8 +8,8 @@ const { AD_TEMPLATE } = require('../ad-template');
 
 const { findAdvertisement, findUser } = require('../../database/methods/find');
 const { createAdvertisement } = require('../../database/methods/create');
-const { updateAdState } = require('../../database/methods/update');
-const { userInputData } = require('../../validators/ad-validation');
+const updateMethods = require('../../database/methods/update');
+const validator = require('../../validators/ad-validation').userInputData;
 const { checkMaxMinReg, categoryError } = require('../validations-labels');
 const { titleLength, descriptionLength, remunerationLength, strArrForCategory } = require('../../constants/ad-values');
 const { deleteAd } = require('../../database/methods/delete');
@@ -54,12 +54,12 @@ exports.renderSetAdImgView = (context) => {
 };
 
 exports.renderPreviewAdView = async (context) => {
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
     const previewActions = [[commands.CANCEL_AD.title[context.lang], commands.PUBLISH_AD.title[context.lang]]];
     if (!ad.imgId) {
         return new Text(AD_TEMPLATE(ad, context.lang)).addReplyKeyboard(previewActions, true).get();
     }
-    return telmsg.sendPhotoWithKeyboard(ad.imgId, AD_TEMPLATE(ad, context.lang), previewActions);
+    return telmsg.sendPhoto(ad.imgId, AD_TEMPLATE(ad, context.lang), previewActions);
 };
 
 // ////////////////////////////////////////////////// //
@@ -67,55 +67,49 @@ exports.renderPreviewAdView = async (context) => {
 // ////////////////////////////////////////////////// //
 
 exports.setTitle = async (context) => {
-    const { inputData } = context;
+    const title = context.inputData;
 
-    if (typeof inputData !== 'string' || inputData === '') {
+    if (typeof title !== 'string' || title === '') {
         throw new CustomException(labels.titleError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, titleLength)) {
+    if (validator.ifStrCondition(title, titleLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](titleLength.min, titleLength.max));
     }
 
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.title = inputData;
-    await updateAdState(ad._id, ad);
+    await updateMethods.updateAdTitle(context.userStateDataHolder.data.currentUpdateAd, title);
 };
 
 exports.setDescription = async (context) => {
-    const { inputData } = context;
+    const description = context.inputData;
 
-    if (typeof inputData !== 'string' || inputData === '') {
+    if (typeof description !== 'string' || description === '') {
         throw new CustomException(labels.descriptionError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, descriptionLength)) {
+    if (validator.ifStrCondition(description, descriptionLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](descriptionLength.min, descriptionLength.max));
     }
 
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.description = inputData;
-    await updateAdState(ad._id, ad);
+    await updateMethods.updateAdDescription(context.userStateDataHolder.data.currentUpdateAd, description);
 };
 
 exports.setRenumeration = async (context) => {
-    const { inputData } = context;
+    const renumeration = context.inputData;
 
-    if (Array.isArray(inputData)) {
+    if (Array.isArray(renumeration)) {
         throw new CustomException(labels.imgInRenumerationError[context.lang]);
     }
-    if (typeof inputData !== 'string' || inputData === '') {
+    if (typeof renumeration !== 'string' || renumeration === '') {
         throw new CustomException(labels.renumerationError[context.lang]);
     }
-    if (userInputData.ifStrCondition(inputData, remunerationLength)) {
+    if (validator.ifStrCondition(renumeration, remunerationLength)) {
         throw new CustomException(checkMaxMinReg[context.lang](remunerationLength.min, remunerationLength.max));
     }
 
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.renumeration = inputData;
-    await updateAdState(ad._id, ad);
+    await updateMethods.updateAdRemuneration(context.userStateDataHolder.data.currentUpdateAd, renumeration);
 };
 
 exports.setCategory = async (context) => {
-    const validationResult = userInputData.ifStrContain(context.inputData, strArrForCategory);
+    const validationResult = validator.ifStrContain(context.inputData, strArrForCategory);
 
     if (validationResult) {
         throw new CustomException(categoryError[context.lang]);
@@ -123,31 +117,30 @@ exports.setCategory = async (context) => {
 
     const ad = { author: context.user.id, category: context.inputData };
     const adId = await createAdvertisement(ad);
-    context.userState.currentUpdateAd = adId;
+    context.userStateDataHolder.data = { currentUpdateAd: adId };
 };
 
 exports.setImg = async (context) => {
-    if (!Array.isArray(context.inputData)) {
+    const image = context.inputData;
+    if (!Array.isArray(image)) {
         throw new CustomException(labels.imgError[context.lang]);
     }
-
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
-    ad.imgId = context.inputData[0].file_id;
-    await updateAdState(ad._id, ad);
+    const imgId = image[0].file_id;
+    await updateMethods.updateAdImage(context.userStateDataHolder.data.currentUpdateAd, imgId);
 };
 
 exports.publish = async (context) => {
     const user = await findUser(context.user.id);
-    const ad = await findAdvertisement(context.userState.currentUpdateAd);
+    const ad = await findAdvertisement(context.userStateDataHolder.data.currentUpdateAd);
     ad.location = { ...user.location };
     ad.isActive = true;
-    await updateAdState(ad._id, ad);
-    context.userState.currentUpdateAd = null;
+    await updateMethods.updateAdState(ad._id, ad);
+    context.userStateDataHolder.data = null;
     return new Text(labels.publish[context.lang]).get();
 };
 
 exports.cancelSettingAd = async (context) => {
-    await deleteAd(context.userState.currentUpdateAd);
-    context.userState.currentUpdateAd = null;
+    await deleteAd(context.userStateDataHolder.data.currentUpdateAd);
+    context.userStateDataHolder.data = null;
     return new Text(labels.cancel[context.lang]).get();
 };
